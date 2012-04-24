@@ -26,9 +26,11 @@
         <!-- all dependency versions are specified here -->
         <junit.version>4.10</junit.version>
         <commons.io.version>2.3</commons.io.version>
+        <javax.servlet.version>2.4</javax.servlet.version>
+        <javax.jstl.version>1.1.1</javax.jstl.version>
         <kdgcommons.version>1.0.3</kdgcommons.version>
+        <springframework.version>3.1.1.RELEASE</springframework.version>
         <practicalxml.version>1.1.11</practicalxml.version>
-        <servlet.version>2.4</servlet.version>
 
         <!-- versions for the build tool itself are here -->
         <plugin.compiler.version>2.3.2</plugin.compiler.version>
