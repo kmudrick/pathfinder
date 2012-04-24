@@ -15,6 +15,7 @@
 
     <modules>
         <module>test-war-servlet</module>
+        <module>test-war-spring2-basic</module>
         <module>test-wars</module>
         <module>lib-core</module>
         <module>lib-servlet</module>
