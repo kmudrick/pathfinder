@@ -18,6 +18,8 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import net.sf.kdgcommons.lang.ObjectUtil;
+
 import com.kdgregory.pathfinder.core.Inspector;
 import com.kdgregory.pathfinder.core.PathRepo;
 import com.kdgregory.pathfinder.core.PathRepo.Destination;
@@ -27,7 +29,7 @@ public class ServletInspector
 implements Inspector
 {
     private Logger logger = Logger.getLogger(getClass());
-    
+
 //----------------------------------------------------------------------------
 //  Inspector
 //----------------------------------------------------------------------------
@@ -59,6 +61,12 @@ implements Inspector
         {
             return servletClass;
         }
+
+        @Override
+        public boolean isImplementedBy(String className)
+        {
+            return ObjectUtil.equals(className, servletClass);
+        }
     }
 
 
@@ -76,6 +84,12 @@ implements Inspector
         public String toString()
         {
             return filename;
+        }
+
+        @Override
+        public boolean isImplementedBy(String className)
+        {
+            return false;
         }
     }
 
@@ -95,6 +109,12 @@ implements Inspector
         {
             return filename;
         }
+
+        @Override
+        public boolean isImplementedBy(String className)
+        {
+            return false;
+        }
     }
 
 
@@ -108,7 +128,7 @@ implements Inspector
         {
             String servletUrl = servlet.getKey();
             String servletClass = servlet.getValue();
-            
+
             logger.debug("added servlet: " + servletUrl + " => " + servletClass);
             paths.put(servlet.getKey(), new ServletDestination(servletClass));
         }
@@ -125,7 +145,7 @@ implements Inspector
                 logger.debug("added JSP: " + filename);
                 paths.put(filename, new JspDestination(filename));
             }
-            if (filename.endsWith(".html") || filename.endsWith(".htm")) 
+            if (filename.endsWith(".html") || filename.endsWith(".htm"))
             {
                 logger.debug("added static HTML: " + filename);
                 paths.put(filename, new HtmlDestination(filename));

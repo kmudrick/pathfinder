@@ -70,6 +70,14 @@ implements Iterable<String>
     public interface Destination
     {
         /**
+         *  Returns <code>true</code> if this destination is handled by the
+         *  specified class, <code>false</code> otherwise. This is the primary
+         *  mechanism for filtering raw servlet destinations.
+         */
+        public boolean isImplementedBy(String className);
+
+
+        /**
          *  Returns a formatted description of this destination.
          */
         @Override
