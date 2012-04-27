@@ -51,7 +51,7 @@
         </dependency>
         <dependency>
             <groupId>com.kdgregory.pathfinder</groupId>
-            <artifactId>pathfinder-test-war-spring-basic</artifactId>
+            <artifactId>pathfinder-test-war-spring2-basic</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>

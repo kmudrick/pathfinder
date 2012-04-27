@@ -8,7 +8,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>pathfinder-test-war-spring-basic</artifactId>
+    <artifactId>pathfinder-test-war-spring2-basic</artifactId>
     <packaging>war</packaging>
 
     <name>WAR for Simple Spring 2 Testing</name>
