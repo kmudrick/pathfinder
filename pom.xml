@@ -19,6 +19,7 @@
         <module>test-wars</module>
         <module>lib-core</module>
         <module>lib-servlet</module>
+        <module>lib-spring</module>
         <module>pathfinder</module>
     </modules>
 
