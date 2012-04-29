@@ -163,6 +163,36 @@ implements Iterable<String>
 
 
     /**
+     *  Removes the destination(s) associated with the given URL and method.
+     *  If the passed method is "ALL", will remove all destinations (even if
+     *  they were added individually).
+     */
+    public void remove(String url, HttpMethod method)
+    {
+        Map<HttpMethod,Destination> destMap = urlMap.get(url);
+        if (destMap == null)
+            return;
+
+        if (method.equals(HttpMethod.ALL))
+        {
+            destMap.clear();
+            return;
+        }
+
+        if (destMap.containsKey(HttpMethod.ALL))
+        {
+            Destination dest = destMap.remove(HttpMethod.ALL);
+            destMap.put(HttpMethod.GET, dest);
+            destMap.put(HttpMethod.POST, dest);
+            destMap.put(HttpMethod.PUT, dest);
+            destMap.put(HttpMethod.DELETE, dest);
+        }
+
+        destMap.remove(method);
+    }
+
+
+    /**
      *  Returns an iterator over the URLs in this repository. These URLs
      *  will be sorted in alphanumeric order.
      */
