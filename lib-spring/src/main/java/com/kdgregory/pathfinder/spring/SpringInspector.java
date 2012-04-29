@@ -14,11 +14,18 @@
 
 package com.kdgregory.pathfinder.spring;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 
 import com.kdgregory.pathfinder.core.Inspector;
 import com.kdgregory.pathfinder.core.PathRepo;
+import com.kdgregory.pathfinder.core.PathRepo.Destination;
 import com.kdgregory.pathfinder.core.WarMachine;
+import com.kdgregory.pathfinder.core.PathRepo.HttpMethod;
 
 
 /**
@@ -42,11 +49,30 @@ implements Inspector
     @Override
     public void inspect(WarMachine war, PathRepo paths)
     {
-        logger.info("SpringInspector invoked");
+        logger.info("SpringInspector started");
+        List<String> springMappings = extractSpringMappings(paths);
+        logger.debug("extracted " + springMappings.size() + " Spring mappings");
+        logger.info("SpringInspector finished");
     }
+
 
 //----------------------------------------------------------------------------
 //  Internals
 //----------------------------------------------------------------------------
+    
+    private List<String> extractSpringMappings(PathRepo paths)
+    {
+        List<String> result = new ArrayList<String>();
+        for (String url : paths)
+        {
+            Destination dest = paths.get(url, HttpMethod.ALL);
+            if (dest.isImplementedBy("org.springframework.web.servlet.DispatcherServlet"))
+            {
+                result.add(url);
+                paths.remove(url, HttpMethod.ALL);
+            }
+        }
+        return result;
+    }
 
 }

@@ -14,12 +14,15 @@
 
 package com.kdgregory.pathfinder.spring;
 
-import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import com.kdgregory.pathfinder.core.PathRepo;
 import com.kdgregory.pathfinder.core.WarMachine;
+import com.kdgregory.pathfinder.servlet.ServletInspector;
+import com.kdgregory.pathfinder.util.TestHelpers;
 
 
 /**
@@ -30,11 +33,23 @@ import com.kdgregory.pathfinder.core.WarMachine;
 public class TestSpring2Basic
 {
     private static WarMachine machine;
+    private PathRepo pathRepo;
 
     @BeforeClass
     public static void loadWar()
     throws Exception
     {
+        machine = TestHelpers.createWarMachine("pathfinder-test-war-spring2-basic.war");
+    }
+
+
+    @Before
+    public void setUp()
+    throws Exception
+    {
+        // SpringInspector relies on ServletInspector running first
+        pathRepo = new PathRepo();
+        new ServletInspector().inspect(machine, pathRepo);
     }
 
 
@@ -43,9 +58,15 @@ public class TestSpring2Basic
 //----------------------------------------------------------------------------
 
     @Test
-    public void testNothing() throws Exception
+    public void testDispatcherServletMappingsRemoved() throws Exception
     {
-        // this is here to keep the skeleton build running
+        new SpringInspector().inspect(machine, pathRepo);
+
+        // the original DispatcherServlet mapping should be gone
+        assertEquals("/servlet/* removed", 0, pathRepo.get("/servlet/*").size());
+
+        // but the MyServlet mapping should remain
+        assertEquals("/servlet2 remains", 1, pathRepo.get("/servlet2").size());
     }
 
 }

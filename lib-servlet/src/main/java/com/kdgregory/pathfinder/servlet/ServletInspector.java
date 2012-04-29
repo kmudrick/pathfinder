@@ -37,8 +37,10 @@ implements Inspector
     @Override
     public void inspect(WarMachine war, PathRepo paths)
     {
+        logger.info("ServletInspector started");
         addServlets(war, paths);
         addJSPandHTML(war, paths);
+        logger.info("ServletInspector finished");
     }
 
 
