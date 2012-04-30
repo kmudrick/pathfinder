@@ -24,6 +24,8 @@ import com.kdgregory.pathfinder.core.Inspector;
 import com.kdgregory.pathfinder.core.PathRepo;
 import com.kdgregory.pathfinder.core.PathRepo.Destination;
 import com.kdgregory.pathfinder.core.WarMachine;
+import com.kdgregory.pathfinder.core.WarMachine.ServletMapping;
+
 
 public class ServletInspector
 implements Inspector
@@ -126,10 +128,10 @@ implements Inspector
 
     private void addServlets(WarMachine war, PathRepo paths)
     {
-        for (Map.Entry<String,String> servlet : war.getServletMappings().entrySet())
+        for (Map.Entry<String,ServletMapping> servlet : war.getServletMappings().entrySet())
         {
             String servletUrl = servlet.getKey();
-            String servletClass = servlet.getValue();
+            String servletClass = servlet.getValue().getServletClass();
 
             logger.debug("added servlet: " + servletUrl + " => " + servletClass);
             paths.put(servlet.getKey(), new ServletDestination(servletClass));

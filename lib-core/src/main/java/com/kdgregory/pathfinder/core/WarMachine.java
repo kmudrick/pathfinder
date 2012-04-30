@@ -40,12 +40,11 @@ public interface WarMachine
 
 
     /**
-     *  Returns the servlet mappings from the WAR's <code>web.xml</code>, joining
-     *  <code>servlet</code> entries to <code>servlet-mapping</code> entries. The
-     *  map's key values are the <code>url-pattern</code> from the latter, mapped
-     *  to the <code>servlet-class</code> of the latter.
+     *  Joins the <code>servlet</code> and <code>servlet-mapping</code> entries from
+     *  <code>web.xml</code>, and returns a map keyed by <code>url-pattern</code>
+     *  from the latter.
      */
-    public Map<String,String> getServletMappings();
+    public Map<String,ServletMapping> getServletMappings();
 
 
     /**
@@ -75,4 +74,24 @@ public interface WarMachine
      */
     public InputStream openFile(String filename)
     throws IOException;
+
+
+//----------------------------------------------------------------------------
+//  Supporting Objects
+//----------------------------------------------------------------------------
+
+    /**
+     *  Servlet mappings are parsed into objects that implement this interface.
+     *  Method names are simple translations of the corresponding element name.
+     */
+    public interface ServletMapping
+    {
+        public String getUrlPattern();
+
+        public String getServletName();
+
+        public String getServletClass();
+        
+        public Map<String,String> getInitParams();
+    }
 }

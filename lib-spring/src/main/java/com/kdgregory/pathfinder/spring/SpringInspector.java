@@ -15,17 +15,15 @@
 package com.kdgregory.pathfinder.spring;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 
 import com.kdgregory.pathfinder.core.Inspector;
 import com.kdgregory.pathfinder.core.PathRepo;
 import com.kdgregory.pathfinder.core.PathRepo.Destination;
-import com.kdgregory.pathfinder.core.WarMachine;
 import com.kdgregory.pathfinder.core.PathRepo.HttpMethod;
+import com.kdgregory.pathfinder.core.WarMachine;
 
 
 /**
@@ -59,7 +57,7 @@ implements Inspector
 //----------------------------------------------------------------------------
 //  Internals
 //----------------------------------------------------------------------------
-    
+
     private List<String> extractSpringMappings(PathRepo paths)
     {
         List<String> result = new ArrayList<String>();

@@ -53,12 +53,12 @@ implements WarMachine
 //----------------------------------------------------------------------------
 //  Instance Variables and Constructor
 //----------------------------------------------------------------------------
-    
+
     private Logger logger = Logger.getLogger(getClass());
 
     private JarFile mappedWar;
     private Document webXml;
-    private Map<String,String> servletMappings = new HashMap<String,String>();
+    private Map<String,ServletMapping> servletMappings;
 
 
     /**
@@ -70,15 +70,12 @@ implements WarMachine
     public WarMachineImpl(File warFile)
     {
         openFile(warFile);
+
+        // if the file doesn't have web.xml, it's not a war, so failfast
         parseWebXml();
-        parseServletMappings();
     }
 
-
-//----------------------------------------------------------------------------
-//  the following methods are called by the ctor; they're broken out because
-//  each throws its own IllegalArgumentException
-//----------------------------------------------------------------------------
+    // the following methods are called by the ctor; broken out for readability
 
     private void openFile(File warFile)
     {
@@ -92,7 +89,6 @@ implements WarMachine
             throw new IllegalArgumentException("unable to open: " + mappedWar, ex);
         }
     }
-
 
     private void parseWebXml()
     {
@@ -121,56 +117,6 @@ implements WarMachine
     }
 
 
-    private void parseServletMappings()
-    {
-        // prebuild all XPath; some of them get reused
-        XPathWrapper xpServlet      = new XPathWrapper("/ns:web-app/ns:servlet")
-                                      .bindNamespace("ns", NS_SERVLET);
-        XPathWrapper xpServletName  = new XPathWrapper("ns:servlet-name")
-                                      .bindNamespace("ns", NS_SERVLET);
-        XPathWrapper xpServletClass = new XPathWrapper("ns:servlet-class")
-                                     .bindNamespace("ns", NS_SERVLET);
-        XPathWrapper xpMapping      = new XPathWrapper("/ns:web-app/ns:servlet-mapping")
-                                      .bindNamespace("ns", NS_SERVLET);
-        XPathWrapper xpMappingName  = new XPathWrapper("ns:servlet-name")
-                                      .bindNamespace("ns", NS_SERVLET);
-        XPathWrapper xpMappingUrl   = new XPathWrapper("ns:url-pattern")
-                                      .bindNamespace("ns", NS_SERVLET);
-
-        try
-        {
-            Map<String,String> servletLookup = new HashMap<String,String>();
-            List<Element> servlets = xpServlet.evaluate(webXml, Element.class);
-            logger.debug("found " + servlets.size() + " <servlet> entries");
-            for (Element servlet : servlets)
-            {
-                String servletName = xpServletName.evaluateAsString(servlet);
-                String servletClass = xpServletClass.evaluateAsString(servlet);
-                servletLookup.put(servletName, servletClass);
-            }
-
-            List<Element> mappings = xpMapping.evaluate(webXml, Element.class);
-            logger.debug("found " + mappings.size() + " <servlet-mapping> entries");
-            for (Element mapping : mappings)
-            {
-                String servletName = xpMappingName.evaluateAsString(mapping);
-                String mappingUrl = xpMappingUrl.evaluateAsString(mapping);
-                String servletClass = servletLookup.get(servletName);
-                if (servletClass == null)
-                    throw new IllegalArgumentException("<servlet-mapping> \"" + servletName
-                                                       + "\" does not have <servlet> entry");
-                servletMappings.put(mappingUrl, servletClass);
-            }
-        }
-        catch (Exception ex)
-        {
-            if (ex instanceof IllegalArgumentException)
-                throw (IllegalArgumentException)ex;
-            throw new IllegalArgumentException("unable to process servlet mappings", ex);
-        }
-    }
-
-
 //----------------------------------------------------------------------------
 //  WarMachine implementation
 //----------------------------------------------------------------------------
@@ -183,8 +129,11 @@ implements WarMachine
 
 
     @Override
-    public Map<String,String> getServletMappings()
+    public Map<String,ServletMapping> getServletMappings()
     {
+        if (servletMappings == null)
+            parseServletMappings();
+
         return Collections.unmodifiableMap(servletMappings);
     }
 
@@ -237,5 +186,101 @@ implements WarMachine
             return null;
 
         return mappedWar.getInputStream(entry);
+    }
+
+
+//----------------------------------------------------------------------------
+//  Internals
+//----------------------------------------------------------------------------
+
+    /**
+     * This method exists to reduce clutter: all XPath against web.xml must be
+     * bound to the servlet namespace. This method does that, using the prefix
+     * "ns".
+     */
+    private static XPathWrapper xpath(String xpath)
+    {
+        return new XPathWrapper(xpath).bindNamespace("ns", NS_SERVLET);
+    }
+
+
+    private void parseServletMappings()
+    {
+        servletMappings = new HashMap<String,WarMachine.ServletMapping>();
+
+        Map<String,Element> servletLookup = new HashMap<String,Element>();
+        List<Element> servlets = xpath("/ns:web-app/ns:servlet").evaluate(webXml, Element.class);
+        logger.debug("found " + servlets.size() + " <servlet> entries");
+        for (Element servlet : servlets)
+        {
+            String servletName = xpath("ns:servlet-name").evaluateAsString(servlet);
+            servletLookup.put(servletName, servlet);
+        }
+
+        List<Element> mappings = xpath("/ns:web-app/ns:servlet-mapping").evaluate(webXml, Element.class);
+        logger.debug("found " + mappings.size() + " <servlet-mapping> entries");
+        for (Element mapping : mappings)
+        {
+            String servletName = xpath("ns:servlet-name").evaluateAsString(mapping);
+            String mappingUrl = xpath("ns:url-pattern").evaluateAsString(mapping);
+            Element servlet = servletLookup.get(servletName);
+            if (servlet == null)
+                logger.warn("<servlet-mapping> \"" + mappingUrl
+                            + "\" does not have <servlet> entry");
+            servletMappings.put(mappingUrl, new ServletMappingImpl(mappingUrl, servlet));
+        }
+    }
+
+
+//----------------------------------------------------------------------------
+//  Supporting classes
+//----------------------------------------------------------------------------
+
+    private static class ServletMappingImpl
+    implements ServletMapping
+    {
+        private String mappingUrl;
+        private String servletName;
+        private String servletClass;
+        private Map<String,String> initParams = new HashMap<String,String>();
+
+        public ServletMappingImpl(String mappingUrl, Element servlet)
+        {
+            this.mappingUrl = mappingUrl;
+            this.servletName = xpath("ns:servlet-name").evaluateAsString(servlet);
+            this.servletClass = xpath("ns:servlet-class").evaluateAsString(servlet);
+
+            List<Element> params = xpath("ns:init-param").evaluate(servlet, Element.class);
+            for (Element param : params)
+            {
+                String paramName = xpath("ns:param-name").evaluateAsString(param);
+                String paramValue = xpath("ns:param-value").evaluateAsString(param);
+                initParams.put(paramName, paramValue);
+            }
+        }
+
+        @Override
+        public String getUrlPattern()
+        {
+            return mappingUrl;
+        }
+
+        @Override
+        public String getServletName()
+        {
+            return servletName;
+        }
+
+        @Override
+        public String getServletClass()
+        {
+            return servletClass;
+        }
+
+        @Override
+        public Map<String,String> getInitParams()
+        {
+            return Collections.unmodifiableMap(initParams);
+        }
     }
 }

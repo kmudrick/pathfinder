@@ -29,6 +29,7 @@ import org.apache.commons.io.IOUtils;
 import net.sf.kdgcommons.io.IOUtil;
 import net.sf.practicalxml.DomUtil;
 
+import com.kdgregory.pathfinder.core.WarMachine.ServletMapping;
 import com.kdgregory.pathfinder.core.impl.WarMachineImpl;
 import com.kdgregory.pathfinder.util.TestHelpers;
 
@@ -61,10 +62,24 @@ public class TestWarMachine
     {
         WarMachine machine = TestHelpers.createWarMachine(TEST_WAR);
 
-        Map<String,String> mappings = machine.getServletMappings();
+        Map<String,ServletMapping> mappings = machine.getServletMappings();
         assertEquals("number of mappings", 2, mappings.size());
-        assertEquals("mapping #1", "com.example.servlet.SomeServlet", mappings.get("/servlet"));
-        assertEquals("mapping #2", "com.example.servlet.SomeServlet", mappings.get("/servlet2"));
+        
+        ServletMapping mapping1 = mappings.get("/servlet"); 
+        assertEquals("mapping #1 class", "com.example.servlet.SomeServlet",
+                     mapping1.getServletClass());
+        assertEquals("mapping #1 param:foo", "bar",
+                     mapping1.getInitParams().get("foo"));
+        assertEquals("mapping #2 argle", "bargle",
+                     mapping1.getInitParams().get("argle"));
+        
+        ServletMapping mapping2 = mappings.get("/servlet"); 
+        assertEquals("mapping #1 class", "com.example.servlet.SomeServlet",
+                     mapping2.getServletClass());
+        assertEquals("mapping #1 param:foo", "bar",
+                     mapping2.getInitParams().get("foo"));
+        assertEquals("mapping #2 argle", "bargle",
+                     mapping2.getInitParams().get("argle"));
     }
 
 
