@@ -14,8 +14,6 @@
 
 package com.kdgregory.pathfinder.servlet;
 
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 
 import net.sf.kdgcommons.lang.ObjectUtil;
@@ -128,13 +126,13 @@ implements Inspector
 
     private void addServlets(WarMachine war, PathRepo paths)
     {
-        for (Map.Entry<String,ServletMapping> servlet : war.getServletMappings().entrySet())
+        for (ServletMapping servlet : war.getServletMappings())
         {
-            String servletUrl = servlet.getKey();
-            String servletClass = servlet.getValue().getServletClass();
+            String servletUrl = servlet.getUrlPattern();
+            String servletClass = servlet.getServletClass();
 
             logger.debug("added servlet: " + servletUrl + " => " + servletClass);
-            paths.put(servlet.getKey(), new ServletDestination(servletClass));
+            paths.put(servletUrl, new ServletDestination(servletClass));
         }
     }
 
