@@ -16,8 +16,6 @@ package com.kdgregory.pathfinder.servlet;
 
 import org.apache.log4j.Logger;
 
-import net.sf.kdgcommons.lang.ObjectUtil;
-
 import com.kdgregory.pathfinder.core.Inspector;
 import com.kdgregory.pathfinder.core.PathRepo;
 import com.kdgregory.pathfinder.core.PathRepo.Destination;
@@ -63,12 +61,6 @@ implements Inspector
         {
             return servletClass;
         }
-
-        @Override
-        public boolean isImplementedBy(String className)
-        {
-            return ObjectUtil.equals(className, servletClass);
-        }
     }
 
 
@@ -87,12 +79,6 @@ implements Inspector
         {
             return filename;
         }
-
-        @Override
-        public boolean isImplementedBy(String className)
-        {
-            return false;
-        }
     }
 
 
@@ -110,12 +96,6 @@ implements Inspector
         public String toString()
         {
             return filename;
-        }
-
-        @Override
-        public boolean isImplementedBy(String className)
-        {
-            return false;
         }
     }
 

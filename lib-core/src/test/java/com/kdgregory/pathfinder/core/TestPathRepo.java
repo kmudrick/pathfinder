@@ -46,11 +46,7 @@ public class TestPathRepo
     private static class MyDestination
     implements PathRepo.Destination
     {
-        @Override
-        public boolean isImplementedBy(String className)
-        {
-            return false;
-        }
+        // nothing here
     }
 
 //----------------------------------------------------------------------------

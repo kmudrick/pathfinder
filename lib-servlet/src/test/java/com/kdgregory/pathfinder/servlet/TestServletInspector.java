@@ -41,9 +41,4 @@ public class TestServletInspector
 
         // and verify that we don't know nothing about the hidden JSP
         assertNull(repo.get("/WEB-INF/views/hidden.jsp", HttpMethod.ALL));
-
-        assertTrue("/servlet implementation class",     repo.get("/servlet", HttpMethod.ALL).isImplementedBy("com.example.servlet.SomeServlet"));
-        assertFalse("/servlet2 implementation class",   repo.get("/servlet2", HttpMethod.ALL).isImplementedBy("com.example.servlet.AnotherServlet"));
-        assertFalse("/index.jsp implementation class",  repo.get("/index.jsp", HttpMethod.ALL).isImplementedBy("com.example.servlet.SomeServlet"));
-        assertFalse("/index.html implementation class", repo.get("/index.html", HttpMethod.ALL).isImplementedBy("com.example.servlet.SomeServlet"));
     }}

@@ -21,9 +21,9 @@ import org.apache.log4j.Logger;
 
 import com.kdgregory.pathfinder.core.Inspector;
 import com.kdgregory.pathfinder.core.PathRepo;
-import com.kdgregory.pathfinder.core.PathRepo.Destination;
 import com.kdgregory.pathfinder.core.PathRepo.HttpMethod;
 import com.kdgregory.pathfinder.core.WarMachine;
+import com.kdgregory.pathfinder.core.WarMachine.ServletMapping;
 
 
 /**
@@ -48,7 +48,7 @@ implements Inspector
     public void inspect(WarMachine war, PathRepo paths)
     {
         logger.info("SpringInspector started");
-        List<String> springMappings = extractSpringMappings(paths);
+        List<ServletMapping> springMappings = extractSpringMappings(war, paths);
         logger.debug("extracted " + springMappings.size() + " Spring mappings");
         logger.info("SpringInspector finished");
     }
@@ -58,16 +58,15 @@ implements Inspector
 //  Internals
 //----------------------------------------------------------------------------
 
-    private List<String> extractSpringMappings(PathRepo paths)
+    private List<ServletMapping> extractSpringMappings(WarMachine war, PathRepo paths)
     {
-        List<String> result = new ArrayList<String>();
-        for (String url : paths)
+        List<ServletMapping> result = new ArrayList<ServletMapping>();
+        for (ServletMapping servlet : war.getServletMappings())
         {
-            Destination dest = paths.get(url, HttpMethod.ALL);
-            if (dest.isImplementedBy("org.springframework.web.servlet.DispatcherServlet"))
+            if (servlet.getServletClass().equals("org.springframework.web.servlet.DispatcherServlet"))
             {
-                result.add(url);
-                paths.remove(url, HttpMethod.ALL);
+                result.add(servlet);
+                paths.remove(servlet.getUrlPattern(), HttpMethod.ALL);
             }
         }
         return result;
