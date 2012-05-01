@@ -58,7 +58,7 @@ implements WarMachine
 
     private JarFile mappedWar;
     private Document webXml;
-    private Map<String,ServletMapping> servletMappings;
+    private List<ServletMapping> servletMappings;
 
 
     /**
@@ -129,12 +129,12 @@ implements WarMachine
 
 
     @Override
-    public Map<String,ServletMapping> getServletMappings()
+    public List<ServletMapping> getServletMappings()
     {
         if (servletMappings == null)
             parseServletMappings();
 
-        return Collections.unmodifiableMap(servletMappings);
+        return Collections.unmodifiableList(servletMappings);
     }
 
 
@@ -206,7 +206,7 @@ implements WarMachine
 
     private void parseServletMappings()
     {
-        servletMappings = new HashMap<String,WarMachine.ServletMapping>();
+        servletMappings = new ArrayList<ServletMapping>();
 
         Map<String,Element> servletLookup = new HashMap<String,Element>();
         List<Element> servlets = xpath("/ns:web-app/ns:servlet").evaluate(webXml, Element.class);
@@ -227,8 +227,9 @@ implements WarMachine
             if (servlet == null)
                 logger.warn("<servlet-mapping> \"" + mappingUrl
                             + "\" does not have <servlet> entry");
-            servletMappings.put(mappingUrl, new ServletMappingImpl(mappingUrl, servlet));
+            servletMappings.add(new ServletMappingImpl(mappingUrl, servlet));
         }
+        Collections.sort(servletMappings);
     }
 
 
@@ -281,6 +282,12 @@ implements WarMachine
         public Map<String,String> getInitParams()
         {
             return Collections.unmodifiableMap(initParams);
+        }
+
+        @Override
+        public int compareTo(ServletMapping that)
+        {
+            return getUrlPattern().compareTo(that.getUrlPattern());
         }
     }
 }

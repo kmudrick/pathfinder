@@ -41,10 +41,9 @@ public interface WarMachine
 
     /**
      *  Joins the <code>servlet</code> and <code>servlet-mapping</code> entries from
-     *  <code>web.xml</code>, and returns a map keyed by <code>url-pattern</code>
-     *  from the latter.
+     *  <code>web.xml</code>. The result is ordered alphabetically.
      */
-    public Map<String,ServletMapping> getServletMappings();
+    public List<ServletMapping> getServletMappings();
 
 
     /**
@@ -83,15 +82,18 @@ public interface WarMachine
     /**
      *  Servlet mappings are parsed into objects that implement this interface.
      *  Method names are simple translations of the corresponding element name.
+     *  <p>
+     *  The natural ordering of this interface is the URL pattern.
      */
     public interface ServletMapping
+    extends Comparable<ServletMapping>
     {
         public String getUrlPattern();
 
         public String getServletName();
 
         public String getServletClass();
-        
+
         public Map<String,String> getInitParams();
     }
 }

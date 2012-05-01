@@ -62,23 +62,27 @@ public class TestWarMachine
     {
         WarMachine machine = TestHelpers.createWarMachine(TEST_WAR);
 
-        Map<String,ServletMapping> mappings = machine.getServletMappings();
+        List<ServletMapping> mappings = machine.getServletMappings();
         assertEquals("number of mappings", 2, mappings.size());
-        
-        ServletMapping mapping1 = mappings.get("/servlet"); 
-        assertEquals("mapping #1 class", "com.example.servlet.SomeServlet",
+
+        ServletMapping mapping1 = mappings.get(0);
+        assertEquals("mapping #0 path", "/servlet",
+                     mapping1.getUrlPattern());
+        assertEquals("mapping #0 class", "com.example.servlet.SomeServlet",
                      mapping1.getServletClass());
-        assertEquals("mapping #1 param:foo", "bar",
+        assertEquals("mapping #0 param:foo", "bar",
                      mapping1.getInitParams().get("foo"));
-        assertEquals("mapping #2 argle", "bargle",
+        assertEquals("mapping #0 argle", "bargle",
                      mapping1.getInitParams().get("argle"));
-        
-        ServletMapping mapping2 = mappings.get("/servlet"); 
+
+        ServletMapping mapping2 = mappings.get(1);
+        assertEquals("mapping #1 path", "/servlet2",
+                     mapping2.getUrlPattern());
         assertEquals("mapping #1 class", "com.example.servlet.SomeServlet",
                      mapping2.getServletClass());
         assertEquals("mapping #1 param:foo", "bar",
                      mapping2.getInitParams().get("foo"));
-        assertEquals("mapping #2 argle", "bargle",
+        assertEquals("mapping #1 argle", "bargle",
                      mapping2.getInitParams().get("argle"));
     }
 
