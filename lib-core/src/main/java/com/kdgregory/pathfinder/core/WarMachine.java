@@ -75,6 +75,15 @@ public interface WarMachine
     throws IOException;
 
 
+    /**
+     *  Opens a file on the WAR's classpath. First looks in <code>WEB-INF/classes</code>,
+     *  then in each of the JARs in <code>lib</code>.
+     */
+    public InputStream openClasspathFile(String filename)
+    throws IOException;
+
+
+
 //----------------------------------------------------------------------------
 //  Supporting Objects
 //----------------------------------------------------------------------------

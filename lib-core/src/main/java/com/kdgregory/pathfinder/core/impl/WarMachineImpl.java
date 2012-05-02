@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.jar.JarInputStream;
+import java.util.zip.ZipEntry;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -175,7 +177,8 @@ implements WarMachine
 
 
     @Override
-    public InputStream openFile(String filename) throws IOException
+    public InputStream openFile(String filename)
+    throws IOException
     {
         if (!filename.startsWith("/"))
             return null;
@@ -186,6 +189,54 @@ implements WarMachine
             return null;
 
         return mappedWar.getInputStream(entry);
+    }
+
+
+    @Override
+    public InputStream openClasspathFile(String filename)
+    throws IOException
+    {
+        logger.debug("looking for " + filename + " on classpath");
+        if (filename.startsWith("/"))
+            filename = filename.substring(1);
+
+        InputStream in = openFile("/WEB-INF/classes/" + filename);
+        if (in != null)
+        {
+            logger.debug("found " + filename + " in WEB-INF/classes");
+            return in;
+        }
+
+        for (String jarFile : getPrivateFiles())
+        {
+            if (!jarFile.startsWith("/WEB-INF/lib") || !jarFile.endsWith(".jar"))
+                continue;
+
+            logger.trace("looking for " + filename + " in " + jarFile);
+            InputStream ii = openFile(jarFile);
+            try
+            {
+                JarInputStream jj = new JarInputStream(ii);
+                ZipEntry entry = null;
+                while ((entry = jj.getNextEntry()) != null)
+                {
+                    if (entry.getName().equals(filename))
+                    {
+                        logger.debug("found " + filename + " in " + jarFile);
+                        return jj;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.debug("error processing " + jarFile, ex);
+                // fall through to close the file and try the next
+            }
+            IOUtil.closeQuietly(ii);
+        }
+
+        logger.debug("unable to find " + filename + " on classpath");
+        return null;
     }
 
 

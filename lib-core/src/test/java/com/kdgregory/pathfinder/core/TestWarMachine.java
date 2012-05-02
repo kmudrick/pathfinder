@@ -37,6 +37,28 @@ public class TestWarMachine
 {
     private final static String TEST_WAR = "pathfinder-test-war-servlet.war";
 
+//----------------------------------------------------------------------------
+//  Support Code
+//----------------------------------------------------------------------------
+
+    /**
+     *  Asserts that the passed InputStream is a classfile, by looking for the magic
+     *  number at its start. Closes the stream after making the assertion.
+     */
+    public static void assertClassFile(String message, InputStream in)
+    throws Exception
+    {
+        assertEquals(message + ": byte 0", 0xCA, in.read());
+        assertEquals(message + ": byte 1", 0xFE, in.read());
+        assertEquals(message + ": byte 2", 0xBA, in.read());
+        assertEquals(message + ": byte 3", 0xBE, in.read());
+        in.close();
+    }
+
+
+//----------------------------------------------------------------------------
+//  Testcases
+//----------------------------------------------------------------------------
 
     @Test(expected=IllegalArgumentException.class)
     public void testInvalidWarfile() throws Exception
@@ -93,7 +115,7 @@ public class TestWarMachine
 
         // jar tvf WARFILE | grep -v '/$' | wc -l
         List<String> allFiles =  machine.getAllFiles();
-        assertEquals("all files", 9, allFiles.size());
+        assertEquals("all files", 10, allFiles.size());
         assertTrue("all files contains /index.jsp",
                    allFiles.contains("/index.jsp"));
 
@@ -105,7 +127,7 @@ public class TestWarMachine
                     publicFiles.contains("/WEB-INF/views/hidden.jsp"));
 
         List<String> privateFiles = machine.getPrivateFiles();
-        assertEquals("private files", 6, privateFiles.size());
+        assertEquals("private files", 7, privateFiles.size());
         assertFalse("private files shouldn't contain /index.jsp",
                     privateFiles.contains("/index.jsp"));
         assertTrue("private files should contain /WEB-INF/views/hidden.jsp",
@@ -144,4 +166,27 @@ public class TestWarMachine
     }
 
 
+    @Test
+    public void testOpenFileOnClasspath() throws Exception
+    {
+        WarMachine machine = TestHelpers.createWarMachine(TEST_WAR);
+
+        // test 1: a servlet class, which will be under WEB-INF and easily recognized
+        //         note: relative filename
+
+        InputStream in1 = machine.openClasspathFile("com/example/servlet/SomeServlet.class");
+        assertNotNull("able to open classfile under WEB-INF/classes", in1);
+        assertClassFile("servlet class", in1);
+
+        // test 2: a classfile that lives in an included JAR (using absolute filename)
+
+        InputStream in2 = machine.openClasspathFile("/net/sf/practicalxml/DomUtil.class");
+        assertNotNull("able to open classfile in enclosed JAR", in2);
+        assertClassFile("JAR'd class", in2);
+
+        // test 3: a file that shouldn't appear on the classpath
+
+        InputStream in3 = machine.openClasspathFile("web.xml");
+        assertNull("shouldn't be able to open file not on classpath", in3);
+    }
 }
