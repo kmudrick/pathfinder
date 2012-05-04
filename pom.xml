@@ -13,10 +13,9 @@
         A tool for finding the URLs supported by a web application
     </description>
 
+
     <modules>
-        <module>test-war-servlet</module>
-        <module>test-war-spring2-basic</module>
-        <module>test-wars</module>
+        <!-- see also "testdata" profile -->
         <module>lib-core</module>
         <module>lib-servlet</module>
         <module>lib-spring</module>
@@ -90,6 +89,19 @@
             </plugin>
         </plugins>
     </reporting>
+
+
+    <profiles>
+        <profile>
+            <id>testdata</id>
+            <modules>
+                <module>testdata-servlet</module>
+                <module>testdata-spring2-basic</module>
+                <module>testdata</module>
+            </modules>
+        </profile>
+    </profiles>
+
 
     <licenses>
         <license>
