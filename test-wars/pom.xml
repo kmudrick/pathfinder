@@ -16,6 +16,8 @@
     <description>
         Combines all test WARs into a JAR that can become a dependency for
         various testcases, allowing extraction of each WAR as a resource.
+        In addition, produces a JAR that contains one class, WarNames,
+        which provides symbolic constants for all the included WARs.
     </description>
 
     <build>
@@ -31,8 +33,8 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
-                        <phase>package</phase> <!-- bind to the packaging phase -->
+                        <id>make-assembly</id>
+                        <phase>package</phase>
                         <goals>
                             <goal>single</goal>
                         </goals>

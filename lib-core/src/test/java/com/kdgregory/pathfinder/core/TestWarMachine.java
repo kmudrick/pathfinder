@@ -30,12 +30,12 @@ import net.sf.practicalxml.DomUtil;
 
 import com.kdgregory.pathfinder.core.WarMachine.ServletMapping;
 import com.kdgregory.pathfinder.core.impl.WarMachineImpl;
+import com.kdgregory.pathfinder.spring.test.WarNames;
 import com.kdgregory.pathfinder.util.TestHelpers;
 
 
 public class TestWarMachine
 {
-    private final static String TEST_WAR = "pathfinder-test-war-servlet.war";
 
 //----------------------------------------------------------------------------
 //  Support Code
@@ -71,7 +71,7 @@ public class TestWarMachine
     @Test
     public void testGetWebXml() throws Exception
     {
-        WarMachine machine = TestHelpers.createWarMachine(TEST_WAR);
+        WarMachine machine = TestHelpers.createWarMachine(WarNames.SERVLET);
 
         Document dom = machine.getWebXml();
         assertEquals("web-app", DomUtil.getLocalName(dom.getDocumentElement()));
@@ -81,7 +81,7 @@ public class TestWarMachine
     @Test
     public void testGetServletMappings() throws Exception
     {
-        WarMachine machine = TestHelpers.createWarMachine(TEST_WAR);
+        WarMachine machine = TestHelpers.createWarMachine(WarNames.SERVLET);
 
         List<ServletMapping> mappings = machine.getServletMappings();
         assertEquals("number of mappings", 2, mappings.size());
@@ -111,7 +111,7 @@ public class TestWarMachine
     @Test
     public void testFileLists() throws Exception
     {
-        WarMachine machine = TestHelpers.createWarMachine(TEST_WAR);
+        WarMachine machine = TestHelpers.createWarMachine(WarNames.SERVLET);
 
         // jar tvf WARFILE | grep -v '/$' | wc -l
         List<String> allFiles =  machine.getAllFiles();
@@ -138,7 +138,7 @@ public class TestWarMachine
     @Test
     public void testOpenFile() throws Exception
     {
-        WarMachine machine = TestHelpers.createWarMachine(TEST_WAR);
+        WarMachine machine = TestHelpers.createWarMachine(WarNames.SERVLET);
 
         InputStream in = machine.openFile("/index.jsp");
         assertNotNull("able to open public file", in);
@@ -151,7 +151,7 @@ public class TestWarMachine
     @Test
     public void testOpenFileDoesntThrowWithBogusFilename() throws Exception
     {
-        WarMachine machine = TestHelpers.createWarMachine(TEST_WAR);
+        WarMachine machine = TestHelpers.createWarMachine(WarNames.SERVLET);
 
         assertNull("bogus file returns null", machine.openFile("/bogus.bogus"));
     }
@@ -160,7 +160,7 @@ public class TestWarMachine
     @Test
     public void testOpenFileRequiresAbsolutePath() throws Exception
     {
-        WarMachine machine = TestHelpers.createWarMachine(TEST_WAR);
+        WarMachine machine = TestHelpers.createWarMachine(WarNames.SERVLET);
 
         assertNull("able to open with relative path", machine.openFile("index.jsp"));
     }
@@ -169,7 +169,7 @@ public class TestWarMachine
     @Test
     public void testOpenFileOnClasspath() throws Exception
     {
-        WarMachine machine = TestHelpers.createWarMachine(TEST_WAR);
+        WarMachine machine = TestHelpers.createWarMachine(WarNames.SERVLET);
 
         // test 1: a servlet class, which will be under WEB-INF and easily recognized
         //         note: relative filename

@@ -22,6 +22,7 @@ import static org.junit.Assert.*;
 import com.kdgregory.pathfinder.core.PathRepo;
 import com.kdgregory.pathfinder.core.WarMachine;
 import com.kdgregory.pathfinder.servlet.ServletInspector;
+import com.kdgregory.pathfinder.spring.test.WarNames;
 import com.kdgregory.pathfinder.util.TestHelpers;
 
 
@@ -39,7 +40,7 @@ public class TestSpring2Basic
     public static void loadWar()
     throws Exception
     {
-        machine = TestHelpers.createWarMachine("pathfinder-test-war-spring2-basic.war");
+        machine = TestHelpers.createWarMachine(WarNames.SPRING2_BASIC);
     }
 
 

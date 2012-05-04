@@ -20,6 +20,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import com.kdgregory.pathfinder.core.WarMachine;
+import com.kdgregory.pathfinder.spring.test.WarNames;
 import com.kdgregory.pathfinder.util.TestHelpers;
 
 
@@ -49,7 +50,7 @@ public class TestSpringContext
     @Test
     public void testSimpleContextFromWar() throws Exception
     {
-        WarMachine war = TestHelpers.createWarMachine("pathfinder-test-war-spring2-basic.war");
+        WarMachine war = TestHelpers.createWarMachine(WarNames.SPRING2_BASIC);
         SpringContext context = new SpringContext(war, "classpath:servletContext.xml");
         assertEquals("number of beans defined", 3, context.getBeans().size());
 
