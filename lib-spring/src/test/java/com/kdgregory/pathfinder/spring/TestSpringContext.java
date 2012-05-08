@@ -58,5 +58,4 @@ public class TestSpringContext
         assertNotNull("able to find bean by name", b1);
         // if we got this far, I'll assume that the assertions from the prior test will all pass
     }
-
 }

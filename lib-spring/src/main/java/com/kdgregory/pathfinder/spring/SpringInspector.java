@@ -17,10 +17,15 @@ package com.kdgregory.pathfinder.spring;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.w3c.dom.Element;
+
 import org.apache.log4j.Logger;
+
+import net.sf.practicalxml.xpath.XPathWrapper;
 
 import com.kdgregory.pathfinder.core.Inspector;
 import com.kdgregory.pathfinder.core.PathRepo;
+import com.kdgregory.pathfinder.core.PathRepo.Destination;
 import com.kdgregory.pathfinder.core.PathRepo.HttpMethod;
 import com.kdgregory.pathfinder.core.WarMachine;
 import com.kdgregory.pathfinder.core.WarMachine.ServletMapping;
@@ -40,6 +45,30 @@ implements Inspector
 //  The Destinations that we support
 //----------------------------------------------------------------------------
 
+    public static class SpringDestination
+    implements Destination
+    {
+        private BeanDefinition beanDef;
+
+        public SpringDestination(BeanDefinition beanDef)
+        {
+            this.beanDef = beanDef;
+        }
+
+        /** This method exists primarily for testing */
+        public BeanDefinition getBeanDefinition()
+        {
+            return beanDef;
+        }
+
+        @Override
+        public String toString()
+        {
+            return beanDef.getBeanClass();
+        }
+    }
+
+
 //----------------------------------------------------------------------------
 //  Inspector Implementation
 //----------------------------------------------------------------------------
@@ -50,6 +79,12 @@ implements Inspector
         logger.info("SpringInspector started");
         List<ServletMapping> springMappings = extractSpringMappings(war, paths);
         logger.debug("extracted " + springMappings.size() + " Spring mappings");
+        for (ServletMapping mapping : springMappings)
+        {
+            String urlPrefix = extractUrlPrefix(mapping.getUrlPattern());
+            SpringContext context = new SpringContext(war, mapping.getInitParams().get("contextConfigLocation"));
+            processSimpleUrlHandlerMapping(war, context, urlPrefix, paths);
+        }
         logger.info("SpringInspector finished");
     }
 
@@ -72,4 +107,35 @@ implements Inspector
         return result;
     }
 
+
+    private String extractUrlPrefix(String urlPattern)
+    {
+        int trimAt = urlPattern.lastIndexOf("/");
+        return (trimAt > 0) ? urlPattern.substring(0, trimAt)
+                            : urlPattern;
+    }
+
+
+    private void processSimpleUrlHandlerMapping(WarMachine war, SpringContext context, String urlPrefix, PathRepo paths)
+    {
+        List<BeanDefinition> defs = context.getBeansByClass("org.springframework.web.servlet.handler.SimpleUrlHandlerMapping");
+        logger.debug("found " + defs.size() + " SimpleUrlHandlerMapping beans");
+
+        for (BeanDefinition def : defs)
+        {
+            // solving for the simple case now, will expand as the testcases do
+            List<Element> mappings = new XPathWrapper("ns:property[@name='mappings']/ns:props/ns:prop")
+                                     .bindNamespace("ns", SpringContext.NS_BEANS)
+                                     .evaluate(def.getBeanDef(), Element.class);
+            logger.debug("SimpleUrlHandlerMapping bean " + def.getBeanName() + " has " + mappings.size() + " mappings");
+            for (Element mapping : mappings)
+            {
+                String url = urlPrefix + mapping.getAttribute("key");
+                String beanName = mapping.getTextContent().trim();
+                BeanDefinition bean = context.getBean(beanName);
+                logger.debug("mapped " + url + " to bean " + beanName);
+                paths.put(url, new SpringDestination(bean));
+            }
+        }
+    }
 }

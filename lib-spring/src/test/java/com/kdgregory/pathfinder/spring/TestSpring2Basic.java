@@ -20,8 +20,10 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import com.kdgregory.pathfinder.core.PathRepo;
+import com.kdgregory.pathfinder.core.PathRepo.HttpMethod;
 import com.kdgregory.pathfinder.core.WarMachine;
 import com.kdgregory.pathfinder.servlet.ServletInspector;
+import com.kdgregory.pathfinder.spring.SpringInspector.SpringDestination;
 import com.kdgregory.pathfinder.spring.test.WarNames;
 import com.kdgregory.pathfinder.util.TestHelpers;
 
@@ -69,5 +71,15 @@ public class TestSpring2Basic
         // but the MyServlet mapping should remain
         assertEquals("/servlet2 remains", 1, pathRepo.get("/servlet2").size());
     }
+
+
+    @Test
+    public void testSimpleUrlMappings() throws Exception
+    {
+        new SpringInspector().inspect(machine, pathRepo);
+        SpringDestination dest = (SpringDestination)pathRepo.get("/servlet/index.html", HttpMethod.GET);
+        assertEquals("simpleController", dest.getBeanDefinition().getBeanName());
+    }
+
 
 }

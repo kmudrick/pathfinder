@@ -43,7 +43,7 @@ public class SpringContext
 //  Constants relating to Spring Application Context
 //----------------------------------------------------------------------------
 
-    private final static String NS_BEANS    = "http://www.springframework.org/schema/beans";
+    public final static String NS_BEANS    = "http://www.springframework.org/schema/beans";
 
 
 //----------------------------------------------------------------------------

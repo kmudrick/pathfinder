@@ -42,20 +42,33 @@ public class BeanDefinition
     }
 
 
+    /**
+     *  Returns the name of this bean: the <code>id</code> attribute for
+     *  XML-configured beans, ?? for annotation-configured beans.
+     */
     public String getBeanName()
     {
         return beanName;
     }
 
 
+    /**
+     *  Returns the class of this bean.
+     */
     public String getBeanClass()
     {
         return beanClass;
     }
 
 
+    /**
+     *  For XML-defined beans, returns the raw XML of the bean definition. 
+     *  @return
+     */
     public Element getBeanDef()
     {
         return beanDef;
     }
+    
+    
 }
