@@ -53,6 +53,16 @@
             <version>${log4j.version}</version>
         </dependency>
         <dependency>
+            <groupId>net.sf.kdgcommons</groupId>
+            <artifactId>kdgcommons</artifactId>
+            <version>${kdgcommons.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.practicalxml</groupId>
+            <artifactId>practicalxml</artifactId>
+            <version>${practicalxml.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
             <version>${springframework.version}</version>

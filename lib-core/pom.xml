@@ -45,7 +45,6 @@
             <version>${log4j.version}</version>
         </dependency>
         <dependency>
-            <!-- http://sourceforge.net/projects/kdgcommons -->
             <groupId>net.sf.kdgcommons</groupId>
             <artifactId>kdgcommons</artifactId>
             <version>${kdgcommons.version}</version>

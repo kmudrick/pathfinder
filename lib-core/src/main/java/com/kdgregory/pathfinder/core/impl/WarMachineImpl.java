@@ -38,7 +38,8 @@ import org.apache.log4j.Logger;
 import net.sf.kdgcommons.collections.CollectionUtil;
 import net.sf.kdgcommons.io.IOUtil;
 import net.sf.practicalxml.ParseUtil;
-import net.sf.practicalxml.xpath.XPathWrapper;
+import net.sf.practicalxml.xpath.XPathWrapperFactory;
+import net.sf.practicalxml.xpath.XPathWrapperFactory.CacheType;
 
 import com.kdgregory.pathfinder.core.WarMachine;
 
@@ -49,8 +50,6 @@ import com.kdgregory.pathfinder.core.WarMachine;
 public class WarMachineImpl
 implements WarMachine
 {
-    // I'm sure this is defined somewhere in the J2EE API ...
-    private final static String NS_SERVLET = "http://java.sun.com/xml/ns/j2ee";
 
 //----------------------------------------------------------------------------
 //  Instance Variables and Constructor
@@ -61,6 +60,9 @@ implements WarMachine
     private JarFile mappedWar;
     private Document webXml;
     private List<ServletMapping> servletMappings;
+
+    private XPathWrapperFactory xpathFact = new XPathWrapperFactory(CacheType.SIMPLE)
+                                            .bindNamespace("j2ee", "http://java.sun.com/xml/ns/j2ee");
 
 
     /**
@@ -244,36 +246,25 @@ implements WarMachine
 //  Internals
 //----------------------------------------------------------------------------
 
-    /**
-     * This method exists to reduce clutter: all XPath against web.xml must be
-     * bound to the servlet namespace. This method does that, using the prefix
-     * "ns".
-     */
-    private static XPathWrapper xpath(String xpath)
-    {
-        return new XPathWrapper(xpath).bindNamespace("ns", NS_SERVLET);
-    }
-
-
     private void parseServletMappings()
     {
         servletMappings = new ArrayList<ServletMapping>();
 
         Map<String,Element> servletLookup = new HashMap<String,Element>();
-        List<Element> servlets = xpath("/ns:web-app/ns:servlet").evaluate(webXml, Element.class);
+        List<Element> servlets = xpathFact.newXPath("/j2ee:web-app/j2ee:servlet").evaluate(webXml, Element.class);
         logger.debug("found " + servlets.size() + " <servlet> entries");
         for (Element servlet : servlets)
         {
-            String servletName = xpath("ns:servlet-name").evaluateAsString(servlet);
+            String servletName = xpathFact.newXPath("j2ee:servlet-name").evaluateAsString(servlet);
             servletLookup.put(servletName, servlet);
         }
 
-        List<Element> mappings = xpath("/ns:web-app/ns:servlet-mapping").evaluate(webXml, Element.class);
+        List<Element> mappings = xpathFact.newXPath("/j2ee:web-app/j2ee:servlet-mapping").evaluate(webXml, Element.class);
         logger.debug("found " + mappings.size() + " <servlet-mapping> entries");
         for (Element mapping : mappings)
         {
-            String servletName = xpath("ns:servlet-name").evaluateAsString(mapping);
-            String mappingUrl = xpath("ns:url-pattern").evaluateAsString(mapping);
+            String servletName = xpathFact.newXPath("j2ee:servlet-name").evaluateAsString(mapping);
+            String mappingUrl = xpathFact.newXPath("j2ee:url-pattern").evaluateAsString(mapping);
             Element servlet = servletLookup.get(servletName);
             if (servlet == null)
                 logger.warn("<servlet-mapping> \"" + mappingUrl
@@ -288,7 +279,7 @@ implements WarMachine
 //  Supporting classes
 //----------------------------------------------------------------------------
 
-    private static class ServletMappingImpl
+    private class ServletMappingImpl
     implements ServletMapping
     {
         private String mappingUrl;
@@ -299,14 +290,14 @@ implements WarMachine
         public ServletMappingImpl(String mappingUrl, Element servlet)
         {
             this.mappingUrl = mappingUrl;
-            this.servletName = xpath("ns:servlet-name").evaluateAsString(servlet);
-            this.servletClass = xpath("ns:servlet-class").evaluateAsString(servlet);
+            this.servletName = xpathFact.newXPath("j2ee:servlet-name").evaluateAsString(servlet);
+            this.servletClass = xpathFact.newXPath("j2ee:servlet-class").evaluateAsString(servlet);
 
-            List<Element> params = xpath("ns:init-param").evaluate(servlet, Element.class);
+            List<Element> params = xpathFact.newXPath("j2ee:init-param").evaluate(servlet, Element.class);
             for (Element param : params)
             {
-                String paramName = xpath("ns:param-name").evaluateAsString(param);
-                String paramValue = xpath("ns:param-value").evaluateAsString(param);
+                String paramName = xpathFact.newXPath("j2ee:param-name").evaluateAsString(param);
+                String paramValue = xpathFact.newXPath("j2ee:param-value").evaluateAsString(param);
                 initParams.put(paramName, paramValue);
             }
         }

@@ -21,8 +21,6 @@ import org.w3c.dom.Element;
 
 import org.apache.log4j.Logger;
 
-import net.sf.practicalxml.xpath.XPathWrapper;
-
 import com.kdgregory.pathfinder.core.Inspector;
 import com.kdgregory.pathfinder.core.PathRepo;
 import com.kdgregory.pathfinder.core.PathRepo.Destination;
@@ -40,6 +38,9 @@ public class SpringInspector
 implements Inspector
 {
     private Logger logger = Logger.getLogger(getClass());
+    
+    private SpringXPathFactory xpfact = new SpringXPathFactory();
+    
 
 //----------------------------------------------------------------------------
 //  The Destinations that we support
@@ -124,8 +125,7 @@ implements Inspector
         for (BeanDefinition def : defs)
         {
             // solving for the simple case now, will expand as the testcases do
-            List<Element> mappings = new XPathWrapper("ns:property[@name='mappings']/ns:props/ns:prop")
-                                     .bindNamespace("ns", SpringContext.NS_BEANS)
+            List<Element> mappings = xpfact.newXPath("b:property[@name='mappings']/b:props/b:prop")
                                      .evaluate(def.getBeanDef(), Element.class);
             logger.debug("SimpleUrlHandlerMapping bean " + def.getBeanName() + " has " + mappings.size() + " mappings");
             for (Element mapping : mappings)

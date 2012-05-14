@@ -29,7 +29,6 @@ import org.xml.sax.InputSource;
 import org.apache.log4j.Logger;
 
 import net.sf.practicalxml.ParseUtil;
-import net.sf.practicalxml.xpath.XPathWrapper;
 
 import com.kdgregory.pathfinder.core.WarMachine;
 
@@ -39,18 +38,14 @@ import com.kdgregory.pathfinder.core.WarMachine;
  */
 public class SpringContext
 {
-//----------------------------------------------------------------------------
-//  Constants relating to Spring Application Context
-//----------------------------------------------------------------------------
+    private Logger logger = Logger.getLogger(getClass());
+    
+    private SpringXPathFactory xpfact = new SpringXPathFactory();
 
-    public final static String NS_BEANS    = "http://www.springframework.org/schema/beans";
-
-
+    
 //----------------------------------------------------------------------------
 //  Instance Variables and Constructor
 //----------------------------------------------------------------------------
-
-    private Logger logger = Logger.getLogger(getClass());
 
     private Map<String,BeanDefinition> beanDefinitions = new HashMap<String,BeanDefinition>();
 
@@ -70,7 +65,7 @@ public class SpringContext
         for (String path : decomposeContextLocation(contextLocation))
         {
             Document dom = parseContextFile(war, path);
-            extractBeanDefinitions(dom);
+            extractBeanDefinitions(dom, path);
         }
     }
 
@@ -111,6 +106,14 @@ public class SpringContext
         }
         return beans;
     }
+    
+    
+    /**
+     *  Applies the passed XPath expression to 
+     *  @param contextLocation
+     *  @return
+     */
+
 
 //----------------------------------------------------------------------------
 //  Internals
@@ -152,11 +155,10 @@ public class SpringContext
     }
 
 
-    private void extractBeanDefinitions(Document dom)
+    private void extractBeanDefinitions(Document dom, String filename)
     {
-        List<Element> beans = new XPathWrapper("/b:beans/b:bean")
-                              .bindNamespace("b", NS_BEANS)
-                              .evaluate(dom, Element.class);
+        List<Element> beans = xpfact.newXPath("/b:beans/b:bean").evaluate(dom, Element.class);
+        logger.debug("found " + beans.size() + " bean definitions in " + filename);
 
         for (Element bean : beans)
         {
