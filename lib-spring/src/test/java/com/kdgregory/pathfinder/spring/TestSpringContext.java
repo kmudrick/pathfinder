@@ -61,7 +61,7 @@ public class TestSpringContext
         // the same file, loaded from a WAR
         logger.info("testGetBeansFromSimpleContextInWar()");
 
-        WarMachine war = TestHelpers.createWarMachine(WarNames.SPRING2_BASIC);
+        WarMachine war = TestHelpers.createWarMachine(WarNames.SPRING2_SIMPLE);
         SpringContext context = new SpringContext(war, "classpath:servletContext.xml");
         assertEquals("number of beans defined", 3, context.getBeans().size());
 

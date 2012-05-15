@@ -20,6 +20,6 @@ package com.kdgregory.pathfinder.spring.test;
  */
 public class WarNames
 {
-    public final static String  SERVLET         = "pathfinder-test-war-servlet.war";
-    public final static String  SPRING2_BASIC   = "pathfinder-test-war-spring2-basic.war";
+    public final static String  SERVLET         = "pathfinder-testdata-servlet.war";
+    public final static String  SPRING2_SIMPLE  = "pathfinder-testdata-spring2-simple.war";
 }

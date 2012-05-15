@@ -23,13 +23,13 @@
     <dependencies>
         <dependency>
             <groupId>com.kdgregory.pathfinder</groupId>
-            <artifactId>pathfinder-test-wars</artifactId>
+            <artifactId>pathfinder-testdata</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.kdgregory.pathfinder</groupId>
-            <artifactId>pathfinder-test-wars</artifactId>
+            <artifactId>pathfinder-testdata</artifactId>
             <version>${project.version}</version>
             <classifier>archive</classifier>
             <scope>test</scope>

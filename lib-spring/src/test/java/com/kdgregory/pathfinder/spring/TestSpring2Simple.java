@@ -33,7 +33,7 @@ import com.kdgregory.pathfinder.util.TestHelpers;
  *  single config file attached to the servlet. All tests run using the
  *  same WAR, which is accessed via a static variable.
  */
-public class TestSpring2Basic
+public class TestSpring2Simple
 {
     private static WarMachine machine;
     private PathRepo pathRepo;
@@ -42,7 +42,7 @@ public class TestSpring2Basic
     public static void loadWar()
     throws Exception
     {
-        machine = TestHelpers.createWarMachine(WarNames.SPRING2_BASIC);
+        machine = TestHelpers.createWarMachine(WarNames.SPRING2_SIMPLE);
     }
 
 

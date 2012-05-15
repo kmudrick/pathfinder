@@ -96,7 +96,7 @@
             <id>testdata</id>
             <modules>
                 <module>testdata-servlet</module>
-                <module>testdata-spring2-basic</module>
+                <module>testdata-spring2-simple</module>
                 <module>testdata</module>
             </modules>
         </profile>
