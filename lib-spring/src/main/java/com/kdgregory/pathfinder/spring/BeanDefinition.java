@@ -14,7 +14,12 @@
 
 package com.kdgregory.pathfinder.spring;
 
+import java.util.List;
+import java.util.Properties;
+
 import org.w3c.dom.Element;
+
+import net.sf.practicalxml.xpath.XPathWrapperFactory;
 
 
 /**
@@ -25,17 +30,21 @@ import org.w3c.dom.Element;
  */
 public class BeanDefinition
 {
+    // this factory is shared with all other definitions from the context
+    private XPathWrapperFactory xpfact;
 
     private String beanName;
     private String beanClass;
     private Element beanDef;
 
+
     /**
      *  Called for beans defined in XML; will extract information from the
      *  XML subtree, and retain a reference to the tree.
      */
-    public BeanDefinition(Element def)
+    public BeanDefinition(XPathWrapperFactory xpf, Element def)
     {
+        xpfact = xpf;
         beanName = def.getAttribute("id").trim();
         beanClass = def.getAttribute("class").trim();
         beanDef = def;
@@ -62,13 +71,76 @@ public class BeanDefinition
 
 
     /**
-     *  For XML-defined beans, returns the raw XML of the bean definition. 
+     *  For XML-defined beans, returns the raw XML of the bean definition.
      *  @return
      */
     public Element getBeanDef()
     {
         return beanDef;
     }
-    
-    
+
+
+    /**
+     *  Returns the named property value as a string. Returns <code>null</code>
+     *  if the named property does not exist or cannot be converted to a string.
+     */
+    public String getPropertyAsString(String name)
+    {
+        Element propDef = getPropertyDefinition(name);
+        if (propDef == null)
+            return null;
+
+        return propDef.getAttribute("value");
+    }
+
+
+    /**
+     *  Returns the name of the bean referred to by the named property. Returns
+     *  <code>null</code> if the property does not exist or is not a reference.
+     */
+    public String getPropertyAsRefId(String name)
+    {
+        Element propDef = getPropertyDefinition(name);
+        if (propDef == null)
+            return null;
+
+        return propDef.getAttribute("ref");
+    }
+
+
+    /**
+     *  Returns the named property as a <code>Properties</code> object. Returns
+     *  <code>null</code> if the property does not exist or cannot be converted.
+     */
+    public Properties getPropertyAsProperties(String name)
+    {
+        Element propDef = getPropertyDefinition(name);
+        if (propDef == null)
+            return null;
+
+        Properties ret = new Properties();
+        List<Element> props = xpfact.newXPath("b:props/b:prop").evaluate(propDef, Element.class);
+        for (Element prop : props)
+        {
+            String propName  = prop.getAttribute("key");
+            String propValue = prop.getTextContent().trim();
+            ret.put(propName, propValue);
+        }
+
+        return ret;
+    }
+
+
+//----------------------------------------------------------------------------
+//  Internals
+//----------------------------------------------------------------------------
+
+    private Element getPropertyDefinition(String name)
+    {
+        // FIXME - consider binding a variable here
+        Element propDef = xpfact.newXPath("b:property[@name='" + name+ "']")
+                          .evaluateAsElement(getBeanDef());
+        return propDef;
+    }
+
 }

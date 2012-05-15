@@ -29,6 +29,8 @@ import org.xml.sax.InputSource;
 import org.apache.log4j.Logger;
 
 import net.sf.practicalxml.ParseUtil;
+import net.sf.practicalxml.xpath.XPathWrapperFactory;
+import net.sf.practicalxml.xpath.XPathWrapperFactory.CacheType;
 
 import com.kdgregory.pathfinder.core.WarMachine;
 
@@ -39,10 +41,12 @@ import com.kdgregory.pathfinder.core.WarMachine;
 public class SpringContext
 {
     private Logger logger = Logger.getLogger(getClass());
-    
-    private SpringXPathFactory xpfact = new SpringXPathFactory();
 
-    
+    private XPathWrapperFactory xpfact
+            = new XPathWrapperFactory(CacheType.SIMPLE)
+              .bindNamespace("b", "http://www.springframework.org/schema/beans");
+
+
 //----------------------------------------------------------------------------
 //  Instance Variables and Constructor
 //----------------------------------------------------------------------------
@@ -106,13 +110,6 @@ public class SpringContext
         }
         return beans;
     }
-    
-    
-    /**
-     *  Applies the passed XPath expression to 
-     *  @param contextLocation
-     *  @return
-     */
 
 
 //----------------------------------------------------------------------------
@@ -162,7 +159,7 @@ public class SpringContext
 
         for (Element bean : beans)
         {
-            BeanDefinition def = new BeanDefinition(bean);
+            BeanDefinition def = new BeanDefinition(xpfact, bean);
             beanDefinitions.put(def.getBeanName(), def);
             logger.debug("found bean \"" + def.getBeanName() + "\" => " + def.getBeanClass());
         }

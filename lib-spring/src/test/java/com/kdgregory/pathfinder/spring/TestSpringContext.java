@@ -15,21 +15,29 @@
 package com.kdgregory.pathfinder.spring;
 
 import java.util.List;
+import java.util.Properties;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
+
+import org.apache.log4j.Logger;
 
 import com.kdgregory.pathfinder.core.WarMachine;
 import com.kdgregory.pathfinder.spring.test.WarNames;
 import com.kdgregory.pathfinder.util.TestHelpers;
 
 
+// note: also tests BeanDefinition
 public class TestSpringContext
 {
+    private Logger logger = Logger.getLogger(getClass());
+
     @Test
-    public void testSimpleContext() throws Exception
+    public void testGetBeansFromSimpleContext() throws Exception
     {
-        // one file, loaded from the classpath, two beans
+        // one file, loaded from the classpath
+        logger.info("testGetBeansFromSimpleContext()");
+
         SpringContext context = new SpringContext(null, "classpath:contexts/simpleContext.xml");
         assertEquals("number of beans defined", 3, context.getBeans().size());
 
@@ -48,8 +56,11 @@ public class TestSpringContext
 
 
     @Test
-    public void testSimpleContextFromWar() throws Exception
+    public void testGetBeansFromSimpleContextInWar() throws Exception
     {
+        // the same file, loaded from a WAR
+        logger.info("testGetBeansFromSimpleContextInWar()");
+
         WarMachine war = TestHelpers.createWarMachine(WarNames.SPRING2_BASIC);
         SpringContext context = new SpringContext(war, "classpath:servletContext.xml");
         assertEquals("number of beans defined", 3, context.getBeans().size());
@@ -57,5 +68,26 @@ public class TestSpringContext
         BeanDefinition b1 = context.getBean("simpleUrlMapping");
         assertNotNull("able to find bean by name", b1);
         // if we got this far, I'll assume that the assertions from the prior test will all pass
+    }
+
+
+    @Test
+    public void testGetProperty() throws Exception
+    {
+        logger.info("testGetProperty()");
+
+        SpringContext context = new SpringContext(null, "classpath:contexts/propContext.xml");
+        BeanDefinition bean = context.getBean("example");
+        assertNotNull("able to load context", bean);
+
+        assertEquals("extracted property as string", "foo", bean.getPropertyAsString("propAsString"));
+
+        assertEquals("extracted property as ref", "example", bean.getPropertyAsRefId("propAsRefId"));
+        // FIXME - add test for explicit <ref> element
+
+        Properties propsProp = bean.getPropertyAsProperties("propAsProperties");
+        assertNotNull("able to extract Properties property", propsProp);
+        assertEquals("extracted property for 'foo'",   "bar",    propsProp.get("foo"));
+        assertEquals("extracted property for 'argle'", "bargle", propsProp.get("argle"));
     }
 }

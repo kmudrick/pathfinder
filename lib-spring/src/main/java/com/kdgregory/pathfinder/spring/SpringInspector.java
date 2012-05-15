@@ -16,8 +16,8 @@ package com.kdgregory.pathfinder.spring;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.w3c.dom.Element;
+import java.util.Map;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
@@ -38,9 +38,7 @@ public class SpringInspector
 implements Inspector
 {
     private Logger logger = Logger.getLogger(getClass());
-    
-    private SpringXPathFactory xpfact = new SpringXPathFactory();
-    
+
 
 //----------------------------------------------------------------------------
 //  The Destinations that we support
@@ -124,14 +122,18 @@ implements Inspector
 
         for (BeanDefinition def : defs)
         {
-            // solving for the simple case now, will expand as the testcases do
-            List<Element> mappings = xpfact.newXPath("b:property[@name='mappings']/b:props/b:prop")
-                                     .evaluate(def.getBeanDef(), Element.class);
-            logger.debug("SimpleUrlHandlerMapping bean " + def.getBeanName() + " has " + mappings.size() + " mappings");
-            for (Element mapping : mappings)
+            Properties mappings = def.getPropertyAsProperties("mappings");
+            if ((mappings == null) || mappings.isEmpty())
             {
-                String url = urlPrefix + mapping.getAttribute("key");
-                String beanName = mapping.getTextContent().trim();
+                logger.debug("SimpleUrlHandlerMapping bean " + def.getBeanName() + " has no mappings");
+                continue;
+            }
+
+            logger.debug("SimpleUrlHandlerMapping bean " + def.getBeanName() + " has " + mappings.size() + " mappings");
+            for (Map.Entry<Object,Object> mapping : mappings.entrySet())
+            {
+                String url = urlPrefix + mapping.getKey();
+                String beanName = String.valueOf(mapping.getValue());
                 BeanDefinition bean = context.getBean(beanName);
                 logger.debug("mapped " + url + " to bean " + beanName);
                 paths.put(url, new SpringDestination(bean));
