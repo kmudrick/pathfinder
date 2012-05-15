@@ -39,7 +39,7 @@ public class TestSpringContext
         logger.info("testGetBeansFromSimpleContext()");
 
         SpringContext context = new SpringContext(null, "classpath:contexts/simpleContext.xml");
-        assertEquals("number of beans defined", 3, context.getBeans().size());
+        assertEquals("number of beans defined", 4, context.getBeans().size());
 
         BeanDefinition b1 = context.getBean("simpleUrlMapping");
         assertNotNull("able to find bean by name", b1);
@@ -63,7 +63,7 @@ public class TestSpringContext
 
         WarMachine war = TestHelpers.createWarMachine(WarNames.SPRING2_SIMPLE);
         SpringContext context = new SpringContext(war, "classpath:servletContext.xml");
-        assertEquals("number of beans defined", 3, context.getBeans().size());
+        assertEquals("number of beans defined", 4, context.getBeans().size());
 
         BeanDefinition b1 = context.getBean("simpleUrlMapping");
         assertNotNull("able to find bean by name", b1);

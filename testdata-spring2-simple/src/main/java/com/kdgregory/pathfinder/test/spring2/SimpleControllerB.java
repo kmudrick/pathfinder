@@ -14,6 +14,9 @@
 
 package com.kdgregory.pathfinder.test.spring2;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -21,14 +24,19 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
 
-public class SimpleController
+public class SimpleControllerB
 extends AbstractController
 {
     @Override
-    protected ModelAndView handleRequestInternal(HttpServletRequest request,
-            HttpServletResponse response) throws Exception
+    protected ModelAndView handleRequestInternal(
+            HttpServletRequest request,
+            HttpServletResponse response) 
+    throws Exception
     {
-        return new ModelAndView("simple");
+        Map<String,String> model = new HashMap<String,String>();
+        model.put("reqUrl", request.getRequestURI());
+        model.put("controller", getClass().getName());
+        return new ModelAndView("simple", "data", model);
     }
 
 }

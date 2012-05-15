@@ -6,7 +6,9 @@
     </head>
     <body>
 
-    This JSP is invoked by the view resolver
-    
+    The request URL was <code>${data.reqUrl}</code>
+    <br/>
+    It was handled by <code>${data.controller}</code>
+
     </body>
 </html>
