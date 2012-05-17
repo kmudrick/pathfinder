@@ -51,6 +51,7 @@ public class SpringContext
 //  Instance Variables and Constructor
 //----------------------------------------------------------------------------
 
+    private SpringContext parent;
     private Map<String,BeanDefinition> beanDefinitions = new HashMap<String,BeanDefinition>();
 
 
@@ -74,6 +75,17 @@ public class SpringContext
     }
 
 
+    /**
+     *  Creates an instance that will delegate bean lookups to its parent if
+     *  they are not found locally.
+     */
+    public SpringContext(SpringContext parent, WarMachine war, String contextLocation)
+    {
+        this(war, contextLocation);
+        this.parent = parent;
+    }
+
+
 //----------------------------------------------------------------------------
 //  Public Methods
 //----------------------------------------------------------------------------
@@ -83,7 +95,12 @@ public class SpringContext
      */
     public Map<String,BeanDefinition> getBeans()
     {
-        return Collections.unmodifiableMap(beanDefinitions);
+        if (parent == null)
+            return Collections.unmodifiableMap(beanDefinitions);
+
+        Map<String,BeanDefinition> combined = new HashMap<String,BeanDefinition>();
+        buildBeanMapFromHierarchy(combined);
+        return Collections.unmodifiableMap(combined);
     }
 
 
@@ -93,12 +110,17 @@ public class SpringContext
      */
     public BeanDefinition getBean(String name)
     {
-        return beanDefinitions.get(name);
+        BeanDefinition def = beanDefinitions.get(name);
+        if ((def == null) && (parent != null))
+            def = parent.getBean(name);
+
+        return def;
     }
 
 
     /**
      *  Returns the set of bean names that implement a specified class.
+     *  The caller is free to modify this list.
      */
     public List<BeanDefinition> getBeansByClass(String className)
     {
@@ -108,6 +130,10 @@ public class SpringContext
             if (className.equals(bean.getBeanClass()))
                 beans.add(bean);
         }
+
+        if (parent != null)
+            beans.addAll(parent.getBeansByClass(className));
+
         return beans;
     }
 
@@ -115,6 +141,18 @@ public class SpringContext
 //----------------------------------------------------------------------------
 //  Internals
 //----------------------------------------------------------------------------
+
+    private void buildBeanMapFromHierarchy(Map<String,BeanDefinition> map)
+    {
+        // note: if both parent and child declares the same beans, it
+        // should be an error; we'll assume that a running WAR won't
+        // have errors of that sort
+
+        map.putAll(beanDefinitions);
+        if (parent != null)
+            parent.buildBeanMapFromHierarchy(map);
+    }
+
 
     private List<String> decomposeContextLocation(String contextLocation)
     {

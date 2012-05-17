@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 import org.apache.log4j.Logger;
@@ -95,5 +96,42 @@ public class TestSpringContext
         assertNotNull("able to extract property with explicit props", propsProp2);
         assertEquals("extracted property for 'foo'",   "bar",    propsProp2.get("foo"));
         assertEquals("extracted property for 'argle'", "bargle", propsProp2.get("argle"));
+    }
+
+
+    @Test
+    public void testParentChildContext() throws Exception
+    {
+        SpringContext parent = new SpringContext(null, "classpath:contexts/parentContext.xml");
+        SpringContext child = new SpringContext(parent, null, "classpath:contexts/childContext.xml");
+
+        // the child should be able to retrieve a bean defined in its own XML
+
+        BeanDefinition bean1 = child.getBean("simpleUrlMapping");
+        assertEquals("child bean class", "org.springframework.web.servlet.handler.SimpleUrlHandlerMapping", bean1.getBeanClass());
+
+        // and that it delegates to the parent if it doesn't have a bean
+
+        BeanDefinition bean2 = child.getBean("simpleControllerB");
+        assertEquals("parent bean class", "com.kdgregory.pathfinder.test.spring2.SimpleController", bean2.getBeanClass());
+
+        // the child's bean map should combine both parent and child
+
+        assertEquals("bean count from child, all beans", 4, child.getBeans().size());
+
+        // but the parent's shouldn't
+
+        assertEquals("bean count from parent, all beans", 2, parent.getBeans().size());
+
+        // ditto for class scans
+
+        List<BeanDefinition> list1 = child.getBeansByClass("com.kdgregory.pathfinder.test.spring2.SimpleController");
+        assertEquals("bean count from child, class scan", 2, list1.size());
+        assertTrue("scan from child has controllerA", list1.contains(child.getBean("simpleControllerA")));
+        assertTrue("scan from child has controllerb", list1.contains(child.getBean("simpleControllerB")));
+
+        List<BeanDefinition> list2 = parent.getBeansByClass("com.kdgregory.pathfinder.test.spring2.SimpleController");
+        assertEquals("bean count from parent, class scan", 1, list2.size());
+        assertTrue("scan from parent has controllerb", list2.contains(child.getBean("simpleControllerB")));
     }
 }
