@@ -147,7 +147,7 @@ public class SpringContext
         {
             if (ex instanceof IllegalArgumentException)
                 throw (IllegalArgumentException)ex;
-            throw new IllegalArgumentException("invalid context location: " + file, ex);
+            throw new IllegalArgumentException("unparseable context: " + file, ex);
         }
     }
 

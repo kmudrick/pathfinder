@@ -80,14 +80,20 @@ public class TestSpringContext
         BeanDefinition bean = context.getBean("example");
         assertNotNull("able to load context", bean);
 
-        assertEquals("extracted property as string", "foo", bean.getPropertyAsString("propAsString"));
+        assertEquals("extracted property as string in attribute", "foo", bean.getPropertyAsString("propAsStringAttribute"));
+        assertEquals("extracted property as string in value", "bar", bean.getPropertyAsString("propAsStringValue"));
 
         assertEquals("extracted property as ref", "example", bean.getPropertyAsRefId("propAsRefId"));
         // FIXME - add test for explicit <ref> element
 
-        Properties propsProp = bean.getPropertyAsProperties("propAsProperties");
-        assertNotNull("able to extract Properties property", propsProp);
-        assertEquals("extracted property for 'foo'",   "bar",    propsProp.get("foo"));
-        assertEquals("extracted property for 'argle'", "bargle", propsProp.get("argle"));
+        Properties propsProp1 = bean.getPropertyAsProperties("propAsSingleValue");
+        assertNotNull("able to extract property with name-value props", propsProp1);
+        assertEquals("extracted property for 'foo'",   "bar",    propsProp1.get("foo"));
+        assertEquals("extracted property for 'argle'", "bargle", propsProp1.get("argle"));
+
+        Properties propsProp2 = bean.getPropertyAsProperties("propAsExplicitProperties");
+        assertNotNull("able to extract property with explicit props", propsProp2);
+        assertEquals("extracted property for 'foo'",   "bar",    propsProp2.get("foo"));
+        assertEquals("extracted property for 'argle'", "bargle", propsProp2.get("argle"));
     }
 }
