@@ -63,7 +63,7 @@ public class TestSpringContext
         logger.info("testGetBeansFromSimpleContextInWar()");
 
         WarMachine war = TestHelpers.createWarMachine(WarNames.SPRING2_SIMPLE);
-        SpringContext context = new SpringContext(war, "classpath:servletContext.xml");
+        SpringContext context = new SpringContext(war, "/WEB-INF/spring/servletContext.xml");
         assertEquals("number of beans defined", 4, context.getBeans().size());
 
         BeanDefinition b1 = context.getBean("simpleUrlMapping");

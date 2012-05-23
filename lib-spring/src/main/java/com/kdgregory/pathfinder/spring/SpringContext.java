@@ -14,8 +14,10 @@
 
 package com.kdgregory.pathfinder.spring;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +30,7 @@ import org.xml.sax.InputSource;
 
 import org.apache.log4j.Logger;
 
+import net.sf.kdgcommons.io.IOUtil;
 import net.sf.practicalxml.ParseUtil;
 import net.sf.practicalxml.xpath.XPathWrapperFactory;
 import net.sf.practicalxml.xpath.XPathWrapperFactory.CacheType;
@@ -157,14 +160,8 @@ public class SpringContext
     private List<String> decomposeContextLocation(String contextLocation)
     {
         String[] paths = contextLocation.split(",");
-        List<String> result = new ArrayList<String>(paths.length);
-        for (String path : paths)
-        {
-            if (path.startsWith("classpath:"))
-                path = path.substring(10);
-            result.add(path);
-        }
-        return result;
+        // FIXME - support wildcards
+        return Arrays.asList(paths);
     }
 
 
@@ -175,8 +172,7 @@ public class SpringContext
         InputStream in = null;
         try
         {
-            in = (war == null) ? getClass().getClassLoader().getResourceAsStream(file)
-                               : war.openClasspathFile(file);
+            in = openResource(war, file);
             if (in == null)
                 throw new IllegalArgumentException("invalid context location: " + file);
             return ParseUtil.parse(new InputSource(in));
@@ -186,6 +182,26 @@ public class SpringContext
             if (ex instanceof IllegalArgumentException)
                 throw (IllegalArgumentException)ex;
             throw new IllegalArgumentException("unparseable context: " + file, ex);
+        }
+        finally
+        {
+            IOUtil.closeQuietly(in);
+        }
+    }
+
+
+    private InputStream openResource(WarMachine war, String file)
+    throws IOException
+    {
+        if (file.startsWith("classpath:"))
+        {
+            file = file.substring(10);
+            return (war == null) ? getClass().getClassLoader().getResourceAsStream(file)
+                                 : war.openClasspathFile(file);
+        }
+        else
+        {
+            return war.openFile(file);
         }
     }
 
