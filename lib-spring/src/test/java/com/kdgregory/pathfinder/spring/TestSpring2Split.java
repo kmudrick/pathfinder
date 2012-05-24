@@ -29,21 +29,20 @@ import com.kdgregory.pathfinder.util.TestHelpers;
 
 
 /**
- *  This test looks for simple XML-based configuration, where there's a
- *  single config file attached to the servlet. All tests run using the
- *  same WAR, which is accessed via a static variable.
+ *  This test class verifies that the WAR machine pulls together imports
+ *  and the root context. It could contain just a single test, but tests
+ *  each case individually to break up implementation.
  */
-public class TestSpring2Simple
+public class TestSpring2Split
 {
     private static WarMachine machine;
     private PathRepo pathRepo;
-
 
     @BeforeClass
     public static void loadWar()
     throws Exception
     {
-        machine = TestHelpers.createWarMachine(WarNames.SPRING2_SIMPLE);
+        machine = TestHelpers.createWarMachine(WarNames.SPRING2_SPLIT);
     }
 
 
@@ -63,29 +62,15 @@ public class TestSpring2Simple
 //----------------------------------------------------------------------------
 
     @Test
-    public void testDispatcherServletMappingsRemoved() throws Exception
+    public void testServletIsCombinedWithRoot() throws Exception
     {
-        new SpringInspector().inspect(machine, pathRepo);
-
-        // the original DispatcherServlet mapping should be gone
-        assertEquals("/servlet/* removed", 0, pathRepo.get("/servlet/*").size());
-
-        // but the MyServlet mapping should remain
-        assertEquals("/servlet2 remains", 1, pathRepo.get("/servlet2").size());
-    }
-
-
-    @Test
-    public void testSimpleUrlMappings() throws Exception
-    {
-        new SpringInspector().inspect(machine, pathRepo);
-
+        // this one is defined in the servlet context
         SpringDestination dest1 = (SpringDestination)pathRepo.get("/servlet/foo.html", HttpMethod.GET);
         assertEquals("simpleControllerA", dest1.getBeanDefinition().getBeanName());
 
-        SpringDestination dest2 = (SpringDestination)pathRepo.get("/servlet/bar.html", HttpMethod.GET);
-        assertEquals("simpleControllerB", dest2.getBeanDefinition().getBeanName());
+        // and this one is defined in the root context
+        SpringDestination dest2 = (SpringDestination)pathRepo.get("/servlet/baz.html", HttpMethod.GET);
+        assertEquals("simpleControllerC", dest2.getBeanDefinition().getBeanName());
+
     }
-
-
 }

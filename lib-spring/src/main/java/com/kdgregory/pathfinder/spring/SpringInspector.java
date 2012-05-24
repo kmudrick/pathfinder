@@ -15,11 +15,15 @@
 package com.kdgregory.pathfinder.spring;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
+
+import net.sf.practicalxml.xpath.XPathWrapperFactory;
 
 import com.kdgregory.pathfinder.core.Inspector;
 import com.kdgregory.pathfinder.core.PathRepo;
@@ -76,12 +80,15 @@ implements Inspector
     public void inspect(WarMachine war, PathRepo paths)
     {
         logger.info("SpringInspector started");
+
+        SpringContext rootContext = loadRootContext(war);
+
         List<ServletMapping> springMappings = extractSpringMappings(war, paths);
         logger.debug("extracted " + springMappings.size() + " Spring mappings");
         for (ServletMapping mapping : springMappings)
         {
             String urlPrefix = extractUrlPrefix(mapping.getUrlPattern());
-            SpringContext context = new SpringContext(war, mapping.getInitParams().get("contextConfigLocation"));
+            SpringContext context = new SpringContext(rootContext, war, mapping.getInitParams().get("contextConfigLocation"));
             processSimpleUrlHandlerMapping(war, context, urlPrefix, paths);
         }
         logger.info("SpringInspector finished");
@@ -91,6 +98,36 @@ implements Inspector
 //----------------------------------------------------------------------------
 //  Internals
 //----------------------------------------------------------------------------
+
+    private SpringContext loadRootContext(WarMachine war)
+    {
+        XPathWrapperFactory xpf = new XPathWrapperFactory()
+                                  .bindNamespace("j2ee", "http://java.sun.com/xml/ns/j2ee");
+
+        // checking for the actual listener is overkill, but it's possible that
+        // the WAR could have a root context that isn't in use
+        List<String> listeners = xpf.newXPath("/j2ee:web-app/j2ee:listener/j2ee:listener-class")
+                                 .evaluateAsStringList(war.getWebXml());
+        Set<String> listeners2 = new HashSet<String>(listeners);
+        if (!listeners2.contains("org.springframework.web.context.ContextLoaderListener"))
+        {
+            logger.debug("no root context listener found");
+            return null;
+        }
+
+        String contextLocation = xpf.newXPath("/j2ee:web-app/j2ee:context-param/"
+                                              + "j2ee:param-name[text()='contextConfigLocation']/"
+                                              + "../j2ee:param-value").evaluateAsString(war.getWebXml());
+        if (contextLocation == null)
+        {
+            logger.debug("context listener found, but no contextConfigLocation");
+            return null;
+        }
+
+        logger.debug("root context location: " + contextLocation);
+        return new SpringContext(war, contextLocation);
+    }
+
 
     private List<ServletMapping> extractSpringMappings(WarMachine war, PathRepo paths)
     {
