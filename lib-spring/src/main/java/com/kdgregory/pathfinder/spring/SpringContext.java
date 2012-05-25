@@ -33,7 +33,6 @@ import org.apache.log4j.Logger;
 import net.sf.kdgcommons.io.IOUtil;
 import net.sf.kdgcommons.lang.StringUtil;
 import net.sf.practicalxml.DomUtil;
-import net.sf.practicalxml.OutputUtil;
 import net.sf.practicalxml.ParseUtil;
 import net.sf.practicalxml.xpath.XPathWrapperFactory;
 import net.sf.practicalxml.xpath.XPathWrapperFactory.CacheType;
@@ -217,8 +216,6 @@ public class SpringContext
                 child = (Element)dom.importNode(child, true);
                 dom.getDocumentElement().appendChild(child);
             }
-
-            System.err.println(OutputUtil.indentedString(dom, 4));
         }
     }
 
