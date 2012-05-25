@@ -85,6 +85,5 @@ public class TestSpring2Split
         // and this one is defined in the imported context
         SpringDestination dest2 = (SpringDestination)pathRepo.get("/servlet/bar.html", HttpMethod.GET);
         assertEquals("simpleControllerB", dest2.getBeanDefinition().getBeanName());
-
     }
 }

@@ -134,4 +134,22 @@ public class TestSpringContext
         assertEquals("bean count from parent, class scan", 1, list2.size());
         assertTrue("scan from parent has controllerb", list2.contains(child.getBean("simpleControllerB")));
     }
+
+
+    @Test
+    public void testCombinedContext() throws Exception
+    {
+        // there are three ways to combine: comma, semi-colon, or whitespace (any amount)
+        // bean count will be our proxy for reading correctly
+
+        SpringContext ctx1 = new SpringContext(null, "classpath:contexts/combined1.xml,classpath:contexts/combined2.xml");
+        assertEquals("processed all files when separated by comma", 4, ctx1.getBeans().size());
+
+        SpringContext ctx2 = new SpringContext(null, "classpath:contexts/combined1.xml;classpath:contexts/combined2.xml");
+        assertEquals("processed all files when separated by semi-colon", 4, ctx2.getBeans().size());
+
+        SpringContext ctx3 = new SpringContext(null, "classpath:contexts/combined1.xml \t\n classpath:contexts/combined2.xml");
+        assertEquals("processed all files when separated by comma", 4, ctx3.getBeans().size());
+    }
+
 }
