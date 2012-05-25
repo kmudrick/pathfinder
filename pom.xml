@@ -33,7 +33,7 @@
         <commons.io.version>2.3</commons.io.version>
         <javax.servlet.version>2.4</javax.servlet.version>
         <javax.jstl.version>1.1.1</javax.jstl.version>
-        <kdgcommons.version>1.0.5</kdgcommons.version>
+        <kdgcommons.version>1.0.6-SNAPSHOT</kdgcommons.version>
         <log4j.version>1.2.12</log4j.version>
         <springframework.version>3.1.1.RELEASE</springframework.version>
         <practicalxml.version>1.1.12</practicalxml.version>

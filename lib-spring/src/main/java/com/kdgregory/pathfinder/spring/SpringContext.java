@@ -31,6 +31,9 @@ import org.xml.sax.InputSource;
 import org.apache.log4j.Logger;
 
 import net.sf.kdgcommons.io.IOUtil;
+import net.sf.kdgcommons.lang.StringUtil;
+import net.sf.practicalxml.DomUtil;
+import net.sf.practicalxml.OutputUtil;
 import net.sf.practicalxml.ParseUtil;
 import net.sf.practicalxml.xpath.XPathWrapperFactory;
 import net.sf.practicalxml.xpath.XPathWrapperFactory.CacheType;
@@ -73,6 +76,7 @@ public class SpringContext
         for (String path : decomposeContextLocation(contextLocation))
         {
             Document dom = parseContextFile(war, path);
+            processImports(dom, war, path);
             extractBeanDefinitions(dom, path);
         }
     }
@@ -187,6 +191,49 @@ public class SpringContext
         {
             IOUtil.closeQuietly(in);
         }
+    }
+
+
+    private void processImports(Document dom, WarMachine war, String origFile)
+    {
+        // < ="services.xml"/>
+        List<Element> importDefs = xpfact.newXPath("/b:beans/b:import")
+                                   .evaluate(dom, Element.class);
+        logger.debug(origFile + " has " + importDefs.size() + " imports");
+        for (Element importDef : importDefs)
+        {
+            String importLoc = importDef.getAttribute("resource");
+            if (StringUtil.isEmpty(importLoc))
+            {
+                logger.warn("missing resource attribute; skipping import");
+                continue;
+            }
+            importLoc = rebaseIncludedResource(origFile, importLoc);
+
+            logger.debug("processing imported file \"" + importLoc + "\" from " + origFile);
+            Document importDom = parseContextFile(war, importLoc);
+            for (Element child : DomUtil.getChildren(importDom.getDocumentElement()))
+            {
+                child = (Element)dom.importNode(child, true);
+                dom.getDocumentElement().appendChild(child);
+            }
+
+            System.err.println(OutputUtil.indentedString(dom, 4));
+        }
+    }
+
+
+    private String rebaseIncludedResource(String origFile, String includedFile)
+    {
+        // FIXME - I'm not sure if the ":" is valid; could be an absolute Windows path
+        if (includedFile.contains(":") || includedFile.startsWith("/"))
+            return includedFile;
+
+        String origPath = StringUtil.extractLeftOfLast(origFile, "/");
+        if (StringUtil.isEmpty(origPath))
+            return includedFile;
+
+        return origPath + "/" + includedFile;
     }
 
 
