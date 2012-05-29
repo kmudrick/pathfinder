@@ -102,9 +102,9 @@
             <id>testdata</id>
             <modules>
                 <module>testdata-servlet</module>
+                <module>testdata-spring-split</module>
+                <module>testdata-spring-default</module>
                 <module>testdata-spring2-simple</module>
-                <module>testdata-spring2-split</module>
-                <module>testdata-spring2-default</module>
                 <module>testdata</module>
             </modules>
         </profile>

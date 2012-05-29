@@ -8,10 +8,10 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>pathfinder-testdata-spring2-split</artifactId>
+    <artifactId>pathfinder-testdata-spring-split</artifactId>
     <packaging>war</packaging>
 
-    <name>WAR for Spring 2 Testing With Multiple Context Files</name>
+    <name>WAR for Spring Testing With Multiple Context Files</name>
     <description>
         A rewriting of the "simple" WAR, that moves some pieces of the config
         into a root config, and imports others

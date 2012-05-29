@@ -21,7 +21,7 @@ package com.kdgregory.pathfinder.spring.test;
 public class WarNames
 {
     public final static String  SERVLET         = "pathfinder-testdata-servlet.war";
+    public final static String  SPRING_SPLIT   = "pathfinder-testdata-spring-split.war";
+    public final static String  SPRING_DEFAULT = "pathfinder-testdata-spring-default.war";
     public final static String  SPRING2_SIMPLE  = "pathfinder-testdata-spring2-simple.war";
-    public final static String  SPRING2_SPLIT   = "pathfinder-testdata-spring2-split.war";
-    public final static String  SPRING2_DEFAULT = "pathfinder-testdata-spring2-default.war";
 }

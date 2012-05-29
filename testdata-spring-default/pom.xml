@@ -8,10 +8,10 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>pathfinder-testdata-spring2-default</artifactId>
+    <artifactId>pathfinder-testdata-spring-default</artifactId>
     <packaging>war</packaging>
 
-    <name>WAR for Spring 2 Testing With Default Context Files</name>
+    <name>WAR for Spring Testing With Default Context Files</name>
     <description>
         A root/servlet split where we don't explicitly specify our
         config file names, but instead use Spring's defaults.

@@ -42,7 +42,7 @@ public class TestSpring2Split
     public static void loadWar()
     throws Exception
     {
-        machine = TestHelpers.createWarMachine(WarNames.SPRING2_SPLIT);
+        machine = TestHelpers.createWarMachine(WarNames.SPRING_SPLIT);
     }
 
 

@@ -42,7 +42,7 @@ public class TestSpring2Default
     public static void loadWar()
     throws Exception
     {
-        machine = TestHelpers.createWarMachine(WarNames.SPRING2_DEFAULT);
+        machine = TestHelpers.createWarMachine(WarNames.SPRING_DEFAULT);
     }
 
 
