@@ -1,3 +1,4 @@
+package com.kdgregory.pathfinder.spring;
 // Copyright (c) Keith D Gregory
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.kdgregory.pathfinder.spring;
+
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -29,11 +30,10 @@ import com.kdgregory.pathfinder.util.TestHelpers;
 
 
 /**
- *  This test class verifies that the Spring Inspector pulls together imports
- *  and the root context. It could contain just a single test, but tests each
- *  case individually to break up implementation.
+ *  This test class verifies that the Spring Inspector will find config files
+ *  that use default location.
  */
-public class TestSpring2Split
+public class TestSpring2Default
 {
     private static WarMachine machine;
     private PathRepo pathRepo;
@@ -42,7 +42,7 @@ public class TestSpring2Split
     public static void loadWar()
     throws Exception
     {
-        machine = TestHelpers.createWarMachine(WarNames.SPRING2_SPLIT);
+        machine = TestHelpers.createWarMachine(WarNames.SPRING2_DEFAULT);
     }
 
 
@@ -61,29 +61,19 @@ public class TestSpring2Split
 //  Testcases
 //----------------------------------------------------------------------------
 
+    // there's only one testcase, that checks both default locations ... and
+    // we'll never get here if the defaults aren't implemented, because the
+    // WAR is inpected at setup
     @Test
-    public void testServletContextIsCombinedWithRoot() throws Exception
+    public void testDefaultLocations() throws Exception
     {
-        // this one is defined in the servlet context
+        // this bean is defined in the servlet context
         SpringDestination dest1 = (SpringDestination)pathRepo.get("/servlet/foo.html", HttpMethod.GET);
         assertEquals("simpleControllerA", dest1.getBeanDefinition().getBeanName());
 
-        // and this one is defined in the root context
-        SpringDestination dest2 = (SpringDestination)pathRepo.get("/servlet/baz.html", HttpMethod.GET);
-        assertEquals("simpleControllerC", dest2.getBeanDefinition().getBeanName());
-
-    }
-
-
-    @Test
-    public void testImportedContext() throws Exception
-    {
-        // this one is defined in the servlet context
-        SpringDestination dest1 = (SpringDestination)pathRepo.get("/servlet/foo.html", HttpMethod.GET);
-        assertEquals("simpleControllerA", dest1.getBeanDefinition().getBeanName());
-
-        // and this one is defined in the imported context
+        // and this one is defined in the root
         SpringDestination dest2 = (SpringDestination)pathRepo.get("/servlet/bar.html", HttpMethod.GET);
         assertEquals("simpleControllerB", dest2.getBeanDefinition().getBeanName());
     }
+
 }

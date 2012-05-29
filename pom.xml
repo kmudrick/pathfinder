@@ -104,6 +104,7 @@
                 <module>testdata-servlet</module>
                 <module>testdata-spring2-simple</module>
                 <module>testdata-spring2-split</module>
+                <module>testdata-spring2-default</module>
                 <module>testdata</module>
             </modules>
         </profile>

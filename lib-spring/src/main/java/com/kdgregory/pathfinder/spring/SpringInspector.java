@@ -23,6 +23,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import net.sf.kdgcommons.lang.StringUtil;
 import net.sf.practicalxml.xpath.XPathWrapperFactory;
 
 import com.kdgregory.pathfinder.core.Inspector;
@@ -88,7 +89,14 @@ implements Inspector
         for (ServletMapping mapping : springMappings)
         {
             String urlPrefix = extractUrlPrefix(mapping.getUrlPattern());
-            SpringContext context = new SpringContext(rootContext, war, mapping.getInitParams().get("contextConfigLocation"));
+            String configLoc = mapping.getInitParams().get("contextConfigLocation");
+            if (StringUtil.isBlank(configLoc))
+            {
+                configLoc = "/WEB-INF/" + mapping.getServletName() + "-servlet.xml";
+            }
+
+            logger.debug("processing mapping for \"" + urlPrefix + "\" from configFile " + configLoc);
+            SpringContext context = new SpringContext(rootContext, war, configLoc);
             processSimpleUrlHandlerMapping(war, context, urlPrefix, paths);
         }
         logger.info("SpringInspector finished");
@@ -104,8 +112,7 @@ implements Inspector
         XPathWrapperFactory xpf = new XPathWrapperFactory()
                                   .bindNamespace("j2ee", "http://java.sun.com/xml/ns/j2ee");
 
-        // checking for the actual listener is overkill, but it's possible that
-        // the WAR could have a root context that isn't in use
+        // if there's no root context listener, we're done
         List<String> listeners = xpf.newXPath("/j2ee:web-app/j2ee:listener/j2ee:listener-class")
                                  .evaluateAsStringList(war.getWebXml());
         Set<String> listeners2 = new HashSet<String>(listeners);
@@ -115,13 +122,16 @@ implements Inspector
             return null;
         }
 
+        // look for an explicit config file location
         String contextLocation = xpf.newXPath("/j2ee:web-app/j2ee:context-param/"
                                               + "j2ee:param-name[text()='contextConfigLocation']/"
                                               + "../j2ee:param-value").evaluateAsString(war.getWebXml());
-        if (contextLocation == null)
+
+        // and fallback to default
+        if (StringUtil.isBlank(contextLocation))
         {
-            logger.debug("context listener found, but no contextConfigLocation");
-            return null;
+            logger.debug("context listener found, but no contextConfigLocation; using default");
+            contextLocation = "/WEB-INF/applicationContext.xml";
         }
 
         logger.debug("root context location: " + contextLocation);
