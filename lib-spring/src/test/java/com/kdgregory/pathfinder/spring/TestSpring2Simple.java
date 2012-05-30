@@ -65,8 +65,6 @@ public class TestSpring2Simple
     @Test
     public void testDispatcherServletMappingsRemoved() throws Exception
     {
-        new SpringInspector().inspect(machine, pathRepo);
-
         // the original DispatcherServlet mapping should be gone
         assertEquals("/servlet/* removed", 0, pathRepo.get("/servlet/*").size());
 
@@ -78,8 +76,6 @@ public class TestSpring2Simple
     @Test
     public void testSimpleUrlMappings() throws Exception
     {
-        new SpringInspector().inspect(machine, pathRepo);
-
         SpringDestination dest1 = (SpringDestination)pathRepo.get("/servlet/foo.html", HttpMethod.GET);
         assertEquals("simpleControllerA", dest1.getBeanDefinition().getBeanName());
 
