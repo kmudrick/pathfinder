@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.w3c.dom.Document;
 
@@ -64,6 +65,23 @@ public interface WarMachine
      *  and WEB-INF.
      */
     public List<String> getPrivateFiles();
+
+
+    /**
+     *  Returns a list of all files on the classpath: those under WEB-INF/classes
+     *  and those contained in JARfiles. Note that the return is a Set; if there
+     *  are multiple classpath files with the same name, one will be chosen
+     *  arbitrarily.
+     */
+    public Set<String> getFilesOnClasspath();
+
+
+    /**
+     *  Returns a list of the files on the classpath that are found within the
+     *  specified package, and which end in ".class". Optionally recurses into
+     *  descendent packages.
+     */
+    public Set<String> getClassfilesInPackage(String packageName, boolean recurse);
 
 
     /**
