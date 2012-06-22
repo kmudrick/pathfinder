@@ -80,8 +80,33 @@ public interface WarMachine
      *  Returns a list of the files on the classpath that are found within the
      *  specified package, and which end in ".class". Optionally recurses into
      *  descendent packages.
+     *
+     *  @param packageName      Name of a single package.
+     *  @param annotationName   Fully-qualified classname of the annotation (eg:
+     *                          <code>java.lang.annotation.Documented</code>).
+     *                          Be sure to omit the "@".
+     *  @param recurse          If <code>true</code>, this method wil examine the
+     *                          specified package and all its decendents. If
+     *                          <code>false</code>, the search is limited to the
+     *                          package.
      */
     public Set<String> getClassfilesInPackage(String packageName, boolean recurse);
+
+
+    /**
+     *  Returns all classes that have a class-level annotation of the specified
+     *  type. The annotation may be runtime-visible or runtime-invisible.
+     *
+     *  @param packageName      Name of a single package.
+     *  @param annotationName   Fully-qualified classname of the annotation (eg:
+     *                          <code>java.lang.annotation.Documented</code>).
+     *                          Be sure to omit the "@".
+     *  @param recurse          If <code>true</code>, this method wil examine the
+     *                          specified package and all its decendents. If
+     *                          <code>false</code>, the search is limited to the
+     *                          package.
+     */
+    public Set<String> getAnnotatedClassfilesInPackage(String packageName, String annotationName, boolean recurse);
 
 
     /**

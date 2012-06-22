@@ -36,6 +36,8 @@ import org.w3c.dom.Element;
 
 import org.xml.sax.InputSource;
 
+import org.apache.bcel.classfile.ClassParser;
+import org.apache.bcel.classfile.JavaClass;
 import org.apache.log4j.Logger;
 
 import net.sf.kdgcommons.collections.CollectionUtil;
@@ -47,6 +49,8 @@ import net.sf.practicalxml.ParseUtil;
 import net.sf.practicalxml.xpath.XPathWrapperFactory;
 import net.sf.practicalxml.xpath.XPathWrapperFactory.CacheType;
 
+import com.kdgregory.bcelx.classfile.Annotation;
+import com.kdgregory.bcelx.parser.AnnotationParser;
 import com.kdgregory.pathfinder.core.WarMachine;
 
 
@@ -221,6 +225,25 @@ implements WarMachine
 
 
     @Override
+    public Set<String> getAnnotatedClassfilesInPackage(String packageName, String annotationName, boolean recurse)
+    {
+        Set<String> result = new HashSet<String>();
+
+        for (String filename : getClassfilesInPackage(packageName, recurse))
+        {
+            AnnotationParser ap = parseAnnotations(filename);
+            for (Annotation anno : ap.getClassVisibleAnnotations())
+            {
+                if (anno.getClassName().equals(annotationName))
+                    result.add(filename);
+            }
+        }
+
+        return result;
+    }
+
+
+    @Override
     public InputStream openFile(String filename)
     throws IOException
     {
@@ -366,6 +389,27 @@ implements WarMachine
             return;
         }
         filesOnClasspath.put(filename, srcLoc);
+    }
+
+
+    private AnnotationParser parseAnnotations(String classFileName)
+    {
+        InputStream in = null;
+        try
+        {
+            in = openClasspathFile(classFileName);
+            String className = classFileName.replace('/', '.');
+            JavaClass parsedClass = new ClassParser(in, className).parse();
+            return new AnnotationParser(parsedClass);
+        }
+        catch (Exception ex)
+        {
+            throw new RuntimeException("unable to examine file: " + classFileName, ex);
+        }
+        finally
+        {
+            IOUtil.closeQuietly(in);
+        }
     }
 
 
