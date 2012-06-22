@@ -148,20 +148,23 @@ public class TestWarMachine
 
 
     @Test
-    public void testGetClassFilesInPackage() throws Exception
+    public void testGetClassfilesInPackage() throws Exception
     {
         WarMachine machine = TestHelpers.createWarMachine(WarNames.SERVLET);
 
-        Set<String> files1 = machine.getClassfilesInPackage("net.sf.practicalxml.xpath", false);
-        assertEquals("number of files, non-recursive",  13, files1.size());
-        assertTrue("searching for file, non-recursive", files1.contains("net/sf/practicalxml/xpath/XPathWrapper.class"));
+        Set<String> files1 = machine.getClassfilesInPackage("com.example.servlet", false);
+        assertEquals("number of files, in WEB-INF, non-recursive",  1, files1.size());
+        assertTrue("searching for file, in WEB-INF, non-recursive", files1.contains("com/example/servlet/SomeServlet.class"));
 
-        Set<String> files2 = machine.getClassfilesInPackage("net.sf.practicalxml.xpath", true);
-        assertEquals("number of files, recursive",  17, files2.size());
-        assertTrue("searching for file, recursive", files2.contains("net/sf/practicalxml/xpath/XPathWrapper.class"));
-        assertTrue("searching for file, recursive", files2.contains("net/sf/practicalxml/xpath/function/Constants.class"));
+        Set<String> files2 = machine.getClassfilesInPackage("net.sf.practicalxml.xpath", false);
+        assertEquals("number of files, in JAR, non-recursive",  13, files2.size());
+        assertTrue("searching for file, in JAR, non-recursive", files2.contains("net/sf/practicalxml/xpath/XPathWrapper.class"));
+
+        Set<String> files3 = machine.getClassfilesInPackage("net.sf.practicalxml.xpath", true);
+        assertEquals("number of files, in JAR, recursive",  17, files3.size());
+        assertTrue("searching for file, in JAR, recursive", files3.contains("net/sf/practicalxml/xpath/XPathWrapper.class"));
+        assertTrue("searching for file, in JAR, recursive", files3.contains("net/sf/practicalxml/xpath/function/Constants.class"));
     }
-
 
 
     @Test
