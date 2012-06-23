@@ -22,6 +22,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -49,7 +51,8 @@ public class SpringContext
 
     private XPathWrapperFactory xpfact
             = new XPathWrapperFactory(CacheType.SIMPLE)
-              .bindNamespace("b", "http://www.springframework.org/schema/beans");
+              .bindNamespace("b",   "http://www.springframework.org/schema/beans")
+              .bindNamespace("ctx", "http://www.springframework.org/schema/context");
 
 
 //----------------------------------------------------------------------------
@@ -57,6 +60,7 @@ public class SpringContext
 //----------------------------------------------------------------------------
 
     private SpringContext parent;
+    private Document dom;
     private Map<String,BeanDefinition> beanDefinitions = new HashMap<String,BeanDefinition>();
 
 
@@ -74,9 +78,9 @@ public class SpringContext
     {
         for (String path : decomposeContextLocation(contextLocation))
         {
-            Document dom = parseContextFile(war, path);
+            dom = parseContextFile(war, path);
             processImports(dom, war, path);
-            extractBeanDefinitions(dom, path);
+            extractBeanDefinitions(path);
         }
     }
 
@@ -141,6 +145,33 @@ public class SpringContext
             beans.addAll(parent.getBeansByClass(className));
 
         return beans;
+    }
+    
+    
+    /**
+     *  Finds all <code>&lt;ctx:component-scan&gt;</code> entries and returns
+     *  the packages that they specify. Looks in the current context only.
+     *  <p>
+     *  FIXME - does not support inclusions or exclusions; need to define an
+     *          object to represent the full scan config
+     */
+    public Set<String> getPackageScans()
+    {
+        // TreeSet makes for easier-to-read logging
+        Set<String> packages = new TreeSet<String>();
+        
+        List<Element> scanDefs = xpfact.newXPath("/b:beans/ctx:component-scan")
+                                 .evaluate(dom, Element.class);
+        for (Element elem : scanDefs)
+        {
+            String basePackage = elem.getAttribute("base-package");
+            String[] bp2 = basePackage.split(",");
+            for (String pkg : bp2)
+                packages.add(pkg.trim());
+        }
+
+        logger.debug("found " + packages.size() + " scanned packages: " + packages);
+        return packages;
     }
 
 
@@ -250,7 +281,7 @@ public class SpringContext
     }
 
 
-    private void extractBeanDefinitions(Document dom, String filename)
+    private void extractBeanDefinitions(String filename)
     {
         List<Element> beans = xpfact.newXPath("/b:beans/b:bean").evaluate(dom, Element.class);
         logger.debug("found " + beans.size() + " bean definitions in " + filename);

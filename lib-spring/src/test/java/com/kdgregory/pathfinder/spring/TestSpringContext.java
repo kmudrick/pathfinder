@@ -16,6 +16,7 @@ package com.kdgregory.pathfinder.spring;
 
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -151,5 +152,20 @@ public class TestSpringContext
         SpringContext ctx3 = new SpringContext(null, "classpath:contexts/combined1.xml \t\n classpath:contexts/combined2.xml");
         assertEquals("processed all files when separated by comma", 4, ctx3.getBeans().size());
     }
+    
+    
+    @Test
+    public void testComponentScan() throws Exception 
+    {
+        SpringContext ctx = new SpringContext(null, "classpath:contexts/componentScan.xml");
+        Set<String> packages = ctx.getPackageScans();
+        
+        assertEquals("count of scanned packages", 4, packages.size());
+        assertTrue("single package found", packages.contains("com.example.pkg1"));
+        assertTrue("single package found", packages.contains("com.example.pkg2"));
+        assertTrue("single package found", packages.contains("com.example.pkg3"));
+        assertTrue("single package found", packages.contains("com.example.pkg4"));
+    }
+    
 
 }
