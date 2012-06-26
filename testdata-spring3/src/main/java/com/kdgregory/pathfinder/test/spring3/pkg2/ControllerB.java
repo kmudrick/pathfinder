@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.kdgregory.pathfinder.test.spring3;
+package com.kdgregory.pathfinder.test.spring3.pkg2;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,12 +28,13 @@ import org.springframework.web.servlet.mvc.AbstractController;
 
 
 @Controller
-public class ControllerA
+@RequestMapping("/B")
+public class ControllerB
 {
     @RequestMapping(value="/foo.html", method=RequestMethod.GET)
     protected ModelAndView basicGet(
             HttpServletRequest request,
-            HttpServletResponse response)
+            HttpServletResponse response) 
     throws Exception
     {
         Map<String,String> model = new HashMap<String,String>();

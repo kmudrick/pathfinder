@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.kdgregory.pathfinder.test.spring3;
+package com.kdgregory.pathfinder.test.spring3.pkg1;
 
 /**
  *  A non-annotated class, used as a check for the scan-by-annotation tests.
