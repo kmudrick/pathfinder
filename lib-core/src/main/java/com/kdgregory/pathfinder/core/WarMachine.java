@@ -94,22 +94,6 @@ public interface WarMachine
 
 
     /**
-     *  Returns all classes that have a class-level annotation of the specified
-     *  type. The annotation may be runtime-visible or runtime-invisible.
-     *
-     *  @param packageName      Name of a single package.
-     *  @param annotationName   Fully-qualified classname of the annotation (eg:
-     *                          <code>java.lang.annotation.Documented</code>).
-     *                          Be sure to omit the "@".
-     *  @param recurse          If <code>true</code>, this method wil examine the
-     *                          specified package and all its decendents. If
-     *                          <code>false</code>, the search is limited to the
-     *                          package.
-     */
-    public Set<String> getAnnotatedClassfilesInPackage(String packageName, String annotationName, boolean recurse);
-
-
-    /**
      *  Returns a stream for the named file, <code>null</code> if the file doesn't
      *  exist. You are encouraged to close this stream, but as it isn't a physical
      *  file handle, there isn't a penalty to pay for not closing it.

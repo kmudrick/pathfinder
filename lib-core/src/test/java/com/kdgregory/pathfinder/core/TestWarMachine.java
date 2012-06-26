@@ -168,38 +168,6 @@ public class TestWarMachine
 
 
     @Test
-    public void testGetAnnotatedClassfilesInPackage() throws Exception
-    {
-        WarMachine machine = TestHelpers.createWarMachine(WarNames.SPRING3);
-
-        // test 1: specific package, no recurse, should find files
-
-        Set<String> files1 = machine.getAnnotatedClassfilesInPackage("com.kdgregory.pathfinder.test.spring3",
-                                                                     "org.springframework.stereotype.Controller",
-                                                                     false);
-        assertEquals("number of files, exact package", 2, files1.size());
-        assertTrue("searching for files, exact package", files1.contains("com/kdgregory/pathfinder/test/spring3/ControllerA.class"));
-        assertTrue("searching for files, exact package", files1.contains("com/kdgregory/pathfinder/test/spring3/ControllerB.class"));
-
-        // test 2: parent package, no recurse, should not find files
-
-        Set<String> files2 = machine.getAnnotatedClassfilesInPackage("com.kdgregory.pathfinder.test",
-                                                                     "org.springframework.stereotype.Controller",
-                                                                     false);
-        assertEquals("number of files, parent no-recurse", 0, files2.size());
-
-        // test 1: parent package, recurse, should find files
-
-        Set<String> files3 = machine.getAnnotatedClassfilesInPackage("com.kdgregory.pathfinder.test",
-                                                                     "org.springframework.stereotype.Controller",
-                                                                     true);
-        assertEquals("number of files, exact package", 2, files3.size());
-        assertTrue("searching for files, exact package", files3.contains("com/kdgregory/pathfinder/test/spring3/ControllerA.class"));
-        assertTrue("searching for files, exact package", files3.contains("com/kdgregory/pathfinder/test/spring3/ControllerB.class"));
-    }
-
-
-    @Test
     public void testOpenFile() throws Exception
     {
         WarMachine machine = TestHelpers.createWarMachine(WarNames.SERVLET);
