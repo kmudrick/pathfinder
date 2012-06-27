@@ -45,7 +45,7 @@ public class TestClasspathScanner
         WarMachine machine = TestHelpers.createWarMachine(WarNames.SERVLET);
 
         ClasspathScanner scanner = new ClasspathScanner()
-                                   .setBasePackage("com.example");
+                                   .addBasePackage("com.example", true);
 
         Set<String> files = scanner.scan(machine);
         assertEquals("number of files found", 1, files.size());
@@ -59,7 +59,7 @@ public class TestClasspathScanner
         WarMachine machine = TestHelpers.createWarMachine(WarNames.SERVLET);
 
         ClasspathScanner scanner = new ClasspathScanner()
-                                   .setBasePackage("com.example", false);
+                                   .addBasePackage("com.example", false);
 
         Set<String> files = scanner.scan(machine);
         assertEquals("number of files found", 0, files.size());
@@ -67,12 +67,29 @@ public class TestClasspathScanner
 
 
     @Test
-    public void testMultipleBasePackages() throws Exception
+    public void testMultipleBasePackagesOneAtATime() throws Exception
     {
         WarMachine machine = TestHelpers.createWarMachine(WarNames.SPRING3);
 
         ClasspathScanner scanner = new ClasspathScanner()
-                                   .setBasePackages(Arrays.asList(
+                                   .addBasePackage("com.kdgregory.pathfinder.test.spring3.pkg1", false)
+                                   .addBasePackage("com.kdgregory.pathfinder.test.spring3.pkg2", false);
+
+        Set<String> files = scanner.scan(machine);
+        assertEquals("number of files found", 3, files.size());
+        assertTrue("expected ControllerA", files.contains("com/kdgregory/pathfinder/test/spring3/pkg1/ControllerA.class"));
+        assertTrue("expected ControllerB", files.contains("com/kdgregory/pathfinder/test/spring3/pkg2/ControllerB.class"));
+        assertTrue("expected Dummy",       files.contains("com/kdgregory/pathfinder/test/spring3/pkg1/Dummy.class"));
+    }
+
+
+    @Test
+    public void testMultipleBasePackagesAllAtOnce() throws Exception
+    {
+        WarMachine machine = TestHelpers.createWarMachine(WarNames.SPRING3);
+
+        ClasspathScanner scanner = new ClasspathScanner()
+                                   .addBasePackages(Arrays.asList(
                                            "com.kdgregory.pathfinder.test.spring3.pkg1",
                                            "com.kdgregory.pathfinder.test.spring3.pkg2"),
                                            false);
@@ -91,7 +108,7 @@ public class TestClasspathScanner
         WarMachine machine = TestHelpers.createWarMachine(WarNames.SPRING3);
 
         ClasspathScanner scanner = new ClasspathScanner()
-                                   .setBasePackage("com.kdgregory.pathfinder.test.spring3")
+                                   .addBasePackage("com.kdgregory.pathfinder.test.spring3")
                                    .setIncludedAnnotations("org.springframework.stereotype.Controller");
 
         Set<String> files = scanner.scan(machine);

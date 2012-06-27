@@ -15,10 +15,11 @@
 package com.kdgregory.pathfinder.core;
 
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -39,8 +40,7 @@ import com.kdgregory.bcelx.parser.AnnotationParser;
  */
 public class ClasspathScanner
 {
-    private List<String> basePackages;
-    private boolean includeSubPackages;
+    private Map<String,Boolean> basePackages;   // packageName -> recurse
     private Set<String> includedAnnotations;
 
 
@@ -49,34 +49,35 @@ public class ClasspathScanner
 //----------------------------------------------------------------------------
 
     /**
-     *  Sets a single base package for the scan, including sub-packages.
+     *  Adds a single base package for the scan, optionally including sub-packages.
      */
-    public ClasspathScanner setBasePackage(String packageName)
+    public ClasspathScanner addBasePackage(String packageName, boolean includeSubPackages)
     {
-        return setBasePackage(packageName, true);
+        if (basePackages == null)
+            basePackages = new HashMap<String,Boolean>();
+
+        basePackages.put(packageName.replace('.', '/'), Boolean.valueOf(includeSubPackages));
+        return this;
     }
 
-
     /**
-     *  Sets a single base package for the scan, optionally including sub-packages.
+     *  Adds a single base package to the scan, including sub-packages.
      */
-    public ClasspathScanner setBasePackage(String packageName, boolean includeSubPackages)
+    public ClasspathScanner addBasePackage(String packageName)
     {
-        return setBasePackages(Arrays.asList(packageName), includeSubPackages);
+        return addBasePackage(packageName, true);
     }
 
 
     /**
      *  Sets multiple base packages for the scan, optionally including sub-packages.
      */
-    public ClasspathScanner setBasePackages(List<String> packageNames, boolean includeSubPackages)
+    public ClasspathScanner addBasePackages(Collection<String> packageNames, boolean includeSubPackages)
     {
-        this.basePackages = new ArrayList<String>(packageNames.size());
         for (String packageName : packageNames)
         {
-            basePackages.add(packageName.replace('.', '/'));
+            addBasePackage(packageName, includeSubPackages);
         }
-        this.includeSubPackages = includeSubPackages;
         return this;
     }
 
@@ -124,12 +125,17 @@ public class ClasspathScanner
             return true;
         if (!filename.endsWith(".class"))
             return false;
-        for (String basePackage : basePackages)
+
+        for (Map.Entry<String,Boolean> entry : basePackages.entrySet())
         {
+            String basePackage = entry.getKey();
+            boolean includeSubPackages = entry.getValue().booleanValue();
+
             if (!filename.startsWith(basePackage))
                 continue;
             if (!includeSubPackages && (filename.lastIndexOf("/") > basePackage.length()))
                 continue;
+
             return true;
         }
         return false;
