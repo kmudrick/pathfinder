@@ -17,6 +17,7 @@ package com.kdgregory.pathfinder.core;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -91,6 +92,18 @@ public class ClasspathScanner
         includedAnnotations = new HashSet<String>();
         includedAnnotations.addAll(Arrays.asList(annotationClasses));
         return this;
+    }
+
+
+//----------------------------------------------------------------------------
+//  Accessor methods -- used for testing and debugging
+//----------------------------------------------------------------------------
+
+    public Map<String,Boolean> getBasePackages()
+    {
+        return (basePackages == null)
+             ? Collections.<String,Boolean>emptyMap()
+             : Collections.unmodifiableMap(basePackages);
     }
 
 

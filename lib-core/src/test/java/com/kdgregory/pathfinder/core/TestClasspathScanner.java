@@ -15,6 +15,7 @@
 package com.kdgregory.pathfinder.core;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.Test;
@@ -74,6 +75,11 @@ public class TestClasspathScanner
         ClasspathScanner scanner = new ClasspathScanner()
                                    .addBasePackage("com.kdgregory.pathfinder.test.spring3.pkg1", false)
                                    .addBasePackage("com.kdgregory.pathfinder.test.spring3.pkg2", false);
+
+        Map<String,Boolean> packages = scanner.getBasePackages();
+        assertEquals("packages in scan", 2, scanner.getBasePackages().size());
+        assertEquals("expected pkg1", Boolean.FALSE, scanner.getBasePackages().get("com/kdgregory/pathfinder/test/spring3/pkg1"));
+        assertEquals("expected pkg2", Boolean.FALSE, scanner.getBasePackages().get("com/kdgregory/pathfinder/test/spring3/pkg2"));
 
         Set<String> files = scanner.scan(machine);
         assertEquals("number of files found", 3, files.size());

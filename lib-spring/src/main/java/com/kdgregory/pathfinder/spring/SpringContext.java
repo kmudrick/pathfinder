@@ -22,8 +22,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -39,6 +37,7 @@ import net.sf.practicalxml.ParseUtil;
 import net.sf.practicalxml.xpath.XPathWrapperFactory;
 import net.sf.practicalxml.xpath.XPathWrapperFactory.CacheType;
 
+import com.kdgregory.pathfinder.core.ClasspathScanner;
 import com.kdgregory.pathfinder.core.WarMachine;
 
 
@@ -79,7 +78,7 @@ public class SpringContext
         for (String path : decomposeContextLocation(contextLocation))
         {
             dom = parseContextFile(war, path);
-            processImports(dom, war, path);
+            processImports(war, path);
             extractBeanDefinitions(path);
         }
     }
@@ -150,28 +149,32 @@ public class SpringContext
     
     /**
      *  Finds all <code>&lt;ctx:component-scan&gt;</code> entries and returns
-     *  the packages that they specify. Looks in the current context only.
+     *  scanner objects for each. Looks in the current context only, and restricts
+     *  the scan to classes annotated with <code>@Controller</code>.
      *  <p>
-     *  FIXME - does not support inclusions or exclusions; need to define an
-     *          object to represent the full scan config
+     *  FIXME - does not support inclusions or exclusions; will need to return
+     *          a list of scanner objects
      */
-    public Set<String> getPackageScans()
+    public List<ClasspathScanner> getComponentScan()
     {
-        // TreeSet makes for easier-to-read logging
-        Set<String> packages = new TreeSet<String>();
-        
         List<Element> scanDefs = xpfact.newXPath("/b:beans/ctx:component-scan")
                                  .evaluate(dom, Element.class);
+        
+        List<ClasspathScanner> result = new ArrayList<ClasspathScanner>(scanDefs.size());
         for (Element elem : scanDefs)
         {
+            ClasspathScanner scanner = new ClasspathScanner()
+                                       .setIncludedAnnotations("org.springframework.stereotype.Controller");
             String basePackage = elem.getAttribute("base-package");
             String[] bp2 = basePackage.split(",");
             for (String pkg : bp2)
-                packages.add(pkg.trim());
+            {
+                scanner.addBasePackage(pkg.trim());
+            }
+            result.add(scanner);
         }
 
-        logger.debug("found " + packages.size() + " scanned packages: " + packages);
-        return packages;
+        return result;
     }
 
 
@@ -224,7 +227,7 @@ public class SpringContext
     }
 
 
-    private void processImports(Document dom, WarMachine war, String origFile)
+    private void processImports(WarMachine war, String origFile)
     {
         // < ="services.xml"/>
         List<Element> importDefs = xpfact.newXPath("/b:beans/b:import")

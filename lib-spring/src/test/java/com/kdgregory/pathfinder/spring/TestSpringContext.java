@@ -16,7 +16,6 @@ package com.kdgregory.pathfinder.spring;
 
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 
 import org.junit.Test;
 
@@ -24,6 +23,7 @@ import static org.junit.Assert.*;
 
 import org.apache.log4j.Logger;
 
+import com.kdgregory.pathfinder.core.ClasspathScanner;
 import com.kdgregory.pathfinder.core.WarMachine;
 import com.kdgregory.pathfinder.spring.test.WarNames;
 import com.kdgregory.pathfinder.util.TestHelpers;
@@ -152,20 +152,53 @@ public class TestSpringContext
         SpringContext ctx3 = new SpringContext(null, "classpath:contexts/combined1.xml \t\n classpath:contexts/combined2.xml");
         assertEquals("processed all files when separated by comma", 4, ctx3.getBeans().size());
     }
-    
-    
+
+
     @Test
-    public void testComponentScan() throws Exception 
+    public void testExtractSingleComponentScan() throws Exception
     {
-        SpringContext ctx = new SpringContext(null, "classpath:contexts/componentScan.xml");
-        Set<String> packages = ctx.getPackageScans();
-        
-        assertEquals("count of scanned packages", 4, packages.size());
-        assertTrue("single package found", packages.contains("com.example.pkg1"));
-        assertTrue("single package found", packages.contains("com.example.pkg2"));
-        assertTrue("single package found", packages.contains("com.example.pkg3"));
-        assertTrue("single package found", packages.contains("com.example.pkg4"));
+        SpringContext ctx = new SpringContext(null, "classpath:contexts/componentScanSingle.xml");
+        List<ClasspathScanner> scanners = ctx.getComponentScan();
+        assertEquals("number of scanner objects", 1, scanners.size());
+
+        ClasspathScanner scanner = scanners.get(0);
+        assertEquals("base package count", 1, scanner.getBasePackages().size());
+        assertEquals("base package config", Boolean.TRUE, scanner.getBasePackages().get("com/example/pkg1"));
     }
-    
+
+
+    @Test
+    public void testExtractComponentScanWithMultiplePackages() throws Exception
+    {
+        SpringContext ctx = new SpringContext(null, "classpath:contexts/componentScanSingleWithMultiplePackages.xml");
+        List<ClasspathScanner> scanners = ctx.getComponentScan();
+        assertEquals("number of scanner objects", 1, scanners.size());
+
+        ClasspathScanner scanner = scanners.get(0);
+        assertEquals("base package count", 3, scanner.getBasePackages().size());
+        assertEquals("base package config", Boolean.TRUE, scanner.getBasePackages().get("com/example/pkg1"));
+        assertEquals("base package config", Boolean.TRUE, scanner.getBasePackages().get("com/example/pkg2"));
+        assertEquals("base package config", Boolean.TRUE, scanner.getBasePackages().get("com/example/pkg3"));
+    }
+
+
+    @Test
+    public void testExtractMultipleComponentScans() throws Exception
+    {
+        SpringContext ctx = new SpringContext(null, "classpath:contexts/componentScanMultiple.xml");
+        List<ClasspathScanner> scanners = ctx.getComponentScan();
+        assertEquals("number of scanner objects", 2, scanners.size());
+
+        ClasspathScanner scanner1 = scanners.get(0);
+        assertEquals("scanner1 package count", 1, scanner1.getBasePackages().size());
+        assertEquals("scanner1 package config", Boolean.TRUE, scanner1.getBasePackages().get("com/example/pkg1"));
+
+        ClasspathScanner scanner2 = scanners.get(1);
+        assertEquals("scanner2 package count", 3, scanner2.getBasePackages().size());
+        assertEquals("scanner2 package config", Boolean.TRUE, scanner2.getBasePackages().get("com/example/pkg1"));
+        assertEquals("scanner2 package config", Boolean.TRUE, scanner2.getBasePackages().get("com/example/pkg2"));
+        assertEquals("scanner2 package config", Boolean.TRUE, scanner2.getBasePackages().get("com/example/pkg3"));
+    }
+
 
 }
