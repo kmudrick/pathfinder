@@ -1,4 +1,3 @@
-package com.kdgregory.pathfinder.spring;
 // Copyright (c) Keith D Gregory
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +12,7 @@ package com.kdgregory.pathfinder.spring;
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
+package com.kdgregory.pathfinder.spring;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -30,19 +29,21 @@ import com.kdgregory.pathfinder.util.TestHelpers;
 
 
 /**
- *  This test class verifies that the Spring Inspector will find config files
- *  that use default location.
+ *  Tests annotation-driven configuration. There are multiple testcases, each
+ *  exploring a different facet of the WAR (and reflecting the incremental
+ *  implementation process).
  */
-public class TestSpring2Default
+public class TestSpring3
 {
     private static WarMachine machine;
     private PathRepo pathRepo;
+
 
     @BeforeClass
     public static void loadWar()
     throws Exception
     {
-        machine = TestHelpers.createWarMachine(WarNames.SPRING_DEFAULT);
+        machine = TestHelpers.createWarMachine(WarNames.SPRING3);
     }
 
 
@@ -61,19 +62,22 @@ public class TestSpring2Default
 //  Testcases
 //----------------------------------------------------------------------------
 
-    // there's only one testcase, that checks both default locations ... and
-    // we'll never get here if the defaults aren't implemented, because the
-    // WAR is inpected at setup
     @Test
-    public void testDefaultLocations() throws Exception
+    public void testBasicAnnotations() throws Exception
     {
-        // this bean is defined in the servlet context
-        SpringDestination dest1 = (SpringDestination)pathRepo.get("/servlet/foo.html", HttpMethod.GET);
-        assertEquals("simpleControllerA", dest1.getBeanDefinition().getBeanName());
+        // the happy path
 
-        // and this one is defined in the root
-        SpringDestination dest2 = (SpringDestination)pathRepo.get("/servlet/bar.html", HttpMethod.POST);
-        assertEquals("simpleControllerB", dest2.getBeanDefinition().getBeanName());
+//        SpringDestination dest1 = (SpringDestination)pathRepo.get("/servlet/foo.html", HttpMethod.GET);
+//        assertEquals("bean: foo.html", "simpleControllerA", dest1.getBeanDefinition().getBeanName());
+//
+//        SpringDestination dest2 = (SpringDestination)pathRepo.get("/servlet/bar.html", HttpMethod.GET);
+//        assertEquals("bean: bar.html", "simpleControllerB", dest2.getBeanDefinition().getBeanName());
+//
+//        SpringDestination dest3 = (SpringDestination)pathRepo.get("/servlet/baz.html", HttpMethod.POST);
+//        assertEquals("bean: baz.html", "simpleControllerB", dest3.getBeanDefinition().getBeanName());
+
+        // verify that we add all  variants when method isn't specified
+
+        // and that we don't add methods that aren't specified
     }
-
 }

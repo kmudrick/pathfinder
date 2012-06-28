@@ -24,14 +24,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
 
 
 @Controller
 public class ControllerA
 {
-    @RequestMapping(value="/foo.html", method=RequestMethod.GET)
-    protected ModelAndView basicGet(
+    @RequestMapping(value="/foo.html")
+    protected ModelAndView getFoo(
             HttpServletRequest request,
             HttpServletResponse response)
     throws Exception
@@ -41,5 +40,4 @@ public class ControllerA
         model.put("controller", getClass().getName());
         return new ModelAndView("simple", "data", model);
     }
-
 }

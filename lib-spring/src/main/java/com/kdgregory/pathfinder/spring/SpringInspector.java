@@ -20,12 +20,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 
 import net.sf.kdgcommons.lang.StringUtil;
 import net.sf.practicalxml.xpath.XPathWrapperFactory;
 
+import com.kdgregory.pathfinder.core.ClasspathScanner;
 import com.kdgregory.pathfinder.core.Inspector;
 import com.kdgregory.pathfinder.core.PathRepo;
 import com.kdgregory.pathfinder.core.PathRepo.Destination;
@@ -98,6 +100,7 @@ implements Inspector
             logger.debug("processing mapping for \"" + urlPrefix + "\" from configFile " + configLoc);
             SpringContext context = new SpringContext(rootContext, war, configLoc);
             processSimpleUrlHandlerMapping(war, context, urlPrefix, paths);
+            processAnnotationMapping(war, context, urlPrefix, paths);
         }
         logger.info("SpringInspector finished");
     }
@@ -186,5 +189,25 @@ implements Inspector
                 paths.put(url, new SpringDestination(bean));
             }
         }
+    }
+
+
+    private void processAnnotationMapping(WarMachine war, SpringContext context, String urlPrefix, PathRepo paths)
+    {
+        logger.debug("processing Spring3 annotations");
+        Set<String> controllers = new TreeSet<String>();    // TreeSet is nicer to print
+
+            // FIXME - process explicit beans
+
+        List<ClasspathScanner> scanners = context.getComponentScans();
+
+        // FIXME - add ClasspathScanner.apply(), iterate classpath files manually
+        for (ClasspathScanner scanner : scanners)
+        {
+            Set<String> scanResults = scanner.scan(war);
+            controllers.addAll(scanResults);
+        }
+
+        logger.debug("found " + controllers.size() + " beans marked with @Controller");
     }
 }

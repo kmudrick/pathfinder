@@ -24,17 +24,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
 
 
 @Controller
 @RequestMapping("/B")
 public class ControllerB
 {
-    @RequestMapping(value="/foo.html", method=RequestMethod.GET)
-    protected ModelAndView basicGet(
+    @RequestMapping(value="/bar.html", method=RequestMethod.GET)
+    protected ModelAndView getBar(
             HttpServletRequest request,
-            HttpServletResponse response) 
+            HttpServletResponse response)
     throws Exception
     {
         Map<String,String> model = new HashMap<String,String>();
@@ -42,5 +41,17 @@ public class ControllerB
         model.put("controller", getClass().getName());
         return new ModelAndView("simple", "data", model);
     }
-
+    
+    
+    @RequestMapping(value="/baz.html", method=RequestMethod.GET)
+    protected ModelAndView getBaz(
+            HttpServletRequest request,
+            HttpServletResponse response)
+    throws Exception
+    {
+        Map<String,String> model = new HashMap<String,String>();
+        model.put("reqUrl", request.getRequestURI());
+        model.put("controller", getClass().getName());
+        return new ModelAndView("simple", "data", model);
+    }
 }

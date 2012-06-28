@@ -107,6 +107,14 @@ public class ClasspathScanner
     }
 
 
+    public Set<String> getIncludedAnnotations()
+    {
+        return (includedAnnotations == null)
+             ? Collections.<String>emptySet()
+             : Collections.unmodifiableSet(includedAnnotations);
+    }
+
+
 //----------------------------------------------------------------------------
 //  Operational Methods
 //----------------------------------------------------------------------------

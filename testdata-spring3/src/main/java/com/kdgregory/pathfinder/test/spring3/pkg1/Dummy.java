@@ -14,10 +14,29 @@
 
 package com.kdgregory.pathfinder.test.spring3.pkg1;
 
+import java.util.HashMap;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+
+
 /**
- *  A non-annotated class, used as a check for the scan-by-annotation tests.
+ *  A class that doesn't have a Controller annotation, but does have request
+ *  mappings. The SpringInspector should ignore it.
  */
 public class Dummy
 {
-    // nothing here
+    // note: same request mapping as ControllerA; should be ignored
+    @RequestMapping(value="/foo.html", method=RequestMethod.GET)
+    protected ModelAndView basicGet(
+            HttpServletRequest request,
+            HttpServletResponse response)
+    throws Exception
+    {
+        return new ModelAndView("simple", "data", new HashMap<Object,Object>());
+    }
 }

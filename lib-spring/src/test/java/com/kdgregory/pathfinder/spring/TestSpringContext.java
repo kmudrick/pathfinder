@@ -16,6 +16,7 @@ package com.kdgregory.pathfinder.spring;
 
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -158,12 +159,16 @@ public class TestSpringContext
     public void testExtractSingleComponentScan() throws Exception
     {
         SpringContext ctx = new SpringContext(null, "classpath:contexts/componentScanSingle.xml");
-        List<ClasspathScanner> scanners = ctx.getComponentScan();
+        List<ClasspathScanner> scanners = ctx.getComponentScans();
         assertEquals("number of scanner objects", 1, scanners.size());
 
         ClasspathScanner scanner = scanners.get(0);
         assertEquals("base package count", 1, scanner.getBasePackages().size());
         assertEquals("base package config", Boolean.TRUE, scanner.getBasePackages().get("com/example/pkg1"));
+
+        Set<String> annotationFilter = scanner.getIncludedAnnotations();
+        assertEquals("count of filter annotations", 1, annotationFilter.size());
+        assertTrue("annotations filter includes @Controller", annotationFilter.contains("org.springframework.stereotype.Controller"));
     }
 
 
@@ -171,7 +176,7 @@ public class TestSpringContext
     public void testExtractComponentScanWithMultiplePackages() throws Exception
     {
         SpringContext ctx = new SpringContext(null, "classpath:contexts/componentScanSingleWithMultiplePackages.xml");
-        List<ClasspathScanner> scanners = ctx.getComponentScan();
+        List<ClasspathScanner> scanners = ctx.getComponentScans();
         assertEquals("number of scanner objects", 1, scanners.size());
 
         ClasspathScanner scanner = scanners.get(0);
@@ -186,7 +191,7 @@ public class TestSpringContext
     public void testExtractMultipleComponentScans() throws Exception
     {
         SpringContext ctx = new SpringContext(null, "classpath:contexts/componentScanMultiple.xml");
-        List<ClasspathScanner> scanners = ctx.getComponentScan();
+        List<ClasspathScanner> scanners = ctx.getComponentScans();
         assertEquals("number of scanner objects", 2, scanners.size());
 
         ClasspathScanner scanner1 = scanners.get(0);

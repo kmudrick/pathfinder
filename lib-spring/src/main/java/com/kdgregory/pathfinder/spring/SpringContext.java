@@ -145,8 +145,8 @@ public class SpringContext
 
         return beans;
     }
-    
-    
+
+
     /**
      *  Finds all <code>&lt;ctx:component-scan&gt;</code> entries and returns
      *  scanner objects for each. Looks in the current context only, and restricts
@@ -155,11 +155,11 @@ public class SpringContext
      *  FIXME - does not support inclusions or exclusions; will need to return
      *          a list of scanner objects
      */
-    public List<ClasspathScanner> getComponentScan()
+    public List<ClasspathScanner> getComponentScans()
     {
         List<Element> scanDefs = xpfact.newXPath("/b:beans/ctx:component-scan")
                                  .evaluate(dom, Element.class);
-        
+
         List<ClasspathScanner> result = new ArrayList<ClasspathScanner>(scanDefs.size());
         for (Element elem : scanDefs)
         {
