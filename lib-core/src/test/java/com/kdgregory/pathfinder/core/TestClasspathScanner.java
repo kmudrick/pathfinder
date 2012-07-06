@@ -15,14 +15,17 @@
 package com.kdgregory.pathfinder.core;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import com.kdgregory.bcelx.parser.AnnotationParser;
 import com.kdgregory.pathfinder.spring.test.WarNames;
 import com.kdgregory.pathfinder.util.TestHelpers;
+
 
 public class TestClasspathScanner
 {
@@ -121,6 +124,23 @@ public class TestClasspathScanner
         assertEquals("number of files found", 2, files.size());
         assertTrue("expected ControllerA", files.contains("com/kdgregory/pathfinder/test/spring3/pkg1/ControllerA.class"));
         assertTrue("expected ControllerB", files.contains("com/kdgregory/pathfinder/test/spring3/pkg2/ControllerB.class"));
+    }
+
+
+    @Test
+    public void testAnnotationFilterWithRetainedParsedClasses() throws Exception
+    {
+        WarMachine machine = TestHelpers.createWarMachine(WarNames.SPRING3);
+
+        ClasspathScanner scanner = new ClasspathScanner()
+                                   .addBasePackage("com.kdgregory.pathfinder.test.spring3")
+                                   .setIncludedAnnotations("org.springframework.stereotype.Controller");
+
+        Map<String,AnnotationParser> parsedClasses = new HashMap<String,AnnotationParser>();
+        scanner.scan(machine, parsedClasses);
+        assertEquals("number of files found", 2, parsedClasses.size());
+        assertNotNull("expected ControllerA", parsedClasses.get("com/kdgregory/pathfinder/test/spring3/pkg1/ControllerA.class"));
+        assertNotNull("expected ControllerB", parsedClasses.get("com/kdgregory/pathfinder/test/spring3/pkg2/ControllerB.class"));
     }
 
 }

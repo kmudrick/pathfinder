@@ -118,17 +118,29 @@ public class ClasspathScanner
 //----------------------------------------------------------------------------
 //  Operational Methods
 //----------------------------------------------------------------------------
+
     /**
      *  Perform the scan.
      */
     public Set<String> scan(WarMachine war)
+    {
+        return scan(war, new HashMap<String,AnnotationParser>());
+    }
+
+
+    /**
+     *  Performs the scan, retaining any classes that pass an annotation
+     *  filter (if there is one). The passed map is keyed by filename; note
+     *  that it may contain more entries than the returned set of filenames.
+     */
+    public Set<String> scan(WarMachine war, Map<String,AnnotationParser> parseResults)
     {
         // returns a TreeSet to simplify debugging; it's not part of the contract
         Set<String> result = new TreeSet<String>();
         for (String file :  war.getFilesOnClasspath())
         {
             boolean include = applyBasePackageFilter(file)
-                           && applyIncludedAnnotationFilter(war, file);
+                           && applyIncludedAnnotationFilter(war, file, parseResults);
             if (include)
                 result.add(file);
         }
@@ -137,7 +149,7 @@ public class ClasspathScanner
 
 
 //----------------------------------------------------------------------------
-//  Filterns
+//  Filters
 //----------------------------------------------------------------------------
 
     private boolean applyBasePackageFilter(String filename)
@@ -163,7 +175,7 @@ public class ClasspathScanner
     }
 
 
-    private boolean applyIncludedAnnotationFilter(WarMachine war, String filename)
+    private boolean applyIncludedAnnotationFilter(WarMachine war, String filename, Map<String,AnnotationParser> parseResults)
     {
         if (includedAnnotations == null)
             return true;
@@ -175,7 +187,10 @@ public class ClasspathScanner
         for (Annotation anno : ap.getClassVisibleAnnotations())
         {
             if (includedAnnotations.contains(anno.getClassName()))
+            {
+                parseResults.put(filename, ap);
                 return true;
+            }
         }
         return false;
     }

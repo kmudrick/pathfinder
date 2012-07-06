@@ -15,18 +15,24 @@
 package com.kdgregory.pathfinder.spring;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.apache.bcel.classfile.JavaClass;
+import org.apache.bcel.classfile.Method;
 import org.apache.log4j.Logger;
 
 import net.sf.kdgcommons.lang.StringUtil;
 import net.sf.practicalxml.xpath.XPathWrapperFactory;
 
+import com.kdgregory.bcelx.classfile.Annotation;
+import com.kdgregory.bcelx.parser.AnnotationParser;
 import com.kdgregory.pathfinder.core.ClasspathScanner;
 import com.kdgregory.pathfinder.core.Inspector;
 import com.kdgregory.pathfinder.core.PathRepo;
@@ -99,8 +105,8 @@ implements Inspector
 
             logger.debug("processing mapping for \"" + urlPrefix + "\" from configFile " + configLoc);
             SpringContext context = new SpringContext(rootContext, war, configLoc);
-            processSimpleUrlHandlerMapping(war, context, urlPrefix, paths);
-            processAnnotationMapping(war, context, urlPrefix, paths);
+            processSimpleUrlHandlerMappings(war, context, urlPrefix, paths);
+            processAnnotationMappings(war, context, urlPrefix, paths);
         }
         logger.info("SpringInspector finished");
     }
@@ -165,7 +171,7 @@ implements Inspector
     }
 
 
-    private void processSimpleUrlHandlerMapping(WarMachine war, SpringContext context, String urlPrefix, PathRepo paths)
+    private void processSimpleUrlHandlerMappings(WarMachine war, SpringContext context, String urlPrefix, PathRepo paths)
     {
         List<BeanDefinition> defs = context.getBeansByClass("org.springframework.web.servlet.handler.SimpleUrlHandlerMapping");
         logger.debug("found " + defs.size() + " SimpleUrlHandlerMapping beans");
@@ -192,22 +198,91 @@ implements Inspector
     }
 
 
-    private void processAnnotationMapping(WarMachine war, SpringContext context, String urlPrefix, PathRepo paths)
+    private void processAnnotationMappings(WarMachine war, SpringContext context, String urlPrefix, PathRepo paths)
     {
         logger.debug("processing Spring3 annotations");
-        Set<String> controllers = new TreeSet<String>();    // TreeSet is nicer to print
+        Set<String> controllers = new TreeSet<String>();    // TreeSet is nicer to print for debugging
 
-            // FIXME - process explicit beans
+        // FIXME - process explicit beans
 
+        Map<String,AnnotationParser> parsedClasses = new TreeMap<String,AnnotationParser>();
         List<ClasspathScanner> scanners = context.getComponentScans();
-
-        // FIXME - add ClasspathScanner.apply(), iterate classpath files manually
         for (ClasspathScanner scanner : scanners)
         {
-            Set<String> scanResults = scanner.scan(war);
+            Set<String> scanResults = scanner.scan(war, parsedClasses);
             controllers.addAll(scanResults);
         }
 
         logger.debug("found " + controllers.size() + " beans marked with @Controller");
+
+        for (String filename : controllers)
+        {
+            processAnnotatedController(filename, parsedClasses.get(filename), war, context, urlPrefix, paths);
+        }
+    }
+
+
+    private void processAnnotatedController(
+            String filename, AnnotationParser parsedClass,
+            WarMachine war, SpringContext context, String urlPrefix, PathRepo paths)
+    {
+        logger.debug("processing annotations from " + filename);
+        logger.debug("initial urlPrefix: " + urlPrefix);
+        Annotation classMapping = parsedClass.getClassAnnotation("org.springframework.web.bind.annotation.RequestMapping");
+        BeanDefinition beanDef = createBeanDefinition(parsedClass);
+        for (String prefix : getMappingUrls(urlPrefix, classMapping))
+        {
+            logger.debug("updated prefix from controller mapping: " + prefix);
+            for (Method method : parsedClass.getAnnotatedMethods("org.springframework.web.bind.annotation.RequestMapping"))
+            {
+                processAnnotatedControllerMethods(beanDef, parsedClass, method, war, context, urlPrefix, paths);
+            }
+        }
+    }
+
+
+    private void processAnnotatedControllerMethods(
+            BeanDefinition beanDef, AnnotationParser parsedClass, Method method,
+            WarMachine war, SpringContext context, String urlPrefix, PathRepo paths)
+    {
+        Annotation anno = parsedClass.getMethodAnnotation(method, "org.springframework.web.bind.annotation.RequestMapping");
+        for (String methodUrl : getMappingUrls(urlPrefix, anno))
+        {
+            paths.put(methodUrl, new SpringDestination(beanDef));
+        }
+    }
+
+
+    private BeanDefinition createBeanDefinition(AnnotationParser ap)
+    {
+        JavaClass parsedClass = ap.getParsedClass();
+        String className = parsedClass.getClassName();
+
+        return new BeanDefinition(className);
+    }
+
+
+    private List<String> getMappingUrls(String urlPrefix, Annotation requestMapping)
+    {
+        // note: called at both class level, where it might be empty, and
+        //       at method level, where it had better not be
+
+        if (requestMapping == null)
+        {
+            return Arrays.asList(urlPrefix);
+        }
+
+        List<Object> mappings = requestMapping.getValue().asListOfObjects();
+        if (mappings.size() == 0)
+        {
+            return Arrays.asList(urlPrefix);
+        }
+
+        List<String> result = new ArrayList<String>(mappings.size());
+        for (Object mapping : mappings)
+        {
+            result.add(urlPrefix + mapping);
+        }
+        return result;
     }
 }

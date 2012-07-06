@@ -56,6 +56,22 @@ public class BeanDefinition
 
 
     /**
+     *  Called for beans defined with annotations; all information must be
+     *  passed in.
+     *  
+     *  @param  className   The fully-qualified name of the bean class. The
+     *                      bean's name will be formed from the simple name
+     *                      of the class, with the first letter lowercased.
+     */
+    public BeanDefinition(String className)
+    {
+        beanName = StringUtil.extractRightOfLast(className, ".");
+        beanName = beanName.substring(0, 1).toLowerCase() + beanName.substring(1);
+        beanClass = className;
+    }
+
+
+    /**
      *  Returns the name of this bean: the <code>id</code> attribute for
      *  XML-configured beans, ?? for annotation-configured beans.
      */
