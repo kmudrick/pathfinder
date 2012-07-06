@@ -68,16 +68,28 @@ public class TestSpring3
         // the happy path
 
         SpringDestination dest1 = (SpringDestination)pathRepo.get("/servlet/foo.html", HttpMethod.GET);
-        assertEquals("bean: foo.html", "controllerA", dest1.getBeanDefinition().getBeanName());
+        assertEquals("foo.html GET", "controllerA", dest1.getBeanDefinition().getBeanName());
 
         SpringDestination dest2 = (SpringDestination)pathRepo.get("/servlet/B/bar.html", HttpMethod.GET);
-        assertEquals("bean: bar.html", "controllerB", dest2.getBeanDefinition().getBeanName());
+        assertEquals("bar.html GET", "controllerB", dest2.getBeanDefinition().getBeanName());
 
         SpringDestination dest3 = (SpringDestination)pathRepo.get("/servlet/B/baz.html", HttpMethod.POST);
-        assertEquals("bean: baz.html", "controllerB", dest3.getBeanDefinition().getBeanName());
+        assertEquals("baz.html POST", "controllerB", dest3.getBeanDefinition().getBeanName());
 
         // verify that we add all  variants when method isn't specified
 
+        SpringDestination dest4 = (SpringDestination)pathRepo.get("/servlet/foo.html", HttpMethod.POST);
+        assertEquals("foo.html POST", "controllerA", dest4.getBeanDefinition().getBeanName());
+
+        SpringDestination dest5 = (SpringDestination)pathRepo.get("/servlet/foo.html", HttpMethod.PUT);
+        assertEquals("foo.html PUT", "controllerA", dest5.getBeanDefinition().getBeanName());
+
+        SpringDestination dest6 = (SpringDestination)pathRepo.get("/servlet/foo.html", HttpMethod.DELETE);
+        assertEquals("foo.html DELETE", "controllerA", dest6.getBeanDefinition().getBeanName());
+
         // and that we don't add methods that aren't specified
+
+        SpringDestination dest7 = (SpringDestination)pathRepo.get("/servlet/B/baz.html", HttpMethod.GET);
+        assertNull("baz.html GET",  dest7);
     }
 }

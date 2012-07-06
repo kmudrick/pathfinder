@@ -43,7 +43,7 @@ public class ControllerB
     }
     
     
-    @RequestMapping(value="/baz.html", method=RequestMethod.GET)
+    @RequestMapping(value="/baz.html", method=RequestMethod.POST)
     protected ModelAndView getBaz(
             HttpServletRequest request,
             HttpServletResponse response)

@@ -28,10 +28,13 @@ import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.log4j.Logger;
 
+import org.springframework.web.bind.annotation.RequestMethod;
+
 import net.sf.kdgcommons.lang.StringUtil;
 import net.sf.practicalxml.xpath.XPathWrapperFactory;
 
 import com.kdgregory.bcelx.classfile.Annotation;
+import com.kdgregory.bcelx.classfile.Annotation.ParamValue;
 import com.kdgregory.bcelx.parser.AnnotationParser;
 import com.kdgregory.pathfinder.core.ClasspathScanner;
 import com.kdgregory.pathfinder.core.Inspector;
@@ -248,7 +251,10 @@ implements Inspector
         Annotation anno = ap.getMethodAnnotation(method, "org.springframework.web.bind.annotation.RequestMapping");
         for (String methodUrl : getMappingUrls(urlPrefix, anno))
         {
-            paths.put(methodUrl, new SpringDestination(beanDef));
+            for (HttpMethod reqMethod : getRequestMethods(anno))
+            {
+                paths.put(methodUrl, reqMethod, new SpringDestination(beanDef));
+            }
         }
     }
 
@@ -282,6 +288,37 @@ implements Inspector
         for (Object mapping : mappings)
         {
             result.add(urlPrefix + mapping);
+        }
+        return result;
+    }
+
+
+    private List<HttpMethod> getRequestMethods(Annotation requestMapping)
+    {
+        ParamValue methods = requestMapping.getParam("method");
+        if (methods == null)
+            return Arrays.asList(HttpMethod.ALL);
+
+        List<HttpMethod> result = new ArrayList<HttpMethod>();
+        for (Object method : methods.asListOfObjects())
+        {
+            switch ((RequestMethod)method)
+            {
+                case GET :
+                    result.add(HttpMethod.GET);
+                    break;
+                case POST :
+                    result.add(HttpMethod.POST);
+                    break;
+                case PUT :
+                    result.add(HttpMethod.PUT);
+                    break;
+                case DELETE :
+                    result.add(HttpMethod.DELETE);
+                    break;
+                default :
+                    throw new UnsupportedOperationException("don't know how to process Spring request method: " + method);
+            }
         }
         return result;
     }
