@@ -223,29 +223,29 @@ implements Inspector
 
 
     private void processAnnotatedController(
-            String filename, AnnotationParser parsedClass,
+            String filename, AnnotationParser ap,
             WarMachine war, SpringContext context, String urlPrefix, PathRepo paths)
     {
         logger.debug("processing annotations from " + filename);
         logger.debug("initial urlPrefix: " + urlPrefix);
-        Annotation classMapping = parsedClass.getClassAnnotation("org.springframework.web.bind.annotation.RequestMapping");
-        BeanDefinition beanDef = createBeanDefinition(parsedClass);
-        for (String prefix : getMappingUrls(urlPrefix, classMapping))
+        BeanDefinition beanDef = createBeanDefinition(ap);
+        Annotation classMapping = ap.getClassAnnotation("org.springframework.web.bind.annotation.RequestMapping");
+        for (String classPrefix : getMappingUrls(urlPrefix, classMapping))
         {
-            logger.debug("updated prefix from controller mapping: " + prefix);
-            for (Method method : parsedClass.getAnnotatedMethods("org.springframework.web.bind.annotation.RequestMapping"))
+            logger.debug("updated prefix from controller mapping: " + classPrefix);
+            for (Method method : ap.getAnnotatedMethods("org.springframework.web.bind.annotation.RequestMapping"))
             {
-                processAnnotatedControllerMethods(beanDef, parsedClass, method, war, context, urlPrefix, paths);
+                processAnnotatedControllerMethods(beanDef, ap, method, war, context, classPrefix, paths);
             }
         }
     }
 
 
     private void processAnnotatedControllerMethods(
-            BeanDefinition beanDef, AnnotationParser parsedClass, Method method,
+            BeanDefinition beanDef, AnnotationParser ap, Method method,
             WarMachine war, SpringContext context, String urlPrefix, PathRepo paths)
     {
-        Annotation anno = parsedClass.getMethodAnnotation(method, "org.springframework.web.bind.annotation.RequestMapping");
+        Annotation anno = ap.getMethodAnnotation(method, "org.springframework.web.bind.annotation.RequestMapping");
         for (String methodUrl : getMappingUrls(urlPrefix, anno))
         {
             paths.put(methodUrl, new SpringDestination(beanDef));

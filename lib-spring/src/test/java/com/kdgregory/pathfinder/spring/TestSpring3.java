@@ -70,10 +70,10 @@ public class TestSpring3
         SpringDestination dest1 = (SpringDestination)pathRepo.get("/servlet/foo.html", HttpMethod.GET);
         assertEquals("bean: foo.html", "controllerA", dest1.getBeanDefinition().getBeanName());
 
-        SpringDestination dest2 = (SpringDestination)pathRepo.get("/servlet/bar.html", HttpMethod.GET);
+        SpringDestination dest2 = (SpringDestination)pathRepo.get("/servlet/B/bar.html", HttpMethod.GET);
         assertEquals("bean: bar.html", "controllerB", dest2.getBeanDefinition().getBeanName());
 
-        SpringDestination dest3 = (SpringDestination)pathRepo.get("/servlet/baz.html", HttpMethod.POST);
+        SpringDestination dest3 = (SpringDestination)pathRepo.get("/servlet/B/baz.html", HttpMethod.POST);
         assertEquals("bean: baz.html", "controllerB", dest3.getBeanDefinition().getBeanName());
 
         // verify that we add all  variants when method isn't specified
