@@ -58,7 +58,7 @@ public class BeanDefinition
     /**
      *  Called for beans defined with annotations; all information must be
      *  passed in.
-     *  
+     *
      *  @param  className   The fully-qualified name of the bean class. The
      *                      bean's name will be formed from the simple name
      *                      of the class, with the first letter lowercased.
@@ -147,6 +147,14 @@ public class BeanDefinition
             ret = tryParsePropertiesFromProps(propDef);
 
         return ret;
+    }
+
+
+
+    @Override
+    public String toString()
+    {
+        return getClass().getSimpleName() + "[id=" + getBeanName() + ", class=" + getBeanClass() + "]";
     }
 
 
