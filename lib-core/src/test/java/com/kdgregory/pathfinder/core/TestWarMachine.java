@@ -31,7 +31,7 @@ import net.sf.practicalxml.DomUtil;
 
 import com.kdgregory.pathfinder.core.WarMachine.ServletMapping;
 import com.kdgregory.pathfinder.core.impl.WarMachineImpl;
-import com.kdgregory.pathfinder.spring.test.WarNames;
+import com.kdgregory.pathfinder.test.WarNames;
 import com.kdgregory.pathfinder.util.TestHelpers;
 
 

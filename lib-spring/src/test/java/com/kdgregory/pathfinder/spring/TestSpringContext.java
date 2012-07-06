@@ -26,7 +26,7 @@ import org.apache.log4j.Logger;
 
 import com.kdgregory.pathfinder.core.ClasspathScanner;
 import com.kdgregory.pathfinder.core.WarMachine;
-import com.kdgregory.pathfinder.spring.test.WarNames;
+import com.kdgregory.pathfinder.test.WarNames;
 import com.kdgregory.pathfinder.util.TestHelpers;
 
 

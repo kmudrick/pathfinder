@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.kdgregory.pathfinder.spring.test;
+package com.kdgregory.pathfinder.test;
 
 
 /**
