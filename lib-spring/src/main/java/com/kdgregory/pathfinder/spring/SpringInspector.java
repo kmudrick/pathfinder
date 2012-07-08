@@ -37,7 +37,6 @@ import com.kdgregory.bcelx.classfile.Annotation.ParamValue;
 import com.kdgregory.bcelx.parser.AnnotationParser;
 
 import com.kdgregory.pathfinder.core.ClasspathScanner;
-import com.kdgregory.pathfinder.core.Destination;
 import com.kdgregory.pathfinder.core.HttpMethod;
 import com.kdgregory.pathfinder.core.Inspector;
 import com.kdgregory.pathfinder.core.PathRepo;
@@ -57,57 +56,7 @@ implements Inspector
 
 
 //----------------------------------------------------------------------------
-//  The Destinations that we support
-//----------------------------------------------------------------------------
-
-    public static class SpringDestination
-    implements Destination
-    {
-        private BeanDefinition beanDef;
-        private String method;
-
-        /**
-         *  Constructor for mappings read from an XML file.
-         */
-        public SpringDestination(BeanDefinition beanDef)
-        {
-            this.beanDef = beanDef;
-        }
-        
-        /**
-         *  Constructor for annotated classes.
-         */
-        public SpringDestination(String className, String method)
-        {
-            this.beanDef = new BeanDefinition(className);
-            this.method  = method;
-        }
-
-        public BeanDefinition getBeanDefinition()
-        {
-            return beanDef;
-        }
-        
-        public String getClassName()
-        {
-            return beanDef.getBeanClass();
-        }
-        
-        public String getMethodName()
-        {
-            return method;
-        }
-
-        @Override
-        public String toString()
-        {
-            return beanDef.getBeanClass();
-        }
-    }
-
-
-//----------------------------------------------------------------------------
-//  Inspector Implementation
+//  Inspector
 //----------------------------------------------------------------------------
 
     @Override
