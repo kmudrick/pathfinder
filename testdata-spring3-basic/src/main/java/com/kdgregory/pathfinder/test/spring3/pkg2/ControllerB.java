@@ -44,7 +44,7 @@ public class ControllerB
     
     
     @RequestMapping(value="/baz.html", method=RequestMethod.POST)
-    protected ModelAndView getBaz(
+    protected ModelAndView setBaz(
             HttpServletRequest request,
             HttpServletResponse response)
     throws Exception

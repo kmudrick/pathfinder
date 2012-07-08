@@ -64,7 +64,9 @@ public class TestSpring3
 
         SpringDestination dest1 = (SpringDestination)pathRepo.get("/servlet/foo.html", HttpMethod.GET);
         assertNotNull("mapping exists", dest1);
-        assertEquals("bean", "controllerA", dest1.getBeanDefinition().getBeanName());
+        assertEquals("bean",    "controllerA", dest1.getBeanDefinition().getBeanName());
+        assertEquals("class",   "com.kdgregory.pathfinder.test.spring3.pkg1.ControllerA", dest1.getClassName());
+        assertEquals("method",  "getFoo", dest1.getMethodName());
     }
 
 
@@ -75,11 +77,15 @@ public class TestSpring3
 
         SpringDestination dest1 = (SpringDestination)pathRepo.get("/servlet/B/bar.html", HttpMethod.GET);
         assertNotNull("GET mapping exists", dest1);
-        assertEquals("GET bean", "controllerB", dest1.getBeanDefinition().getBeanName());
+        assertEquals("GET bean",    "controllerB", dest1.getBeanDefinition().getBeanName());
+        assertEquals("GET class",   "com.kdgregory.pathfinder.test.spring3.pkg2.ControllerB", dest1.getClassName());
+        assertEquals("GET method",  "getBar", dest1.getMethodName());
 
         SpringDestination dest2 = (SpringDestination)pathRepo.get("/servlet/B/baz.html", HttpMethod.POST);
         assertNotNull("POST mapping exists", dest2);
-        assertEquals("POST bean", "controllerB", dest2.getBeanDefinition().getBeanName());
+        assertEquals("POST bean",   "controllerB", dest2.getBeanDefinition().getBeanName());
+        assertEquals("POST class",  "com.kdgregory.pathfinder.test.spring3.pkg2.ControllerB", dest2.getClassName());
+        assertEquals("POST method", "setBaz", dest2.getMethodName());
     }
 
 
@@ -90,7 +96,9 @@ public class TestSpring3
 
         SpringDestination dest1 = (SpringDestination)pathRepo.get("/servlet/C", HttpMethod.GET);
         assertNotNull("mapping exists", dest1);
-        assertEquals("bean", "controllerC", dest1.getBeanDefinition().getBeanName());
+        assertEquals("bean",    "controllerC", dest1.getBeanDefinition().getBeanName());
+        assertEquals("class",   "com.kdgregory.pathfinder.test.spring3.pkg2.ControllerC", dest1.getClassName());
+        assertEquals("method",  "getC", dest1.getMethodName());
     }
 
 

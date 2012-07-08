@@ -24,7 +24,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Method;
 import org.apache.log4j.Logger;
 
@@ -36,6 +35,7 @@ import net.sf.practicalxml.xpath.XPathWrapperFactory;
 import com.kdgregory.bcelx.classfile.Annotation;
 import com.kdgregory.bcelx.classfile.Annotation.ParamValue;
 import com.kdgregory.bcelx.parser.AnnotationParser;
+
 import com.kdgregory.pathfinder.core.ClasspathScanner;
 import com.kdgregory.pathfinder.core.Destination;
 import com.kdgregory.pathfinder.core.HttpMethod;
@@ -64,16 +64,38 @@ implements Inspector
     implements Destination
     {
         private BeanDefinition beanDef;
+        private String method;
 
+        /**
+         *  Constructor for mappings read from an XML file.
+         */
         public SpringDestination(BeanDefinition beanDef)
         {
             this.beanDef = beanDef;
         }
+        
+        /**
+         *  Constructor for annotated classes.
+         */
+        public SpringDestination(String className, String method)
+        {
+            this.beanDef = new BeanDefinition(className);
+            this.method  = method;
+        }
 
-        /** This method exists primarily for testing */
         public BeanDefinition getBeanDefinition()
         {
             return beanDef;
+        }
+        
+        public String getClassName()
+        {
+            return beanDef.getBeanClass();
+        }
+        
+        public String getMethodName()
+        {
+            return method;
         }
 
         @Override
@@ -235,40 +257,32 @@ implements Inspector
     {
         logger.debug("processing annotations from " + filename);
         logger.debug("initial urlPrefix: " + urlPrefix);
-        BeanDefinition beanDef = createBeanDefinition(ap);
+        String className = ap.getParsedClass().getClassName();
         Annotation classMapping = ap.getClassAnnotation("org.springframework.web.bind.annotation.RequestMapping");
         for (String classPrefix : getMappingUrls(urlPrefix, classMapping))
         {
             logger.debug("updated prefix from controller mapping: " + classPrefix);
             for (Method method : ap.getAnnotatedMethods("org.springframework.web.bind.annotation.RequestMapping"))
             {
-                processAnnotatedControllerMethods(beanDef, ap, method, war, context, classPrefix, paths);
+                processAnnotatedControllerMethods(className, method, ap, war, context, classPrefix, paths);
             }
         }
     }
 
 
     private void processAnnotatedControllerMethods(
-            BeanDefinition beanDef, AnnotationParser ap, Method method,
+            String className, Method method, AnnotationParser ap, 
             WarMachine war, SpringContext context, String urlPrefix, PathRepo paths)
     {
+        String methodName = method.getName();
         Annotation anno = ap.getMethodAnnotation(method, "org.springframework.web.bind.annotation.RequestMapping");
         for (String methodUrl : getMappingUrls(urlPrefix, anno))
         {
             for (HttpMethod reqMethod : getRequestMethods(anno))
             {
-                paths.put(methodUrl, reqMethod, new SpringDestination(beanDef));
+                paths.put(methodUrl, reqMethod, new SpringDestination(className, methodName));
             }
         }
-    }
-
-
-    private BeanDefinition createBeanDefinition(AnnotationParser ap)
-    {
-        JavaClass parsedClass = ap.getParsedClass();
-        String className = parsedClass.getClassName();
-
-        return new BeanDefinition(className);
     }
 
 
