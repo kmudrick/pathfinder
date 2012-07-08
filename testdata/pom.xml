@@ -77,7 +77,7 @@
         </dependency>
         <dependency>
             <groupId>com.kdgregory.pathfinder</groupId>
-            <artifactId>pathfinder-testdata-spring3</artifactId>
+            <artifactId>pathfinder-testdata-spring3-basic</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>

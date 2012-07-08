@@ -44,7 +44,7 @@ public class TestSpring3
     public static void loadWar()
     throws Exception
     {
-        machine = TestHelpers.createWarMachine(WarNames.SPRING3);
+        machine = TestHelpers.createWarMachine(WarNames.SPRING3_BASIC);
     }
 
 
