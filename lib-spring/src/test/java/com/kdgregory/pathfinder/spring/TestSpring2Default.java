@@ -1,4 +1,3 @@
-package com.kdgregory.pathfinder.spring;
 // Copyright (c) Keith D Gregory
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +12,7 @@ package com.kdgregory.pathfinder.spring;
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+package com.kdgregory.pathfinder.spring;
 
 
 import org.junit.Before;
@@ -20,9 +20,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import com.kdgregory.pathfinder.core.HttpMethod;
 import com.kdgregory.pathfinder.core.PathRepo;
-import com.kdgregory.pathfinder.core.PathRepo.HttpMethod;
 import com.kdgregory.pathfinder.core.WarMachine;
+import com.kdgregory.pathfinder.core.impl.PathRepoImpl;
 import com.kdgregory.pathfinder.servlet.ServletInspector;
 import com.kdgregory.pathfinder.spring.SpringInspector.SpringDestination;
 import com.kdgregory.pathfinder.test.WarNames;
@@ -51,7 +52,7 @@ public class TestSpring2Default
     throws Exception
     {
         // we run the inspector chain here, assert its actions in the test methods
-        pathRepo = new PathRepo();
+        pathRepo = new PathRepoImpl();
         new ServletInspector().inspect(machine, pathRepo);
         new SpringInspector().inspect(machine, pathRepo);
     }
