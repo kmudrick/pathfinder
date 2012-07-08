@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+package com.kdgregory.pathfinder.spring;
+>>>>>>> master
 // Copyright (c) Keith D Gregory
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,7 +16,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+<<<<<<< HEAD
 package com.kdgregory.pathfinder.spring;
+=======
+
+>>>>>>> master
 
 import org.junit.Before;
 import org.junit.BeforeClass;
