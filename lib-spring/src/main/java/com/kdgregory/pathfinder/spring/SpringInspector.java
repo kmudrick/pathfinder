@@ -169,8 +169,12 @@ implements Inspector
     private String extractUrlPrefix(String urlPattern)
     {
         int trimAt = urlPattern.lastIndexOf("/");
-        return (trimAt > 0) ? urlPattern.substring(0, trimAt)
-                            : urlPattern;
+        String prefix = (trimAt > 0)
+                      ? urlPattern.substring(0, trimAt)
+                      : urlPattern;
+        if (prefix.equals("/"))
+            prefix = "";
+        return prefix;
     }
 
 
