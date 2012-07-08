@@ -270,15 +270,20 @@ implements Inspector
 
     private List<String> getMappingUrls(String urlPrefix, Annotation requestMapping)
     {
-        // note: called at both class level, where it might be empty, and
-        //       at method level, where it had better not be
+        // note: called at both class and method level; either can be empty/missing
 
         if (requestMapping == null)
         {
             return Arrays.asList(urlPrefix);
         }
 
-        List<Object> mappings = requestMapping.getValue().asListOfObjects();
+        ParamValue paramValue = requestMapping.getValue();
+        if (paramValue == null)
+        {
+            return Arrays.asList(urlPrefix);
+        }
+
+        List<Object> mappings = paramValue.asListOfObjects();
         if (mappings.size() == 0)
         {
             return Arrays.asList(urlPrefix);
