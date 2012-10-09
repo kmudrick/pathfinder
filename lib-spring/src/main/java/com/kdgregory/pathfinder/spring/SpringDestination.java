@@ -14,6 +14,8 @@
 
 package com.kdgregory.pathfinder.spring;
 
+import net.sf.kdgcommons.lang.StringUtil;
+
 import com.kdgregory.pathfinder.core.Destination;
 
 public class SpringDestination
@@ -57,6 +59,9 @@ implements Destination
     @Override
     public String toString()
     {
-        return beanDef.getBeanClass();
+        if (StringUtil.isBlank(method))
+            return beanDef.getBeanClass();
+        else
+            return beanDef.getBeanClass() + "." + method + "()";
     }
 }

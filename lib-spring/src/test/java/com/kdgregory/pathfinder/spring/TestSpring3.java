@@ -66,6 +66,7 @@ public class TestSpring3
         assertEquals("bean",    "controllerA", dest1.getBeanDefinition().getBeanName());
         assertEquals("class",   "com.kdgregory.pathfinder.test.spring3.pkg1.ControllerA", dest1.getClassName());
         assertEquals("method",  "getFoo", dest1.getMethodName());
+        assertEquals("toString","com.kdgregory.pathfinder.test.spring3.pkg1.ControllerA.getFoo()", dest1.toString());
     }
 
 
@@ -79,12 +80,14 @@ public class TestSpring3
         assertEquals("GET bean",    "controllerB", dest1.getBeanDefinition().getBeanName());
         assertEquals("GET class",   "com.kdgregory.pathfinder.test.spring3.pkg2.ControllerB", dest1.getClassName());
         assertEquals("GET method",  "getBar", dest1.getMethodName());
+        assertEquals("toString","com.kdgregory.pathfinder.test.spring3.pkg2.ControllerB.getBar()", dest1.toString());
 
         SpringDestination dest2 = (SpringDestination)pathRepo.get("/servlet/B/baz.html", HttpMethod.POST);
         assertNotNull("POST mapping exists", dest2);
         assertEquals("POST bean",   "controllerB", dest2.getBeanDefinition().getBeanName());
         assertEquals("POST class",  "com.kdgregory.pathfinder.test.spring3.pkg2.ControllerB", dest2.getClassName());
         assertEquals("POST method", "setBaz", dest2.getMethodName());
+        assertEquals("toString","com.kdgregory.pathfinder.test.spring3.pkg2.ControllerB.setBaz()", dest2.toString());
     }
 
 
@@ -98,6 +101,7 @@ public class TestSpring3
         assertEquals("bean",    "controllerC", dest1.getBeanDefinition().getBeanName());
         assertEquals("class",   "com.kdgregory.pathfinder.test.spring3.pkg2.ControllerC", dest1.getClassName());
         assertEquals("method",  "getC", dest1.getMethodName());
+        assertEquals("toString","com.kdgregory.pathfinder.test.spring3.pkg2.ControllerC.getC()", dest1.toString());
     }
 
 
