@@ -25,9 +25,11 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.bcel.classfile.Method;
+import org.apache.bcel.generic.Type;
 import org.apache.log4j.Logger;
 
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import net.sf.kdgcommons.lang.StringUtil;
 import net.sf.practicalxml.xpath.XPathWrapperFactory;
@@ -223,15 +225,35 @@ implements Inspector
             String className, Method method, AnnotationParser ap, 
             WarMachine war, SpringContext context, String urlPrefix, PathRepo paths)
     {
+        Map<String,String> requestParams = processParameterAnnotations(method, ap);
+        
         String methodName = method.getName();
         Annotation anno = ap.getMethodAnnotation(method, "org.springframework.web.bind.annotation.RequestMapping");
         for (String methodUrl : getMappingUrls(urlPrefix, anno))
         {
             for (HttpMethod reqMethod : getRequestMethods(anno))
             {
-                paths.put(methodUrl, reqMethod, new SpringDestination(className, methodName));
+                paths.put(methodUrl, reqMethod, new SpringDestination(className, methodName, requestParams));
             }
         }
+    }
+    
+    
+    private Map<String,String> processParameterAnnotations(Method method, AnnotationParser ap)
+    {
+        Map<String,String> result = new TreeMap<String,String>();
+        Type[] methodParams = method.getArgumentTypes();
+        for (int parmIdx = 0 ; parmIdx < methodParams.length ; parmIdx++)
+        {
+            Annotation paramAnno = ap.getParameterAnnotation(method, parmIdx, RequestParam.class.getName());
+            if (paramAnno == null)
+                continue;
+            
+            String param = paramAnno.getValue().asScalar().toString();
+            String type = methodParams[parmIdx].toString();
+            result.put(param, type);
+        }
+        return result;
     }
 
 

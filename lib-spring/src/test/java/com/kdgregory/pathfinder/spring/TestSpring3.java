@@ -14,6 +14,8 @@
 
 package com.kdgregory.pathfinder.spring;
 
+import java.util.Map;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -174,5 +176,19 @@ public class TestSpring3
         SpringDestination dest4 = (SpringDestination)pathRepo.get("/servlet/C", HttpMethod.GET);
         assertNotNull("class-only mapping exists", dest3);
         assertEquals("class-only bean", "controllerC", dest4.getBeanDefinition().getBeanName());
+    }
+
+
+    @Test
+    public void testRequestParameters() throws Exception
+    {
+        processWar(WarNames.SPRING3_BASIC);
+
+        SpringDestination dest = (SpringDestination)pathRepo.get("/servlet/foo.html", HttpMethod.GET);
+        Map<String,String> params = dest.getParams();
+        assertEquals("#/params", 3, params.size());
+        assertEquals("param: argle",  "java.lang.String",  params.get("argle"));
+        assertEquals("param: bargle", "java.lang.Integer", params.get("bargle"));
+        assertEquals("param: wargle", "int",               params.get("wargle"));
     }
 }

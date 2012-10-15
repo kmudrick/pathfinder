@@ -14,54 +14,78 @@
 
 package com.kdgregory.pathfinder.spring;
 
+import java.util.Map;
+
 import net.sf.kdgcommons.lang.StringUtil;
 
 import com.kdgregory.pathfinder.core.Destination;
+
 
 public class SpringDestination
 implements Destination
 {
     private BeanDefinition beanDef;
-    private String method;
+    private String methodName;
+    private Map<String,String> requestParams;
 
     /**
      *  Constructor for mappings read from an XML file.
+     *  
+     *  @param beanDef  The bean definition.
      */
     public SpringDestination(BeanDefinition beanDef)
     {
+        // FIXME - anything that caller needs should be extracted here
         this.beanDef = beanDef;
     }
-    
+
     /**
      *  Constructor for annotated classes.
+     *  
+     *  @param  className       The fully-qualified name of the controller class.
+     *  @param  methodName      The name of the method invoked for this destination.
+     *  @param  requestParams   Any parameters that are expected in the request; key
+     *                          is parameter name, value is expected type.
+     *                          FIXME - this should handle the required/not flag
      */
-    public SpringDestination(String className, String method)
+    public SpringDestination(String className, String methodName, Map<String,String> requestParams)
     {
         this.beanDef = new BeanDefinition(className);
-        this.method  = method;
+        this.methodName  = methodName;
+        this.requestParams = requestParams;
     }
+
 
     public BeanDefinition getBeanDefinition()
     {
         return beanDef;
     }
-    
+
+
     public String getClassName()
     {
         return beanDef.getBeanClass();
     }
-    
+
+
     public String getMethodName()
     {
-        return method;
+        return methodName;
     }
+
+
+    public Map<String,String> getParams()
+    {
+        return requestParams;
+    }
+
 
     @Override
     public String toString()
     {
-        if (StringUtil.isBlank(method))
+        if (StringUtil.isBlank(methodName))
             return beanDef.getBeanClass();
         else
-            return beanDef.getBeanClass() + "." + method + "()";
+            return beanDef.getBeanClass() + "." + methodName + "()";
     }
 }
