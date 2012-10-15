@@ -19,8 +19,6 @@ import java.util.Map;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import org.springframework.web.bind.annotation.RequestParam;
-
 import com.kdgregory.pathfinder.core.HttpMethod;
 import com.kdgregory.pathfinder.core.PathRepo;
 import com.kdgregory.pathfinder.core.WarMachine;

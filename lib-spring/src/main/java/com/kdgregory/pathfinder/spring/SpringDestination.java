@@ -16,11 +16,10 @@ package com.kdgregory.pathfinder.spring;
 
 import java.util.Map;
 
-import org.springframework.web.bind.annotation.RequestParam;
-
 import net.sf.kdgcommons.lang.StringUtil;
 
 import com.kdgregory.pathfinder.core.Destination;
+import com.kdgregory.pathfinder.util.InvocationOptions;
 
 
 public class SpringDestination
@@ -29,7 +28,7 @@ implements Destination
 //----------------------------------------------------------------------------
 //  Supporting classes
 //----------------------------------------------------------------------------
-    
+
     /**
      *  Extracted information from parameters marked with <code>@RequestParam</code>.
      */
@@ -47,12 +46,12 @@ implements Destination
             this.defaultValue = defaultValue;
             this.required = required;
         }
-        
+
         public String getName()
         {
             return name;
         }
-        
+
         public String getType()
         {
             return type;
@@ -78,19 +77,19 @@ implements Destination
         }
     }
 
-    
+
 //----------------------------------------------------------------------------
 //  The destination itself
 //----------------------------------------------------------------------------
-    
+
     private BeanDefinition beanDef;
     private String methodName;
     private Map<String,RequestParameter> requestParams;
 
-    
+
     /**
      *  Constructor for mappings read from an XML file.
-     *  
+     *
      *  @param beanDef  The bean definition.
      */
     public SpringDestination(BeanDefinition beanDef)
@@ -102,7 +101,7 @@ implements Destination
 
     /**
      *  Constructor for annotated classes.
-     *  
+     *
      *  @param  className       The fully-qualified name of the controller class.
      *  @param  methodName      The name of the method invoked for this destination.
      *  @param  requestParams   Any parameters that are expected in the request; key
@@ -148,5 +147,26 @@ implements Destination
             return beanDef.getBeanClass();
         else
             return beanDef.getBeanClass() + "." + methodName + "()";
+    }
+
+
+    @Override
+    public String toString(Map<InvocationOptions,Boolean> options)
+    {
+        String base = toString();
+        if (! options.get(InvocationOptions.ENABLE_REQUEST_PARAMS).booleanValue())
+            return base;
+
+        StringBuilder sb = new StringBuilder(1024)
+                           .append(base)
+                           .deleteCharAt(base.length() - 1);    // remove trailing ")"
+        for (RequestParameter param : requestParams.values())
+        {
+            if (sb.charAt(sb.length() - 1) != '(')
+                sb.append(", ");
+            sb.append(param.getType()).append(" ").append(param.getName());
+        }
+        sb.append(")");
+        return sb.toString();
     }
 }
