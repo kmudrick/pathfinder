@@ -44,6 +44,7 @@ import com.kdgregory.pathfinder.core.Inspector;
 import com.kdgregory.pathfinder.core.PathRepo;
 import com.kdgregory.pathfinder.core.WarMachine;
 import com.kdgregory.pathfinder.core.WarMachine.ServletMapping;
+import com.kdgregory.pathfinder.spring.SpringDestination.RequestParameter;
 
 
 /**
@@ -225,7 +226,7 @@ implements Inspector
             String className, Method method, AnnotationParser ap, 
             WarMachine war, SpringContext context, String urlPrefix, PathRepo paths)
     {
-        Map<String,String> requestParams = processParameterAnnotations(method, ap);
+        Map<String,RequestParameter> requestParams = processParameterAnnotations(method, ap);
         
         String methodName = method.getName();
         Annotation anno = ap.getMethodAnnotation(method, "org.springframework.web.bind.annotation.RequestMapping");
@@ -239,9 +240,9 @@ implements Inspector
     }
     
     
-    private Map<String,String> processParameterAnnotations(Method method, AnnotationParser ap)
+    private Map<String,RequestParameter> processParameterAnnotations(Method method, AnnotationParser ap)
     {
-        Map<String,String> result = new TreeMap<String,String>();
+        Map<String,RequestParameter> result = new TreeMap<String,RequestParameter>();
         Type[] methodParams = method.getArgumentTypes();
         for (int parmIdx = 0 ; parmIdx < methodParams.length ; parmIdx++)
         {
@@ -249,9 +250,16 @@ implements Inspector
             if (paramAnno == null)
                 continue;
             
-            String param = paramAnno.getValue().asScalar().toString();
+            String name = paramAnno.getValue().asScalar().toString();
             String type = methodParams[parmIdx].toString();
-            result.put(param, type);
+            String dflt = (paramAnno.getParam("defaultValue") != null)
+                        ? paramAnno.getParam("defaultValue").asScalar().toString()
+                        : "";
+            int req0    = (paramAnno.getParam("required") != null)
+                        ? ((Integer)paramAnno.getParam("required").asScalar()).intValue()
+                        : 0;
+            boolean req = (req0 != 0) ? true : false;
+            result.put(name, new RequestParameter(name, type, dflt, req));
         }
         return result;
     }

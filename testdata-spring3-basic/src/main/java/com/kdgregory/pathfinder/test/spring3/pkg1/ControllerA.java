@@ -33,9 +33,9 @@ public class ControllerA
     protected ModelAndView getFoo(
             HttpServletRequest request,
             HttpServletResponse response,
-            @RequestParam(value="argle", required=false)  String argle,
-            @RequestParam(value="bargle", required=false) Integer bargle,
-            @RequestParam(value="wargle", required=false) int wargle) 
+            @RequestParam(value="argle",  required=true)                     String argle,
+            @RequestParam(value="bargle", required=false, defaultValue="12") Integer bargle,
+            @RequestParam(value="wargle", required=false)                    int wargle) 
     throws Exception
     {
         Map<String,String> model = new HashMap<String,String>();

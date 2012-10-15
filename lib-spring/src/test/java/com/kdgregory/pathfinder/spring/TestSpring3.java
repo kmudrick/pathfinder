@@ -19,11 +19,14 @@ import java.util.Map;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import org.springframework.web.bind.annotation.RequestParam;
+
 import com.kdgregory.pathfinder.core.HttpMethod;
 import com.kdgregory.pathfinder.core.PathRepo;
 import com.kdgregory.pathfinder.core.WarMachine;
 import com.kdgregory.pathfinder.core.impl.PathRepoImpl;
 import com.kdgregory.pathfinder.servlet.ServletInspector;
+import com.kdgregory.pathfinder.spring.SpringDestination.RequestParameter;
 import com.kdgregory.pathfinder.test.WarNames;
 import com.kdgregory.pathfinder.util.TestHelpers;
 
@@ -185,10 +188,22 @@ public class TestSpring3
         processWar(WarNames.SPRING3_BASIC);
 
         SpringDestination dest = (SpringDestination)pathRepo.get("/servlet/foo.html", HttpMethod.GET);
-        Map<String,String> params = dest.getParams();
+        Map<String,RequestParameter> params = dest.getParams();
         assertEquals("#/params", 3, params.size());
-        assertEquals("param: argle",  "java.lang.String",  params.get("argle"));
-        assertEquals("param: bargle", "java.lang.Integer", params.get("bargle"));
-        assertEquals("param: wargle", "int",               params.get("wargle"));
+        
+        assertEquals("param name: argle",   "argle",             params.get("argle").getName());
+        assertEquals("param type: argle",   "java.lang.String",  params.get("argle").getType());
+        assertEquals("default val: argle",  "",                  params.get("argle").getDefaultValue());
+        assertTrue("required: argle",                            params.get("argle").isRequired());
+        
+        assertEquals("param name: bargle",  "bargle",            params.get("bargle").getName());
+        assertEquals("param type: bargle",  "java.lang.Integer", params.get("bargle").getType());
+        assertEquals("default val: bargle", "12",                params.get("bargle").getDefaultValue());
+        assertFalse("required: bargle",                          params.get("bargle").isRequired());
+        
+        assertEquals("param name: wargle",  "wargle",            params.get("wargle").getName());
+        assertEquals("paramtype : wargle",  "int",               params.get("wargle").getType());
+        assertEquals("default val: wargle", "",                  params.get("wargle").getDefaultValue());
+        assertFalse("required: wargle",                          params.get("wargle").isRequired());
     }
 }

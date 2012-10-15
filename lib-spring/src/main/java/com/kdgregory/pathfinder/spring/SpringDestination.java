@@ -16,6 +16,8 @@ package com.kdgregory.pathfinder.spring;
 
 import java.util.Map;
 
+import org.springframework.web.bind.annotation.RequestParam;
+
 import net.sf.kdgcommons.lang.StringUtil;
 
 import com.kdgregory.pathfinder.core.Destination;
@@ -24,10 +26,68 @@ import com.kdgregory.pathfinder.core.Destination;
 public class SpringDestination
 implements Destination
 {
+//----------------------------------------------------------------------------
+//  Supporting classes
+//----------------------------------------------------------------------------
+    
+    /**
+     *  Extracted information from parameters marked with <code>@RequestParam</code>.
+     */
+    public static class RequestParameter
+    {
+        private String name;
+        private String type;
+        private String defaultValue;
+        private boolean required;
+
+        public RequestParameter(String name, String type, String defaultValue, boolean required)
+        {
+            this.name = name;
+            this.type = type;
+            this.defaultValue = defaultValue;
+            this.required = required;
+        }
+        
+        public String getName()
+        {
+            return name;
+        }
+        
+        public String getType()
+        {
+            return type;
+        }
+
+        public String getDefaultValue()
+        {
+            return defaultValue;
+        }
+
+        public boolean isRequired()
+        {
+            return required;
+        }
+
+        @Override
+        public String toString()
+        {
+            return "@RequestParam(value=\"" + name + "\""
+                 + ", required=" + required
+                 + ", defaultValue=\"" + defaultValue + "\""
+                 + ") " + type + " " + name;
+        }
+    }
+
+    
+//----------------------------------------------------------------------------
+//  The destination itself
+//----------------------------------------------------------------------------
+    
     private BeanDefinition beanDef;
     private String methodName;
-    private Map<String,String> requestParams;
+    private Map<String,RequestParameter> requestParams;
 
+    
     /**
      *  Constructor for mappings read from an XML file.
      *  
@@ -39,6 +99,7 @@ implements Destination
         this.beanDef = beanDef;
     }
 
+
     /**
      *  Constructor for annotated classes.
      *  
@@ -48,7 +109,7 @@ implements Destination
      *                          is parameter name, value is expected type.
      *                          FIXME - this should handle the required/not flag
      */
-    public SpringDestination(String className, String methodName, Map<String,String> requestParams)
+    public SpringDestination(String className, String methodName, Map<String,RequestParameter> requestParams)
     {
         this.beanDef = new BeanDefinition(className);
         this.methodName  = methodName;
@@ -74,7 +135,7 @@ implements Destination
     }
 
 
-    public Map<String,String> getParams()
+    public Map<String,RequestParameter> getParams()
     {
         return requestParams;
     }
