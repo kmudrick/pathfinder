@@ -26,6 +26,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 
+/**
+ *  This controller is used to test cases where there's a @RequestMapping at
+ *  both the class and method level.
+ */
 @Controller
 @RequestMapping("/B")
 public class ControllerB

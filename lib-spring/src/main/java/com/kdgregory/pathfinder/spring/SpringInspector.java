@@ -223,12 +223,12 @@ implements Inspector
 
 
     private void processAnnotatedControllerMethods(
-            String className, Method method, AnnotationParser ap, 
+            String className, Method method, AnnotationParser ap,
             WarMachine war, SpringContext context, String urlPrefix, PathRepo paths)
     {
-        Map<String,RequestParameter> requestParams = processParameterAnnotations(method, ap);
-        
         String methodName = method.getName();
+        Map<String,RequestParameter> requestParams = processParameterAnnotations(method, ap);
+
         Annotation anno = ap.getMethodAnnotation(method, "org.springframework.web.bind.annotation.RequestMapping");
         for (String methodUrl : getMappingUrls(urlPrefix, anno))
         {
@@ -238,8 +238,8 @@ implements Inspector
             }
         }
     }
-    
-    
+
+
     private Map<String,RequestParameter> processParameterAnnotations(Method method, AnnotationParser ap)
     {
         Map<String,RequestParameter> result = new TreeMap<String,RequestParameter>();
@@ -249,7 +249,7 @@ implements Inspector
             Annotation paramAnno = ap.getParameterAnnotation(method, parmIdx, RequestParam.class.getName());
             if (paramAnno == null)
                 continue;
-            
+
             String name = paramAnno.getValue().asScalar().toString();
             String type = methodParams[parmIdx].toString();
             String dflt = (paramAnno.getParam("defaultValue") != null)
@@ -268,6 +268,11 @@ implements Inspector
     private List<String> getMappingUrls(String urlPrefix, Annotation requestMapping)
     {
         // note: called at both class and method level; either can be empty/missing
+        //     - also, we can't be sure that the controller has the proper number of
+        //       leading/trailing slashes on either mapping, so we'll remove and rebuild
+
+        while (urlPrefix.endsWith("/"))
+            urlPrefix = urlPrefix.substring(0, urlPrefix.length() - 1);
 
         if (requestMapping == null)
         {
@@ -287,9 +292,13 @@ implements Inspector
         }
 
         List<String> result = new ArrayList<String>(mappings.size());
-        for (Object mapping : mappings)
+        for (Object mapping0 : mappings)
         {
-            result.add(urlPrefix + mapping);
+            String mapping = mapping0.toString();
+            while (mapping.startsWith("/"))
+                mapping = mapping.substring(1);
+
+            result.add(urlPrefix + "/" + mapping);
         }
         return result;
     }

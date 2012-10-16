@@ -27,15 +27,16 @@ import org.springframework.web.servlet.ModelAndView;
 
 
 /**
- *  This controller is used to test the case where @RequestMapping is applied at
- *  the top of the class, and not on individual methods.
+ *  This controller is used to test mappings with path variables. It also ensures
+ *  that we insert a slash between the request-level mapping and the path-level
+ *  mapping.
  */
 @Controller
-@RequestMapping("/C")
-public class ControllerC
+@RequestMapping("/D")
+public class ControllerD
 {
-    @RequestMapping(method=RequestMethod.GET)
-    protected ModelAndView getC(
+    @RequestMapping(value="{id}", method=RequestMethod.GET)
+    protected ModelAndView getD(
             HttpServletRequest request,
             HttpServletResponse response)
     throws Exception
