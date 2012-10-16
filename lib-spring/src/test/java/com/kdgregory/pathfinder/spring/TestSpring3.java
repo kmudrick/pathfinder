@@ -200,7 +200,7 @@ public class TestSpring3
     {
         processWar(WarNames.SPRING3_BASIC);
 
-        SpringDestination dest = (SpringDestination)pathRepo.get("/servlet/foo.html", HttpMethod.GET);
+        SpringDestination dest = (SpringDestination)pathRepo.get("/servlet/E1", HttpMethod.GET);
         Map<String,RequestParameter> params = dest.getParams();
         assertEquals("#/params", 3, params.size());
 
@@ -211,12 +211,12 @@ public class TestSpring3
 
         assertEquals("param name: bargle",  "bargle",            params.get("bargle").getName());
         assertEquals("param type: bargle",  "java.lang.Integer", params.get("bargle").getType());
-        assertEquals("default val: bargle", "12",                params.get("bargle").getDefaultValue());
+        assertEquals("default val: bargle", "",                  params.get("bargle").getDefaultValue());
         assertFalse("required: bargle",                          params.get("bargle").isRequired());
 
         assertEquals("param name: wargle",  "wargle",            params.get("wargle").getName());
         assertEquals("paramtype : wargle",  "int",               params.get("wargle").getType());
-        assertEquals("default val: wargle", "",                  params.get("wargle").getDefaultValue());
+        assertEquals("default val: wargle", "12",                params.get("wargle").getDefaultValue());
         assertFalse("required: wargle",                          params.get("wargle").isRequired());
     }
 }

@@ -12,31 +12,38 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.kdgregory.pathfinder.test.spring3.pkg1;
+package com.kdgregory.pathfinder.test.spring3.pkg2;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 
 /**
- *  The basic controller; responds to everything, isn't picky about what it's given.
+ * Controller for testing request parameters.
  */
 @Controller
-public class ControllerA
+public class ControllerE
 {
-    @RequestMapping(value="/foo.html")
+    @RequestMapping(value="/E1")
     protected ModelAndView getFoo(
             HttpServletRequest request,
-            HttpServletResponse response)
+            HttpServletResponse response,
+            @RequestParam(value="argle",  required=true)                     String argle,
+            @RequestParam(value="bargle", required=false)                    Integer bargle,
+            @RequestParam(value="wargle", required=false, defaultValue="12") int wargle)
     throws Exception
     {
         ModelAndView mav = new ModelAndView("simple");
         mav.addObject("reqUrl", request.getRequestURI());
         mav.addObject("controller", getClass().getName());
+        mav.addObject("argle", argle);
+        mav.addObject("bargle", bargle);
+        mav.addObject("wargle", wargle);
         return mav;
     }
 }
