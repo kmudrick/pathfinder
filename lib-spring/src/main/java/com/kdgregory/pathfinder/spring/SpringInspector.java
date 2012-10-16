@@ -56,12 +56,6 @@ import com.kdgregory.pathfinder.spring.SpringDestination.RequestParameter;
 public class SpringInspector
 implements Inspector
 {
-    private final static String DISPATCHER_SERVLET_CLASS     = "org.springframework.web.servlet.DispatcherServlet";
-    private final static String CONTEXT_LISTENER_CLASS      = "org.springframework.web.context.ContextLoaderListener";
-    private final static String SIMPLE_URL_HANDLER_CLASS    = "org.springframework.web.servlet.handler.SimpleUrlHandlerMapping";
-    private final static String CONTROLLER_ANNO_CLASS       = "org.springframework.stereotype.Controller";
-    private final static String REQUEST_MAPPING_ANNO_CLASS  = "org.springframework.web.bind.annotation.RequestMapping";
-
     private Logger logger = Logger.getLogger(getClass());
 
 
@@ -106,7 +100,7 @@ implements Inspector
         List<String> listeners = war.getWebXmlPath("/j2ee:web-app/j2ee:listener/j2ee:listener-class")
                                  .evaluateAsStringList(war.getWebXml());
         Set<String> listeners2 = new HashSet<String>(listeners);
-        if (!listeners2.contains(CONTEXT_LISTENER_CLASS))
+        if (!listeners2.contains(SpringConstants.CONTEXT_LISTENER_CLASS))
         {
             logger.debug("no root context listener found");
             return null;
@@ -135,7 +129,7 @@ implements Inspector
         List<ServletMapping> result = new ArrayList<ServletMapping>();
         for (ServletMapping servlet : war.getServletMappings())
         {
-            if (servlet.getServletClass().equals(DISPATCHER_SERVLET_CLASS))
+            if (servlet.getServletClass().equals(SpringConstants.DISPATCHER_SERVLET_CLASS))
             {
                 result.add(servlet);
                 paths.remove(servlet.getUrlPattern(), HttpMethod.ALL);
@@ -159,7 +153,7 @@ implements Inspector
 
     private void processSimpleUrlHandlerMappings(WarMachine war, SpringContext context, String urlPrefix, PathRepo paths)
     {
-        List<BeanDefinition> defs = context.getBeansByClass(SIMPLE_URL_HANDLER_CLASS);
+        List<BeanDefinition> defs = context.getBeansByClass(SpringConstants.SIMPLE_URL_HANDLER_CLASS);
         logger.debug("found " + defs.size() + " SimpleUrlHandlerMapping beans");
 
         for (BeanDefinition def : defs)
@@ -216,11 +210,11 @@ implements Inspector
         logger.debug("initial urlPrefix: " + urlPrefix);
         String className = ap.getParsedClass().getClassName();
         String beanName = getBeanName(className, ap);
-        Annotation classMapping = ap.getClassAnnotation(REQUEST_MAPPING_ANNO_CLASS);
+        Annotation classMapping = ap.getClassAnnotation(SpringConstants.REQUEST_MAPPING_ANNO_CLASS);
         for (String classPrefix : getMappingUrls(urlPrefix, classMapping))
         {
             logger.debug("updated prefix from controller mapping: " + classPrefix);
-            for (Method method : ap.getAnnotatedMethods(REQUEST_MAPPING_ANNO_CLASS))
+            for (Method method : ap.getAnnotatedMethods(SpringConstants.REQUEST_MAPPING_ANNO_CLASS))
             {
                 processAnnotatedControllerMethods(beanName, className, method, ap, war, context, classPrefix, paths);
             }
@@ -235,7 +229,7 @@ implements Inspector
         String methodName = method.getName();
         Map<String,RequestParameter> requestParams = processParameterAnnotations(method, ap);
 
-        Annotation anno = ap.getMethodAnnotation(method, REQUEST_MAPPING_ANNO_CLASS);
+        Annotation anno = ap.getMethodAnnotation(method, SpringConstants.REQUEST_MAPPING_ANNO_CLASS);
         for (String methodUrl : getMappingUrls(urlPrefix, anno))
         {
             for (HttpMethod reqMethod : getRequestMethods(anno))
@@ -275,7 +269,7 @@ implements Inspector
 
     private String getBeanName(String className, AnnotationParser ap)
     {
-        Annotation ctlAnno = ap.getClassAnnotation(CONTROLLER_ANNO_CLASS);
+        Annotation ctlAnno = ap.getClassAnnotation(SpringConstants.CONTROLLER_ANNO_CLASS);
         if (ctlAnno.getValue() == null)
             return BeanDefinition.classNameToBeanId(className);
         else

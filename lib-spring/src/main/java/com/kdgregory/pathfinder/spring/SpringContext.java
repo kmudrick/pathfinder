@@ -165,7 +165,7 @@ public class SpringContext
         for (Element elem : scanDefs)
         {
             ClasspathScanner scanner = new ClasspathScannerImpl()
-                                       .setIncludedAnnotations("org.springframework.stereotype.Controller");
+                                       .setIncludedAnnotations(SpringConstants.CONTROLLER_ANNO_CLASS);
             String basePackage = elem.getAttribute("base-package");
             String[] bp2 = basePackage.split(",");
             for (String pkg : bp2)
