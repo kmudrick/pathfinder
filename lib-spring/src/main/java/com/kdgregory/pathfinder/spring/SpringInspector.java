@@ -350,7 +350,7 @@ implements Inspector
                     : "";
         int req0    = (anno.getParam("required") != null)
                     ? ((Integer)anno.getParam("required").asScalar()).intValue()
-                    : 0;
+                    : 1;
         boolean req = (req0 != 0) ? true : false;
         return new RequestParameter(name, type, dflt, req);
     }

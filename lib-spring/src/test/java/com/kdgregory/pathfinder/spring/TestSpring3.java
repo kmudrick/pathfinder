@@ -16,7 +16,6 @@ package com.kdgregory.pathfinder.spring;
 
 import java.util.Map;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -202,7 +201,7 @@ public class TestSpring3
 
         SpringDestination dest = (SpringDestination)pathRepo.get("/servlet/E1", HttpMethod.GET);
         Map<String,RequestParameter> params = dest.getParams();
-        assertEquals("#/params", 3, params.size());
+        assertEquals("#/params", 4, params.size());
 
         assertEquals("param name: argle",   "argle",             params.get("argle").getName());
         assertEquals("param type: argle",   "java.lang.String",  params.get("argle").getType());
@@ -218,6 +217,12 @@ public class TestSpring3
         assertEquals("paramtype : wargle",  "int",               params.get("wargle").getType());
         assertEquals("default val: wargle", "12",                params.get("wargle").getDefaultValue());
         assertFalse("required: wargle",                          params.get("wargle").isRequired());
+
+        // added test: params are required by default
+        assertEquals("param name: zargle",  "zargle",            params.get("zargle").getName());
+        assertEquals("param type: zargle",  "java.lang.Integer", params.get("zargle").getType());
+        assertEquals("default val: zargle", "",                  params.get("zargle").getDefaultValue());
+        assertTrue("required: zargle",                           params.get("zargle").isRequired());
     }
 
 

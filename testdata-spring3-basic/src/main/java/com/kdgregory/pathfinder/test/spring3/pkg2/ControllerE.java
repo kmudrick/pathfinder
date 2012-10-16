@@ -37,7 +37,8 @@ public class ControllerE
             HttpServletResponse response,
             @RequestParam(value="argle",  required=true)                     String argle,
             @RequestParam(value="bargle", required=false)                    Integer bargle,
-            @RequestParam(value="wargle", required=false, defaultValue="12") int wargle)
+            @RequestParam(value="wargle", required=false, defaultValue="12") int wargle,
+            @RequestParam(value="zargle")                                    Integer zargle)
     throws Exception
     {
         ModelAndView mav = new ModelAndView("simple");
