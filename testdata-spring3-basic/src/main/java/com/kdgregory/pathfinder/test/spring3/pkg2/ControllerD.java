@@ -14,13 +14,11 @@
 
 package com.kdgregory.pathfinder.test.spring3.pkg2;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -38,11 +36,13 @@ public class ControllerD
     @RequestMapping(value="{id}", method=RequestMethod.GET)
     protected ModelAndView getD(
             HttpServletRequest request,
-            HttpServletResponse response)
+            HttpServletResponse response,
+            @PathVariable String id)
     throws Exception
     {
-        Map<String,String> model = new HashMap<String,String>();
-        model.put("reqUrl", request.getRequestURI());
-        model.put("controller", getClass().getName());
-        return new ModelAndView("simple", "data", model);
+        ModelAndView mav = new ModelAndView("simple");
+        mav.addObject("reqUrl", request.getRequestURI());
+        mav.addObject("controller", getClass().getName());
+        mav.addObject("id", id);
+        return mav;
     }}

@@ -14,9 +14,6 @@
 
 package com.kdgregory.pathfinder.test.spring3.pkg2;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -40,22 +37,22 @@ public class ControllerB
             HttpServletResponse response)
     throws Exception
     {
-        Map<String,String> model = new HashMap<String,String>();
-        model.put("reqUrl", request.getRequestURI());
-        model.put("controller", getClass().getName());
-        return new ModelAndView("simple", "data", model);
+        ModelAndView mav = new ModelAndView("simple");
+        mav.addObject("reqUrl", request.getRequestURI());
+        mav.addObject("controller", getClass().getName());
+        return mav;
     }
-    
-    
+
+
     @RequestMapping(value="/baz.html", method=RequestMethod.POST)
     protected ModelAndView setBaz(
             HttpServletRequest request,
             HttpServletResponse response)
     throws Exception
     {
-        Map<String,String> model = new HashMap<String,String>();
-        model.put("reqUrl", request.getRequestURI());
-        model.put("controller", getClass().getName());
-        return new ModelAndView("simple", "data", model);
+        ModelAndView mav = new ModelAndView("simple");
+        mav.addObject("reqUrl", request.getRequestURI());
+        mav.addObject("controller", getClass().getName());
+        return mav;
     }
 }
