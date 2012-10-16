@@ -197,6 +197,7 @@ public class SpringContext
 
     private List<String> decomposeContextLocation(String contextLocation)
     {
+        contextLocation = StringUtil.trim(contextLocation);
         String[] paths = contextLocation.split("[,;]|\\s+");
         // FIXME - support wildcards
         return Arrays.asList(paths);
