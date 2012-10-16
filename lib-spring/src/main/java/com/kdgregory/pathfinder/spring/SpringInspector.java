@@ -34,7 +34,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import net.sf.kdgcommons.lang.ClassUtil;
 import net.sf.kdgcommons.lang.StringUtil;
-import net.sf.practicalxml.xpath.XPathWrapperFactory;
 
 import com.kdgregory.bcelx.classfile.Annotation;
 import com.kdgregory.bcelx.classfile.Annotation.ParamValue;
@@ -103,11 +102,8 @@ implements Inspector
 
     private SpringContext loadRootContext(WarMachine war)
     {
-        XPathWrapperFactory xpf = new XPathWrapperFactory()
-                                  .bindNamespace("j2ee", "http://java.sun.com/xml/ns/j2ee");
-
         // if there's no root context listener, we're done
-        List<String> listeners = xpf.newXPath("/j2ee:web-app/j2ee:listener/j2ee:listener-class")
+        List<String> listeners = war.getWebXmlPath("/j2ee:web-app/j2ee:listener/j2ee:listener-class")
                                  .evaluateAsStringList(war.getWebXml());
         Set<String> listeners2 = new HashSet<String>(listeners);
         if (!listeners2.contains(CONTEXT_LISTENER_CLASS))
@@ -117,9 +113,10 @@ implements Inspector
         }
 
         // look for an explicit config file location
-        String contextLocation = xpf.newXPath("/j2ee:web-app/j2ee:context-param/"
+        String contextLocation = war.getWebXmlPath("/j2ee:web-app/j2ee:context-param/"
                                               + "j2ee:param-name[text()='contextConfigLocation']/"
-                                              + "../j2ee:param-value").evaluateAsString(war.getWebXml());
+                                              + "../j2ee:param-value")
+                                              .evaluateAsString(war.getWebXml());
 
         // and fallback to default
         if (StringUtil.isBlank(contextLocation))

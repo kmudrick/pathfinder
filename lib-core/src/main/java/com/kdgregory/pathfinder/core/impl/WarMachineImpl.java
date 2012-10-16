@@ -45,6 +45,7 @@ import net.sf.kdgcommons.lang.StringUtil;
 import net.sf.kdgcommons.lang.UnreachableCodeException;
 import net.sf.practicalxml.DomUtil;
 import net.sf.practicalxml.ParseUtil;
+import net.sf.practicalxml.xpath.XPathWrapper;
 import net.sf.practicalxml.xpath.XPathWrapperFactory;
 import net.sf.practicalxml.xpath.XPathWrapperFactory.CacheType;
 
@@ -169,6 +170,13 @@ implements WarMachine
     public Document getWebXml()
     {
         return webXml;
+    }
+    
+    
+    @Override
+    public XPathWrapper getWebXmlPath(String path)
+    {
+        return xpathFact.newXPath(path);
     }
 
 
