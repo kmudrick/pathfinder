@@ -49,13 +49,15 @@ implements Destination
     /**
      *  Constructor for annotated classes.
      *
-     *  @param  className       The fully-qualified name of the controller class.
-     *  @param  methodName      The name of the method invoked for this destination.
-     *  @param  requestParams   Any method parameters identified with @RequestParam.
+     *  @param  beanName        Identifier for the bean (either defined in annotation
+     *                          or generated from classname)
+     *  @param  className       The fully-qualified name of the controller class
+     *  @param  methodName      The name of the method invoked for this destination
+     *  @param  requestParams   Any method parameters identified with @RequestParam
      */
-    public SpringDestination(String className, String methodName, Map<String,RequestParameter> requestParams)
+    public SpringDestination(String beanName, String className, String methodName, Map<String,RequestParameter> requestParams)
     {
-        this.beanName = BeanDefinition.classNameToBeanId(className);
+        this.beanName = beanName;
         this.className = className;
         this.methodName  = methodName;
         this.requestParams = requestParams;

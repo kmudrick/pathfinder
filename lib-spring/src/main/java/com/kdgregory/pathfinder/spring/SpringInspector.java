@@ -57,6 +57,12 @@ import com.kdgregory.pathfinder.spring.SpringDestination.RequestParameter;
 public class SpringInspector
 implements Inspector
 {
+    private final static String DISPATCHER_SERVLET_CLASS     = "org.springframework.web.servlet.DispatcherServlet";
+    private final static String CONTEXT_LISTENER_CLASS      = "org.springframework.web.context.ContextLoaderListener";
+    private final static String SIMPLE_URL_HANDLER_CLASS    = "org.springframework.web.servlet.handler.SimpleUrlHandlerMapping";
+    private final static String CONTROLLER_ANNO_CLASS       = "org.springframework.stereotype.Controller";
+    private final static String REQUEST_MAPPING_ANNO_CLASS  = "org.springframework.web.bind.annotation.RequestMapping";
+
     private Logger logger = Logger.getLogger(getClass());
 
 
@@ -104,7 +110,7 @@ implements Inspector
         List<String> listeners = xpf.newXPath("/j2ee:web-app/j2ee:listener/j2ee:listener-class")
                                  .evaluateAsStringList(war.getWebXml());
         Set<String> listeners2 = new HashSet<String>(listeners);
-        if (!listeners2.contains("org.springframework.web.context.ContextLoaderListener"))
+        if (!listeners2.contains(CONTEXT_LISTENER_CLASS))
         {
             logger.debug("no root context listener found");
             return null;
@@ -132,7 +138,7 @@ implements Inspector
         List<ServletMapping> result = new ArrayList<ServletMapping>();
         for (ServletMapping servlet : war.getServletMappings())
         {
-            if (servlet.getServletClass().equals("org.springframework.web.servlet.DispatcherServlet"))
+            if (servlet.getServletClass().equals(DISPATCHER_SERVLET_CLASS))
             {
                 result.add(servlet);
                 paths.remove(servlet.getUrlPattern(), HttpMethod.ALL);
@@ -156,7 +162,7 @@ implements Inspector
 
     private void processSimpleUrlHandlerMappings(WarMachine war, SpringContext context, String urlPrefix, PathRepo paths)
     {
-        List<BeanDefinition> defs = context.getBeansByClass("org.springframework.web.servlet.handler.SimpleUrlHandlerMapping");
+        List<BeanDefinition> defs = context.getBeansByClass(SIMPLE_URL_HANDLER_CLASS);
         logger.debug("found " + defs.size() + " SimpleUrlHandlerMapping beans");
 
         for (BeanDefinition def : defs)
@@ -212,31 +218,32 @@ implements Inspector
         logger.debug("processing annotations from " + filename);
         logger.debug("initial urlPrefix: " + urlPrefix);
         String className = ap.getParsedClass().getClassName();
-        Annotation classMapping = ap.getClassAnnotation("org.springframework.web.bind.annotation.RequestMapping");
+        String beanName = getBeanName(className, ap);
+        Annotation classMapping = ap.getClassAnnotation(REQUEST_MAPPING_ANNO_CLASS);
         for (String classPrefix : getMappingUrls(urlPrefix, classMapping))
         {
             logger.debug("updated prefix from controller mapping: " + classPrefix);
-            for (Method method : ap.getAnnotatedMethods("org.springframework.web.bind.annotation.RequestMapping"))
+            for (Method method : ap.getAnnotatedMethods(REQUEST_MAPPING_ANNO_CLASS))
             {
-                processAnnotatedControllerMethods(className, method, ap, war, context, classPrefix, paths);
+                processAnnotatedControllerMethods(beanName, className, method, ap, war, context, classPrefix, paths);
             }
         }
     }
 
 
     private void processAnnotatedControllerMethods(
-            String className, Method method, AnnotationParser ap,
-            WarMachine war, SpringContext context, String urlPrefix, PathRepo paths)
+            String beanName, String className, Method method,
+            AnnotationParser ap, WarMachine war, SpringContext context, String urlPrefix, PathRepo paths)
     {
         String methodName = method.getName();
         Map<String,RequestParameter> requestParams = processParameterAnnotations(method, ap);
 
-        Annotation anno = ap.getMethodAnnotation(method, "org.springframework.web.bind.annotation.RequestMapping");
+        Annotation anno = ap.getMethodAnnotation(method, REQUEST_MAPPING_ANNO_CLASS);
         for (String methodUrl : getMappingUrls(urlPrefix, anno))
         {
             for (HttpMethod reqMethod : getRequestMethods(anno))
             {
-                paths.put(methodUrl, reqMethod, new SpringDestination(className, methodName, requestParams));
+                paths.put(methodUrl, reqMethod, new SpringDestination(beanName, className, methodName, requestParams));
             }
         }
     }
@@ -266,6 +273,16 @@ implements Inspector
             result.put(param.getName(), param);
         }
         return result;
+    }
+
+
+    private String getBeanName(String className, AnnotationParser ap)
+    {
+        Annotation ctlAnno = ap.getClassAnnotation(CONTROLLER_ANNO_CLASS);
+        if (ctlAnno.getValue() == null)
+            return BeanDefinition.classNameToBeanId(className);
+        else
+            return ctlAnno.getValue().asScalar().toString();
     }
 
 

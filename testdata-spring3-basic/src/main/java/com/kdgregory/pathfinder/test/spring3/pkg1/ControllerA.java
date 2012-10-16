@@ -25,7 +25,7 @@ import org.springframework.web.servlet.ModelAndView;
 /**
  *  The basic controller; responds to everything, isn't picky about what it's given.
  */
-@Controller
+@Controller("myController")
 public class ControllerA
 {
     @RequestMapping(value="/foo.html")

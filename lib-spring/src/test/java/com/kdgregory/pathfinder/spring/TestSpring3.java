@@ -62,14 +62,12 @@ public class TestSpring3
     {
         processWar(WarNames.SPRING3_BASIC);
 
-        // the assertion will throw an NPE if the mapping wasn't found
-
-        SpringDestination dest1 = (SpringDestination)pathRepo.get("/servlet/foo.html", HttpMethod.GET);
-        assertNotNull("mapping exists", dest1);
-        assertEquals("bean",    "controllerA", dest1.getBeanName());
-        assertEquals("class",   "com.kdgregory.pathfinder.test.spring3.pkg1.ControllerA", dest1.getClassName());
-        assertEquals("method",  "getFoo", dest1.getMethodName());
-        assertEquals("toString","com.kdgregory.pathfinder.test.spring3.pkg1.ControllerA.getFoo()", dest1.toString());
+        SpringDestination dest = (SpringDestination)pathRepo.get("/servlet/foo.html", HttpMethod.GET);
+        assertNotNull("mapping exists", dest);
+        assertEquals("bean",    "myController", dest.getBeanName());
+        assertEquals("class",   "com.kdgregory.pathfinder.test.spring3.pkg1.ControllerA", dest.getClassName());
+        assertEquals("method",  "getFoo", dest.getMethodName());
+        assertEquals("toString","com.kdgregory.pathfinder.test.spring3.pkg1.ControllerA.getFoo()", dest.toString());
     }
 
 
@@ -130,16 +128,16 @@ public class TestSpring3
         // verify that we add all variants when method isn't specified
 
         SpringDestination dest1a = (SpringDestination)pathRepo.get("/servlet/foo.html", HttpMethod.GET);
-        assertEquals("foo.html GET", "controllerA", dest1a.getBeanName());
+        assertEquals("foo.html GET", "myController", dest1a.getBeanName());
 
         SpringDestination dest1b = (SpringDestination)pathRepo.get("/servlet/foo.html", HttpMethod.POST);
-        assertEquals("foo.html POST", "controllerA", dest1b.getBeanName());
+        assertEquals("foo.html POST", "myController", dest1b.getBeanName());
 
         SpringDestination dest1c = (SpringDestination)pathRepo.get("/servlet/foo.html", HttpMethod.PUT);
-        assertEquals("foo.html PUT", "controllerA", dest1c.getBeanName());
+        assertEquals("foo.html PUT", "myController", dest1c.getBeanName());
 
         SpringDestination dest1d = (SpringDestination)pathRepo.get("/servlet/foo.html", HttpMethod.DELETE);
-        assertEquals("foo.html DELETE", "controllerA", dest1d.getBeanName());
+        assertEquals("foo.html DELETE", "myController", dest1d.getBeanName());
 
         // and that we don't add methods that aren't specified
 
