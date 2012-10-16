@@ -47,6 +47,11 @@ implements Destination
             this.required = required;
         }
 
+        public RequestParameter(String name, String type)
+        {
+            this(name, type, "", true);
+        }
+
         public String getName()
         {
             return name;

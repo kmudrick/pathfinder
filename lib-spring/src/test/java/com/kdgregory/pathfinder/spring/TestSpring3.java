@@ -219,4 +219,25 @@ public class TestSpring3
         assertEquals("default val: wargle", "12",                params.get("wargle").getDefaultValue());
         assertFalse("required: wargle",                          params.get("wargle").isRequired());
     }
+
+
+    @Test
+    public void testInferredRequestParameters() throws Exception
+    {
+        processWar(WarNames.SPRING3_BASIC);
+
+        SpringDestination dest = (SpringDestination)pathRepo.get("/servlet/E2", HttpMethod.GET);
+        Map<String,RequestParameter> params = dest.getParams();
+        assertEquals("#/params", 2, params.size());
+
+        assertEquals("param name: argle",   "argle",             params.get("argle").getName());
+        assertEquals("param type: argle",   "java.lang.String",  params.get("argle").getType());
+        assertEquals("default val: argle",  "",                  params.get("argle").getDefaultValue());
+        assertTrue("required: argle",                            params.get("argle").isRequired());
+
+        assertEquals("param name: bargle",  "bargle",            params.get("bargle").getName());
+        assertEquals("param type: bargle",  "java.lang.Integer", params.get("bargle").getType());
+        assertEquals("default val: bargle", "",                  params.get("bargle").getDefaultValue());
+        assertTrue("required: bargle",                           params.get("bargle").isRequired());
+    }
 }

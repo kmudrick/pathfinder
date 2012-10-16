@@ -24,7 +24,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 
 /**
- * Controller for testing request parameters.
+ *  Controller for testing request parameters. Method {@link #getFoo} uses explicit
+ *  parameter definitions, method {@link #getBar} infers parameter types from debug
+ *  information.
  */
 @Controller
 public class ControllerE
@@ -44,6 +46,23 @@ public class ControllerE
         mav.addObject("argle", argle);
         mav.addObject("bargle", bargle);
         mav.addObject("wargle", wargle);
+        return mav;
+    }
+
+
+    @RequestMapping(value="/E2")
+    protected ModelAndView getBar(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @RequestParam String argle,
+            @RequestParam Integer bargle)
+    throws Exception
+    {
+        ModelAndView mav = new ModelAndView("simple");
+        mav.addObject("reqUrl", request.getRequestURI());
+        mav.addObject("controller", getClass().getName());
+        mav.addObject("argle", argle);
+        mav.addObject("bargle", bargle);
         return mav;
     }
 }

@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.apache.bcel.classfile.LocalVariable;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.Type;
 import org.apache.log4j.Logger;
@@ -31,6 +32,7 @@ import org.apache.log4j.Logger;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import net.sf.kdgcommons.lang.ClassUtil;
 import net.sf.kdgcommons.lang.StringUtil;
 import net.sf.practicalxml.xpath.XPathWrapperFactory;
 
@@ -250,16 +252,18 @@ implements Inspector
             if (paramAnno == null)
                 continue;
 
-            String name = paramAnno.getValue().asScalar().toString();
-            String type = methodParams[parmIdx].toString();
-            String dflt = (paramAnno.getParam("defaultValue") != null)
-                        ? paramAnno.getParam("defaultValue").asScalar().toString()
-                        : "";
-            int req0    = (paramAnno.getParam("required") != null)
-                        ? ((Integer)paramAnno.getParam("required").asScalar()).intValue()
-                        : 0;
-            boolean req = (req0 != 0) ? true : false;
-            result.put(name, new RequestParameter(name, type, dflt, req));
+            RequestParameter param = extractParameterFromAnnotationAlone(paramAnno, methodParams[parmIdx].toString());
+            if (param == null)
+                param = extractParameterFromAnnotationAndMethod(paramAnno, method, parmIdx);
+            if (param == null)
+            {
+                logger.warn("unable to process annotation for parameter "
+                            + parmIdx + " of method " + method.getName()
+                            + ": " + paramAnno);
+                continue;
+            }
+
+            result.put(param.getName(), param);
         }
         return result;
     }
@@ -332,5 +336,34 @@ implements Inspector
             }
         }
         return result;
+    }
+
+
+    private RequestParameter extractParameterFromAnnotationAlone(Annotation anno, String type)
+    {
+        if (anno.getValue() == null)
+            return null;
+
+        String name = anno.getValue().asScalar().toString();
+        String dflt = (anno.getParam("defaultValue") != null)
+                    ? anno.getParam("defaultValue").asScalar().toString()
+                    : "";
+        int req0    = (anno.getParam("required") != null)
+                    ? ((Integer)anno.getParam("required").asScalar()).intValue()
+                    : 0;
+        boolean req = (req0 != 0) ? true : false;
+        return new RequestParameter(name, type, dflt, req);
+    }
+
+
+    private RequestParameter extractParameterFromAnnotationAndMethod(Annotation anno, Method method, int paramIndex)
+    {
+        int lvtIndex = paramIndex + 1;  // compensate for this
+        LocalVariable[] lvt = method.getLocalVariableTable().getLocalVariableTable();
+        if (lvt.length <= lvtIndex)
+            return null;
+
+        LocalVariable param = lvt[lvtIndex];
+        return new RequestParameter(param.getName(), ClassUtil.internalNameToExternal(param.getSignature()));
     }
 }
