@@ -66,7 +66,7 @@ public class TestSpring3
 
         SpringDestination dest1 = (SpringDestination)pathRepo.get("/servlet/foo.html", HttpMethod.GET);
         assertNotNull("mapping exists", dest1);
-        assertEquals("bean",    "controllerA", dest1.getBeanDefinition().getBeanName());
+        assertEquals("bean",    "controllerA", dest1.getBeanName());
         assertEquals("class",   "com.kdgregory.pathfinder.test.spring3.pkg1.ControllerA", dest1.getClassName());
         assertEquals("method",  "getFoo", dest1.getMethodName());
         assertEquals("toString","com.kdgregory.pathfinder.test.spring3.pkg1.ControllerA.getFoo()", dest1.toString());
@@ -80,14 +80,14 @@ public class TestSpring3
 
         SpringDestination dest1 = (SpringDestination)pathRepo.get("/servlet/B/bar.html", HttpMethod.GET);
         assertNotNull("GET mapping exists", dest1);
-        assertEquals("GET bean",    "controllerB", dest1.getBeanDefinition().getBeanName());
+        assertEquals("GET bean",    "controllerB", dest1.getBeanName());
         assertEquals("GET class",   "com.kdgregory.pathfinder.test.spring3.pkg2.ControllerB", dest1.getClassName());
         assertEquals("GET method",  "getBar", dest1.getMethodName());
         assertEquals("toString","com.kdgregory.pathfinder.test.spring3.pkg2.ControllerB.getBar()", dest1.toString());
 
         SpringDestination dest2 = (SpringDestination)pathRepo.get("/servlet/B/baz.html", HttpMethod.POST);
         assertNotNull("POST mapping exists", dest2);
-        assertEquals("POST bean",   "controllerB", dest2.getBeanDefinition().getBeanName());
+        assertEquals("POST bean",   "controllerB", dest2.getBeanName());
         assertEquals("POST class",  "com.kdgregory.pathfinder.test.spring3.pkg2.ControllerB", dest2.getClassName());
         assertEquals("POST method", "setBaz", dest2.getMethodName());
         assertEquals("toString","com.kdgregory.pathfinder.test.spring3.pkg2.ControllerB.setBaz()", dest2.toString());
@@ -101,7 +101,7 @@ public class TestSpring3
 
         SpringDestination dest1 = (SpringDestination)pathRepo.get("/servlet/C", HttpMethod.GET);
         assertNotNull("mapping exists", dest1);
-        assertEquals("bean",    "controllerC", dest1.getBeanDefinition().getBeanName());
+        assertEquals("bean",    "controllerC", dest1.getBeanName());
         assertEquals("class",   "com.kdgregory.pathfinder.test.spring3.pkg2.ControllerC", dest1.getClassName());
         assertEquals("method",  "getC", dest1.getMethodName());
         assertEquals("toString","com.kdgregory.pathfinder.test.spring3.pkg2.ControllerC.getC()", dest1.toString());
@@ -115,7 +115,7 @@ public class TestSpring3
 
         SpringDestination est = (SpringDestination)pathRepo.get("/servlet/D/{id}", HttpMethod.GET);
         assertNotNull("mapping exists", est);
-        assertEquals("bean",    "controllerD", est.getBeanDefinition().getBeanName());
+        assertEquals("bean",    "controllerD", est.getBeanName());
         assertEquals("class",   "com.kdgregory.pathfinder.test.spring3.pkg2.ControllerD", est.getClassName());
         assertEquals("method",  "getD", est.getMethodName());
         assertEquals("toString","com.kdgregory.pathfinder.test.spring3.pkg2.ControllerD.getD()", est.toString());
@@ -130,16 +130,16 @@ public class TestSpring3
         // verify that we add all variants when method isn't specified
 
         SpringDestination dest1a = (SpringDestination)pathRepo.get("/servlet/foo.html", HttpMethod.GET);
-        assertEquals("foo.html GET", "controllerA", dest1a.getBeanDefinition().getBeanName());
+        assertEquals("foo.html GET", "controllerA", dest1a.getBeanName());
 
         SpringDestination dest1b = (SpringDestination)pathRepo.get("/servlet/foo.html", HttpMethod.POST);
-        assertEquals("foo.html POST", "controllerA", dest1b.getBeanDefinition().getBeanName());
+        assertEquals("foo.html POST", "controllerA", dest1b.getBeanName());
 
         SpringDestination dest1c = (SpringDestination)pathRepo.get("/servlet/foo.html", HttpMethod.PUT);
-        assertEquals("foo.html PUT", "controllerA", dest1c.getBeanDefinition().getBeanName());
+        assertEquals("foo.html PUT", "controllerA", dest1c.getBeanName());
 
         SpringDestination dest1d = (SpringDestination)pathRepo.get("/servlet/foo.html", HttpMethod.DELETE);
-        assertEquals("foo.html DELETE", "controllerA", dest1d.getBeanDefinition().getBeanName());
+        assertEquals("foo.html DELETE", "controllerA", dest1d.getBeanName());
 
         // and that we don't add methods that aren't specified
 
@@ -155,19 +155,19 @@ public class TestSpring3
 
         SpringDestination dest1 = (SpringDestination)pathRepo.get("/foo.html", HttpMethod.GET);
         assertNotNull("method-only mapping exists", dest1);
-        assertEquals("method-only bean", "controllerA", dest1.getBeanDefinition().getBeanName());
+        assertEquals("method-only bean", "controllerA", dest1.getBeanName());
 
         SpringDestination dest2 = (SpringDestination)pathRepo.get("/B/bar.html", HttpMethod.GET);
         assertNotNull("class/method GET exists", dest2);
-        assertEquals("class/method GET bean", "controllerB", dest2.getBeanDefinition().getBeanName());
+        assertEquals("class/method GET bean", "controllerB", dest2.getBeanName());
 
         SpringDestination dest3 = (SpringDestination)pathRepo.get("/B/baz.html", HttpMethod.POST);
         assertNotNull("class/method POST exists", dest3);
-        assertEquals("class/method POST bean", "controllerB", dest3.getBeanDefinition().getBeanName());
+        assertEquals("class/method POST bean", "controllerB", dest3.getBeanName());
 
         SpringDestination dest4 = (SpringDestination)pathRepo.get("/C", HttpMethod.GET);
         assertNotNull("class-only mapping exists", dest3);
-        assertEquals("class-only bean", "controllerC", dest4.getBeanDefinition().getBeanName());
+        assertEquals("class-only bean", "controllerC", dest4.getBeanName());
     }
 
 
@@ -178,19 +178,19 @@ public class TestSpring3
 
         SpringDestination dest1 = (SpringDestination)pathRepo.get("/servlet/foo.html", HttpMethod.GET);
         assertNotNull("method-only mapping exists", dest1);
-        assertEquals("method-only bean", "controllerA", dest1.getBeanDefinition().getBeanName());
+        assertEquals("method-only bean", "controllerA", dest1.getBeanName());
 
         SpringDestination dest2 = (SpringDestination)pathRepo.get("/servlet/B/bar.html", HttpMethod.GET);
         assertNotNull("class/method GET exists", dest2);
-        assertEquals("class/method GET bean", "controllerB", dest2.getBeanDefinition().getBeanName());
+        assertEquals("class/method GET bean", "controllerB", dest2.getBeanName());
 
         SpringDestination dest3 = (SpringDestination)pathRepo.get("/servlet/B/baz.html", HttpMethod.POST);
         assertNotNull("class/method POST exists", dest3);
-        assertEquals("class/method POST bean", "controllerB", dest3.getBeanDefinition().getBeanName());
+        assertEquals("class/method POST bean", "controllerB", dest3.getBeanName());
 
         SpringDestination dest4 = (SpringDestination)pathRepo.get("/servlet/C", HttpMethod.GET);
         assertNotNull("class-only mapping exists", dest3);
-        assertEquals("class-only bean", "controllerC", dest4.getBeanDefinition().getBeanName());
+        assertEquals("class-only bean", "controllerC", dest4.getBeanName());
     }
 
 

@@ -14,6 +14,7 @@
 
 package com.kdgregory.pathfinder.spring;
 
+import java.util.Collections;
 import java.util.Map;
 
 import net.sf.kdgcommons.lang.StringUtil;
@@ -25,6 +26,97 @@ import com.kdgregory.pathfinder.util.InvocationOptions;
 public class SpringDestination
 implements Destination
 {
+    private String beanName;
+    private String className;
+    private String methodName;
+    private Map<String,RequestParameter> requestParams;
+
+
+    /**
+     *  Constructor for mappings read from an XML file.
+     *
+     *  @param beanDef  The bean definition.
+     */
+    public SpringDestination(BeanDefinition beanDef)
+    {
+        this.beanName = beanDef.getBeanName();
+        this.className = beanDef.getBeanClass();
+        this.methodName = "";
+        this.requestParams = Collections.emptyMap();
+    }
+
+
+    /**
+     *  Constructor for annotated classes.
+     *
+     *  @param  className       The fully-qualified name of the controller class.
+     *  @param  methodName      The name of the method invoked for this destination.
+     *  @param  requestParams   Any method parameters identified with @RequestParam.
+     */
+    public SpringDestination(String className, String methodName, Map<String,RequestParameter> requestParams)
+    {
+        this.beanName = BeanDefinition.classNameToBeanId(className);
+        this.className = className;
+        this.methodName  = methodName;
+        this.requestParams = requestParams;
+    }
+
+
+    public String getBeanName()
+    {
+        return beanName;
+    }
+
+
+    public String getClassName()
+    {
+        return className;
+    }
+
+
+    public String getMethodName()
+    {
+        return methodName;
+    }
+
+
+    public Map<String,RequestParameter> getParams()
+    {
+        return requestParams;
+    }
+
+
+    @Override
+    public String toString()
+    {
+        if (StringUtil.isBlank(methodName))
+            return getClassName();
+        else
+            return getClassName() + "." + getMethodName() + "()";
+    }
+
+
+    @Override
+    public String toString(Map<InvocationOptions,Boolean> options)
+    {
+        String base = toString();
+        if (! options.get(InvocationOptions.ENABLE_REQUEST_PARAMS).booleanValue())
+            return base;
+
+        StringBuilder sb = new StringBuilder(1024)
+                           .append(base)
+                           .deleteCharAt(base.length() - 1);    // remove trailing ")"
+        for (RequestParameter param : requestParams.values())
+        {
+            if (sb.charAt(sb.length() - 1) != '(')
+                sb.append(", ");
+            sb.append(param.getType()).append(" ").append(param.getName());
+        }
+        sb.append(")");
+        return sb.toString();
+    }
+
+
 //----------------------------------------------------------------------------
 //  Supporting classes
 //----------------------------------------------------------------------------
@@ -80,98 +172,5 @@ implements Destination
                  + ", defaultValue=\"" + defaultValue + "\""
                  + ") " + type + " " + name;
         }
-    }
-
-
-//----------------------------------------------------------------------------
-//  The destination itself
-//----------------------------------------------------------------------------
-
-    private BeanDefinition beanDef;
-    private String methodName;
-    private Map<String,RequestParameter> requestParams;
-
-
-    /**
-     *  Constructor for mappings read from an XML file.
-     *
-     *  @param beanDef  The bean definition.
-     */
-    public SpringDestination(BeanDefinition beanDef)
-    {
-        // FIXME - anything that caller needs should be extracted here
-        this.beanDef = beanDef;
-    }
-
-
-    /**
-     *  Constructor for annotated classes.
-     *
-     *  @param  className       The fully-qualified name of the controller class.
-     *  @param  methodName      The name of the method invoked for this destination.
-     *  @param  requestParams   Any parameters that are expected in the request; key
-     *                          is parameter name, value is expected type.
-     *                          FIXME - this should handle the required/not flag
-     */
-    public SpringDestination(String className, String methodName, Map<String,RequestParameter> requestParams)
-    {
-        this.beanDef = new BeanDefinition(className);
-        this.methodName  = methodName;
-        this.requestParams = requestParams;
-    }
-
-
-    public BeanDefinition getBeanDefinition()
-    {
-        return beanDef;
-    }
-
-
-    public String getClassName()
-    {
-        return beanDef.getBeanClass();
-    }
-
-
-    public String getMethodName()
-    {
-        return methodName;
-    }
-
-
-    public Map<String,RequestParameter> getParams()
-    {
-        return requestParams;
-    }
-
-
-    @Override
-    public String toString()
-    {
-        if (StringUtil.isBlank(methodName))
-            return beanDef.getBeanClass();
-        else
-            return beanDef.getBeanClass() + "." + methodName + "()";
-    }
-
-
-    @Override
-    public String toString(Map<InvocationOptions,Boolean> options)
-    {
-        String base = toString();
-        if (! options.get(InvocationOptions.ENABLE_REQUEST_PARAMS).booleanValue())
-            return base;
-
-        StringBuilder sb = new StringBuilder(1024)
-                           .append(base)
-                           .deleteCharAt(base.length() - 1);    // remove trailing ")"
-        for (RequestParameter param : requestParams.values())
-        {
-            if (sb.charAt(sb.length() - 1) != '(')
-                sb.append(", ");
-            sb.append(param.getType()).append(" ").append(param.getName());
-        }
-        sb.append(")");
-        return sb.toString();
     }
 }
