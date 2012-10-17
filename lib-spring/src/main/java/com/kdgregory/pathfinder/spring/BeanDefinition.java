@@ -194,11 +194,11 @@ public class BeanDefinition
         return ret;
     }
 
-    
+
 //----------------------------------------------------------------------------
 //  Static utility methods
 //----------------------------------------------------------------------------
-    
+
     /**
      *  Converts a Java class name (fully-qualified or not) into a bean name
      *  by lowercasing the first letter. No attempt is made to deal with other
