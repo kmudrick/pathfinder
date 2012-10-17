@@ -171,8 +171,8 @@ implements WarMachine
     {
         return webXml;
     }
-    
-    
+
+
     @Override
     public XPathWrapper getWebXmlPath(String path)
     {
