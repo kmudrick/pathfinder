@@ -243,4 +243,15 @@ public class TestSpring3
         assertEquals("default val: bargle", "",                  params.get("bargle").getDefaultValue());
         assertTrue("required: bargle",                           params.get("bargle").isRequired());
     }
+
+
+    @Test
+    public void testRootLevelDispatcherMappingRemovesWildcard() throws Exception
+    {
+        processWar(WarNames.SPRING_RESTFUL);
+
+        SpringDestination dest = (SpringDestination)pathRepo.get("/foo.html", HttpMethod.GET);
+        assertNotNull(dest);
+    }
+
 }
