@@ -174,6 +174,13 @@ implements WarMachine
 
 
     @Override
+    public XPathWrapper getWebXmlPath(String path)
+    {
+        return xpathFact.newXPath(path);
+    }
+
+
+    @Override
     public List<ServletMapping> getServletMappings()
     {
         if (servletMappings == null)
