@@ -74,7 +74,7 @@ public class TestClasspathScanner
     @Test
     public void testMultipleBasePackagesOneAtATime() throws Exception
     {
-        WarMachine machine = TestHelpers.createWarMachine(WarNames.SPRING3_BASIC);
+        WarMachine machine = TestHelpers.createWarMachine(WarNames.SPRING_ANNO);
 
         ClasspathScannerImpl scanner = new ClasspathScannerImpl()
                                        .addBasePackage("com.kdgregory.pathfinder.test.spring3.pkg1", false)
@@ -99,7 +99,7 @@ public class TestClasspathScanner
     @Test
     public void testMultipleBasePackagesAllAtOnce() throws Exception
     {
-        WarMachine machine = TestHelpers.createWarMachine(WarNames.SPRING3_BASIC);
+        WarMachine machine = TestHelpers.createWarMachine(WarNames.SPRING_ANNO);
 
         ClasspathScannerImpl scanner = new ClasspathScannerImpl()
                                            .addBasePackages(Arrays.asList(
@@ -121,7 +121,7 @@ public class TestClasspathScanner
     @Test
     public void testAnnotationFilter() throws Exception
     {
-        WarMachine machine = TestHelpers.createWarMachine(WarNames.SPRING3_BASIC);
+        WarMachine machine = TestHelpers.createWarMachine(WarNames.SPRING_ANNO);
 
         ClasspathScannerImpl scanner = new ClasspathScannerImpl()
                                        .addBasePackage("com.kdgregory.pathfinder.test.spring3")
@@ -141,7 +141,7 @@ public class TestClasspathScanner
     @Test
     public void testAnnotationFilterWithRetainedParsedClasses() throws Exception
     {
-        WarMachine machine = TestHelpers.createWarMachine(WarNames.SPRING3_BASIC);
+        WarMachine machine = TestHelpers.createWarMachine(WarNames.SPRING_ANNO);
 
         ClasspathScannerImpl scanner = new ClasspathScannerImpl()
                                        .addBasePackage("com.kdgregory.pathfinder.test.spring3")

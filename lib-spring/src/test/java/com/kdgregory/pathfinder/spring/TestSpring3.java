@@ -37,7 +37,7 @@ extends AbstractSpringTestcase
     @Test
     public void testMappingOnMethodOnly() throws Exception
     {
-        processWar(WarNames.SPRING3_BASIC);
+        processWar(WarNames.SPRING_ANNO);
 
         SpringDestination dest = (SpringDestination)pathRepo.get("/servlet/foo.html", HttpMethod.GET);
         assertNotNull("mapping exists", dest);
@@ -51,7 +51,7 @@ extends AbstractSpringTestcase
     @Test
     public void testMappingOnClassAndMethod() throws Exception
     {
-        processWar(WarNames.SPRING3_BASIC);
+        processWar(WarNames.SPRING_ANNO);
 
         SpringDestination dest1 = (SpringDestination)pathRepo.get("/servlet/B/bar.html", HttpMethod.GET);
         assertNotNull("GET mapping exists", dest1);
@@ -72,7 +72,7 @@ extends AbstractSpringTestcase
     @Test
     public void testMappingOnClassOnly() throws Exception
     {
-        processWar(WarNames.SPRING3_BASIC);
+        processWar(WarNames.SPRING_ANNO);
 
         SpringDestination dest1 = (SpringDestination)pathRepo.get("/servlet/C", HttpMethod.GET);
         assertNotNull("mapping exists", dest1);
@@ -86,7 +86,7 @@ extends AbstractSpringTestcase
     @Test
     public void testMappingWithPathVariable() throws Exception
     {
-        processWar(WarNames.SPRING3_BASIC);
+        processWar(WarNames.SPRING_ANNO);
 
         SpringDestination est = (SpringDestination)pathRepo.get("/servlet/D/{id}", HttpMethod.GET);
         assertNotNull("mapping exists", est);
@@ -100,7 +100,7 @@ extends AbstractSpringTestcase
     @Test
     public void testRequestMethodSpecification() throws Exception
     {
-        processWar(WarNames.SPRING3_BASIC);
+        processWar(WarNames.SPRING_ANNO);
 
         // verify that we add all variants when method isn't specified
 
@@ -126,7 +126,7 @@ extends AbstractSpringTestcase
     @Test
     public void testRequestParameters() throws Exception
     {
-        processWar(WarNames.SPRING3_BASIC);
+        processWar(WarNames.SPRING_ANNO);
 
         SpringDestination dest = (SpringDestination)pathRepo.get("/servlet/E1", HttpMethod.GET);
         Map<String,RequestParameter> params = dest.getParams();
@@ -158,7 +158,7 @@ extends AbstractSpringTestcase
     @Test
     public void testInferredRequestParameters() throws Exception
     {
-        processWar(WarNames.SPRING3_BASIC);
+        processWar(WarNames.SPRING_ANNO);
 
         SpringDestination dest = (SpringDestination)pathRepo.get("/servlet/E2", HttpMethod.GET);
         Map<String,RequestParameter> params = dest.getParams();

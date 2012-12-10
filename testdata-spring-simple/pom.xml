@@ -8,12 +8,12 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>pathfinder-testdata-spring3-basic</artifactId>
+    <artifactId>pathfinder-testdata-spring-simple</artifactId>
     <packaging>war</packaging>
 
-    <name>WAR for Spring 3 Testing</name>
+    <name>WAR for Spring SimpleUrlHandlerMapping Testing</name>
     <description>
-        This WAR has a context scan and various request mappings.
+        A WAR that explicitly specifies its controller in the beans.xml.
     </description>
 
     <dependencies>

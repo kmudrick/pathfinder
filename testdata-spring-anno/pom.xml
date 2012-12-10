@@ -8,13 +8,12 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>pathfinder-testdata-spring2-simple</artifactId>
+    <artifactId>pathfinder-testdata-spring-anno</artifactId>
     <packaging>war</packaging>
 
-    <name>WAR for Simple Spring 2 Testing</name>
+    <name>WAR for Spring Annotation-Driven Testing</name>
     <description>
-        A very basic WAR that uses a single controller, invoked by
-        a SimpleUrlHandlerMapping bean.
+        This WAR has a context scan and various annotated mappings.
     </description>
 
     <dependencies>

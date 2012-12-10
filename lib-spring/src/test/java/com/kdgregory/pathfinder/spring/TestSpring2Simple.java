@@ -43,7 +43,7 @@ public class TestSpring2Simple
     public static void loadWar()
     throws Exception
     {
-        machine = TestHelpers.createWarMachine(WarNames.SPRING2_SIMPLE);
+        machine = TestHelpers.createWarMachine(WarNames.SPRING_SIMPLE);
     }
 
 
