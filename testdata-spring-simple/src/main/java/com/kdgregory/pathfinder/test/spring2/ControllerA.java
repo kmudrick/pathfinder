@@ -24,7 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
 
-public class SimpleControllerB
+public class ControllerA
 extends AbstractController
 {
     @Override
