@@ -24,13 +24,13 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
 
-public class SimpleControllerC
+public class ControllerA
 extends AbstractController
 {
     @Override
     protected ModelAndView handleRequestInternal(
             HttpServletRequest request,
-            HttpServletResponse response) 
+            HttpServletResponse response)
     throws Exception
     {
         Map<String,String> model = new HashMap<String,String>();

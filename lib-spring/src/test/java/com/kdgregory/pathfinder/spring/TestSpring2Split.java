@@ -65,12 +65,14 @@ public class TestSpring2Split
     public void testServletContextIsCombinedWithRoot() throws Exception
     {
         // this one is defined in the servlet context
-        SpringDestination dest1 = (SpringDestination)pathRepo.get("/servlet/foo.html", HttpMethod.GET);
-        assertEquals("simpleControllerA", dest1.getBeanName());
+        SpringDestination dest1 = (SpringDestination)pathRepo.get("/servlet/foo", HttpMethod.GET);
+        assertEquals("controllerA", dest1.getBeanName());
+        assertEquals("com.kdgregory.pathfinder.test.spring2.ControllerA", dest1.getClassName());
 
         // and this one is defined in the root context
-        SpringDestination dest2 = (SpringDestination)pathRepo.get("/servlet/baz.html", HttpMethod.GET);
-        assertEquals("simpleControllerC", dest2.getBeanName());
+        SpringDestination dest2 = (SpringDestination)pathRepo.get("/servlet/baz", HttpMethod.GET);
+        assertEquals("controllerC", dest2.getBeanName());
+        assertEquals("com.kdgregory.pathfinder.test.spring2.ControllerC", dest2.getClassName());
 
     }
 
@@ -79,11 +81,13 @@ public class TestSpring2Split
     public void testImportedContext() throws Exception
     {
         // this one is defined in the servlet context
-        SpringDestination dest1 = (SpringDestination)pathRepo.get("/servlet/foo.html", HttpMethod.GET);
-        assertEquals("simpleControllerA", dest1.getBeanName());
+        SpringDestination dest1 = (SpringDestination)pathRepo.get("/servlet/foo", HttpMethod.GET);
+        assertEquals("controllerA", dest1.getBeanName());
+        assertEquals("com.kdgregory.pathfinder.test.spring2.ControllerA", dest1.getClassName());
 
         // and this one is defined in the imported context
-        SpringDestination dest2 = (SpringDestination)pathRepo.get("/servlet/bar.html", HttpMethod.GET);
-        assertEquals("simpleControllerB", dest2.getBeanName());
+        SpringDestination dest2 = (SpringDestination)pathRepo.get("/servlet/bar", HttpMethod.GET);
+        assertEquals("controllerB", dest2.getBeanName());
+        assertEquals("com.kdgregory.pathfinder.test.spring2.ControllerB", dest2.getClassName());
     }
 }
