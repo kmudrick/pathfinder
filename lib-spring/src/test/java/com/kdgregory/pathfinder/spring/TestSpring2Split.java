@@ -67,12 +67,12 @@ public class TestSpring2Split
         // this one is defined in the servlet context
         SpringDestination dest1 = (SpringDestination)pathRepo.get("/servlet/foo", HttpMethod.GET);
         assertEquals("controllerA", dest1.getBeanName());
-        assertEquals("com.kdgregory.pathfinder.test.spring2.ControllerA", dest1.getClassName());
+        assertEquals("com.kdgregory.pathfinder.test.spring2.ControllerA", dest1.getBeanClass());
 
         // and this one is defined in the root context
         SpringDestination dest2 = (SpringDestination)pathRepo.get("/servlet/baz", HttpMethod.GET);
         assertEquals("controllerC", dest2.getBeanName());
-        assertEquals("com.kdgregory.pathfinder.test.spring2.ControllerC", dest2.getClassName());
+        assertEquals("com.kdgregory.pathfinder.test.spring2.ControllerC", dest2.getBeanClass());
 
     }
 
@@ -83,11 +83,11 @@ public class TestSpring2Split
         // this one is defined in the servlet context
         SpringDestination dest1 = (SpringDestination)pathRepo.get("/servlet/foo", HttpMethod.GET);
         assertEquals("controllerA", dest1.getBeanName());
-        assertEquals("com.kdgregory.pathfinder.test.spring2.ControllerA", dest1.getClassName());
+        assertEquals("com.kdgregory.pathfinder.test.spring2.ControllerA", dest1.getBeanClass());
 
         // and this one is defined in the imported context
         SpringDestination dest2 = (SpringDestination)pathRepo.get("/servlet/bar", HttpMethod.GET);
         assertEquals("controllerB", dest2.getBeanName());
-        assertEquals("com.kdgregory.pathfinder.test.spring2.ControllerB", dest2.getClassName());
+        assertEquals("com.kdgregory.pathfinder.test.spring2.ControllerB", dest2.getBeanClass());
     }
 }

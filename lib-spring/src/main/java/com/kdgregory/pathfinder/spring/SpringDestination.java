@@ -70,7 +70,7 @@ implements Destination
     }
 
 
-    public String getClassName()
+    public String getBeanClass()
     {
         return className;
     }
@@ -92,9 +92,9 @@ implements Destination
     public String toString()
     {
         if (StringUtil.isBlank(methodName))
-            return getClassName();
+            return getBeanClass();
         else
-            return getClassName() + "." + getMethodName() + "()";
+            return getBeanClass() + "." + getMethodName() + "()";
     }
 
 
