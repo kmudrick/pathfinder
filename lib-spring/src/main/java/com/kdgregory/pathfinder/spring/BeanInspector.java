@@ -70,7 +70,7 @@ public class BeanInspector
             Properties mappings = def.getPropertyAsProperties("mappings");
             if ((mappings == null) || mappings.isEmpty())
             {
-                logger.debug("SimpleUrlHandlerMapping bean " + def.getBeanName() + " has no mappings");
+                logger.warn("SimpleUrlHandlerMapping bean " + def.getBeanName() + " has no mappings");
                 continue;
             }
 
