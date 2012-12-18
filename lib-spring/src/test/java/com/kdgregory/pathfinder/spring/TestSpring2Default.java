@@ -67,12 +67,14 @@ public class TestSpring2Default
     public void testDefaultLocations() throws Exception
     {
         // this bean is defined in the servlet context
-        SpringDestination dest1 = (SpringDestination)pathRepo.get("/servlet/foo.html", HttpMethod.GET);
-        assertEquals("simpleControllerA", dest1.getBeanName());
+        SpringDestination dest1 = (SpringDestination)pathRepo.get("/servlet/foo", HttpMethod.GET);
+        assertEquals("controllerA", dest1.getBeanName());
+        assertEquals("com.kdgregory.pathfinder.test.spring2.ControllerA", dest1.getClassName());
 
         // and this one is defined in the root
-        SpringDestination dest2 = (SpringDestination)pathRepo.get("/servlet/bar.html", HttpMethod.POST);
-        assertEquals("simpleControllerB", dest2.getBeanName());
+        SpringDestination dest2 = (SpringDestination)pathRepo.get("/servlet/bar", HttpMethod.POST);
+        assertEquals("controllerB", dest2.getBeanName());
+        assertEquals("com.kdgregory.pathfinder.test.spring2.ControllerB", dest2.getClassName());
     }
 
 }
