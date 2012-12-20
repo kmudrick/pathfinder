@@ -48,7 +48,7 @@ public class TestSpringContext
         BeanDefinition b1 = context.getBean("simpleUrlMapping");
         assertNotNull("able to find bean by name", b1);
         assertEquals("bean name set",              "simpleUrlMapping",
-                                                   b1.getBeanName());
+                                                   b1.getBeanId());
         assertEquals("bean class set",             "org.springframework.web.servlet.handler.SimpleUrlHandlerMapping",
                                                    b1.getBeanClass());
         assertNotNull("bean definition has XML",   b1.getBeanDef());

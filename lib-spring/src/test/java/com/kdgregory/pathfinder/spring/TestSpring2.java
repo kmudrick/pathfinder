@@ -14,57 +14,24 @@
 
 package com.kdgregory.pathfinder.spring;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 import com.kdgregory.pathfinder.core.HttpMethod;
-import com.kdgregory.pathfinder.core.PathRepo;
-import com.kdgregory.pathfinder.core.WarMachine;
-import com.kdgregory.pathfinder.core.impl.PathRepoImpl;
-import com.kdgregory.pathfinder.servlet.ServletInspector;
 import com.kdgregory.pathfinder.test.WarNames;
-import com.kdgregory.pathfinder.util.TestHelpers;
 
 
 /**
- *  This test looks for simple XML-based configuration, where there's a
- *  single config file attached to the servlet. All tests run using the
- *  same WAR, which is accessed via a static variable.
+ *  This test looks for explicitly configured URL mappings.
  */
-public class TestSpring2Simple
+public class TestSpring2
+extends AbstractSpringTestcase
 {
-    private static WarMachine machine;
-    private PathRepo pathRepo;
-
-
-    @BeforeClass
-    public static void loadWar()
-    throws Exception
-    {
-        machine = TestHelpers.createWarMachine(WarNames.SPRING_SIMPLE);
-    }
-
-
-    @Before
-    public void setUp()
-    throws Exception
-    {
-        // we run the inspector chain here, assert its actions in the test methods
-        pathRepo = new PathRepoImpl();
-        new ServletInspector().inspect(machine, pathRepo);
-        new SpringInspector().inspect(machine, pathRepo);
-    }
-
-
-//----------------------------------------------------------------------------
-//  Testcases
-//----------------------------------------------------------------------------
-
     @Test
     public void testDispatcherServletMappingsRemoved() throws Exception
     {
+        processWar(WarNames.SPRING_SIMPLE);
+
         // the original DispatcherServlet mapping should be gone
         assertEquals("/servlet/* removed", 0, pathRepo.get("/servlet/*").size());
 
@@ -76,6 +43,8 @@ public class TestSpring2Simple
     @Test
     public void testSimpleUrlMappings() throws Exception
     {
+        processWar(WarNames.SPRING_SIMPLE);
+
         SpringDestination dest1 = (SpringDestination)pathRepo.get("/servlet/foo", HttpMethod.GET);
         assertEquals("controllerA", dest1.getBeanName());
         assertEquals("com.kdgregory.pathfinder.test.spring2.ControllerA", dest1.getBeanClass());
@@ -86,4 +55,17 @@ public class TestSpring2Simple
     }
 
 
+    @Test
+    public void testBeanNameUrlMappings() throws Exception
+    {
+        processWar(WarNames.SPRING_BEAN_NAME);
+
+        SpringDestination dest1 = (SpringDestination)pathRepo.get("/servlet/foo", HttpMethod.GET);
+        assertEquals("controllerA", dest1.getBeanName());
+        assertEquals("com.kdgregory.pathfinder.test.spring2.ControllerA", dest1.getBeanClass());
+
+        SpringDestination dest2 = (SpringDestination)pathRepo.get("/servlet/bar", HttpMethod.GET);
+        assertEquals("controllerB", dest2.getBeanName());
+        assertEquals("com.kdgregory.pathfinder.test.spring2.ControllerB", dest2.getBeanClass());
+    }
 }

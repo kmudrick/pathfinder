@@ -39,7 +39,7 @@ implements Destination
      */
     public SpringDestination(BeanDefinition beanDef)
     {
-        this.beanName = beanDef.getBeanName();
+        this.beanName = beanDef.getBeanId();
         this.className = beanDef.getBeanClass();
         this.methodName = "";
         this.requestParams = Collections.emptyMap();

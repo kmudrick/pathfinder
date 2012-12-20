@@ -53,6 +53,7 @@ public class BeanInspector
     public void inspect(String urlPrefix)
     {
         processSimpleUrlHandlerMappings(urlPrefix);
+        processBeanNameHandlerMappings(urlPrefix);
     }
 
 
@@ -70,19 +71,44 @@ public class BeanInspector
             Properties mappings = def.getPropertyAsProperties("mappings");
             if ((mappings == null) || mappings.isEmpty())
             {
-                logger.warn("SimpleUrlHandlerMapping bean " + def.getBeanName() + " has no mappings");
+                logger.warn("SimpleUrlHandlerMapping bean " + def.getBeanId() + " has no mappings");
                 continue;
             }
 
-            logger.debug("SimpleUrlHandlerMapping bean " + def.getBeanName() + " has " + mappings.size() + " mappings");
+            logger.debug("SimpleUrlHandlerMapping bean " + def.getBeanId() + " has " + mappings.size() + " mappings");
             for (Map.Entry<Object,Object> mapping : mappings.entrySet())
             {
                 String url = urlPrefix + mapping.getKey();
-                String beanName = String.valueOf(mapping.getValue());
-                BeanDefinition bean = context.getBean(beanName);
-                logger.debug("mapped " + url + " to bean " + beanName);
+                String beanId = String.valueOf(mapping.getValue());
+                BeanDefinition bean = context.getBean(beanId);
+                logger.debug("mapped " + url + " to bean " + beanId);
                 paths.put(url, new SpringDestination(bean));
             }
         }
+    }
+
+
+    // FIXME - this should be the default, if no explicit mappings present
+    //        - it should be called last, and will need a flag to indicate
+    //          whether it should act even if no explicit mapping bean defined
+    private void processBeanNameHandlerMappings(String urlPrefix)
+    {
+        List<BeanDefinition> beans = context.getBeansByClass(SpringConstants.BEAN_NAME_URL_HANDLER_CLASS);
+        if (beans.size() == 0)
+        {
+            logger.debug("did not find BeanNameUrlHandlerMapping");
+            return;
+        }
+        logger.debug("found BeanNameUrlHandlerMapping; scanning for beans with explicit names");
+
+        for (BeanDefinition bean : context.getBeans().values())
+        {
+            String beanName = bean.getBeanName();
+            if (! beanName.startsWith("/"))
+                continue;
+
+            logger.debug("found name-mapping candidate: " + bean.getBeanId() + " = " + beanName);
+            String url = urlPrefix + beanName;
+            paths.put(url, new SpringDestination(bean));   }
     }
 }
