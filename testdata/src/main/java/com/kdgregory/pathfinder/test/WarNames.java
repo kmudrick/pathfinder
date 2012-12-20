@@ -24,7 +24,7 @@ public class WarNames
     public final static String  SERVLET_25          = "pathfinder-testdata-servlet25.war";
     public final static String  SPRING_SPLIT        = "pathfinder-testdata-spring-split.war";
     public final static String  SPRING_SIMPLE       = "pathfinder-testdata-spring-simple.war";
-    public final static String  SPRING_BEAN_NAME    = "pathfinder-testdata-spring-name.war";
+    public final static String  SPRING_BEAN_NAME    = "pathfinder-testdata-spring-beanname.war";
     public final static String  SPRING_ANNO         = "pathfinder-testdata-spring-anno.war";
     public final static String  SPRING_DEFAULT      = "pathfinder-testdata-spring-default.war";
     public final static String  SPRING_ROOT_DISP_1  = "pathfinder-testdata-spring-dispatch-1.war";

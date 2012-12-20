@@ -65,7 +65,7 @@
         </dependency>
         <dependency>
             <groupId>com.kdgregory.pathfinder</groupId>
-            <artifactId>pathfinder-testdata-spring-name</artifactId>
+            <artifactId>pathfinder-testdata-spring-beanname</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
