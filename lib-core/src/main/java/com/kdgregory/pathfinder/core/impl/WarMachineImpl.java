@@ -256,8 +256,9 @@ implements WarMachine
 
             if (filePackage.equals(packageName) || recurse)
             {
-                filename = filename.replace("/", ".").replace(".class", "");
-                result.add(filename);
+                String className = StringUtil.extractLeftOfLast(filename, ".class")
+                                   .replace("/", ".");
+                result.add(className);
             }
         }
 

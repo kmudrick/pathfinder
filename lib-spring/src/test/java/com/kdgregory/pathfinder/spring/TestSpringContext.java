@@ -165,7 +165,7 @@ public class TestSpringContext
 
         ClasspathScannerImpl scanner = (ClasspathScannerImpl)scanners.get(0);
         assertEquals("base package count", 1, scanner.getBasePackages().size());
-        assertEquals("base package config", Boolean.TRUE, scanner.getBasePackages().get("com/example/pkg1"));
+        assertEquals("base package config", Boolean.TRUE, scanner.getBasePackages().get("com.example.pkg1"));
 
         Set<String> annotationFilter = scanner.getIncludedAnnotations();
         assertEquals("count of filter annotations", 1, annotationFilter.size());
@@ -182,9 +182,9 @@ public class TestSpringContext
 
         ClasspathScannerImpl scanner = (ClasspathScannerImpl)scanners.get(0);
         assertEquals("base package count", 3, scanner.getBasePackages().size());
-        assertEquals("base package config", Boolean.TRUE, scanner.getBasePackages().get("com/example/pkg1"));
-        assertEquals("base package config", Boolean.TRUE, scanner.getBasePackages().get("com/example/pkg2"));
-        assertEquals("base package config", Boolean.TRUE, scanner.getBasePackages().get("com/example/pkg3"));
+        assertEquals("base package config", Boolean.TRUE, scanner.getBasePackages().get("com.example.pkg1"));
+        assertEquals("base package config", Boolean.TRUE, scanner.getBasePackages().get("com.example.pkg2"));
+        assertEquals("base package config", Boolean.TRUE, scanner.getBasePackages().get("com.example.pkg3"));
     }
 
 
@@ -197,14 +197,12 @@ public class TestSpringContext
 
         ClasspathScannerImpl scanner1 = (ClasspathScannerImpl)scanners.get(0);
         assertEquals("scanner1 package count", 1, scanner1.getBasePackages().size());
-        assertEquals("scanner1 package config", Boolean.TRUE, scanner1.getBasePackages().get("com/example/pkg1"));
+        assertEquals("scanner1 package config", Boolean.TRUE, scanner1.getBasePackages().get("com.example.pkg1"));
 
         ClasspathScannerImpl scanner2 = (ClasspathScannerImpl)scanners.get(1);
         assertEquals("scanner2 package count", 3, scanner2.getBasePackages().size());
-        assertEquals("scanner2 package config", Boolean.TRUE, scanner2.getBasePackages().get("com/example/pkg1"));
-        assertEquals("scanner2 package config", Boolean.TRUE, scanner2.getBasePackages().get("com/example/pkg2"));
-        assertEquals("scanner2 package config", Boolean.TRUE, scanner2.getBasePackages().get("com/example/pkg3"));
+        assertEquals("scanner2 package config", Boolean.TRUE, scanner2.getBasePackages().get("com.example.pkg1"));
+        assertEquals("scanner2 package config", Boolean.TRUE, scanner2.getBasePackages().get("com.example.pkg2"));
+        assertEquals("scanner2 package config", Boolean.TRUE, scanner2.getBasePackages().get("com.example.pkg3"));
     }
-
-
 }
