@@ -48,6 +48,13 @@ implements PathRepo
 //----------------------------------------------------------------------------
 
     @Override
+    public int size()
+    {
+        return urlMap.size();
+    }
+
+
+    @Override
     public void put(String url, Destination dest)
     {
         getOrCreateDestMap(url).clear();

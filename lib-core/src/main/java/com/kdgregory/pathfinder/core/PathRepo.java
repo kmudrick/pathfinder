@@ -33,6 +33,13 @@ public interface PathRepo
 extends Iterable<String>
 {
     /**
+     *  Returns the number of URLs in the repository. Note that multiple actions
+     *  for the same URL are only counted once.
+     */
+    public int size();
+
+
+    /**
      *  Stores a destination that responds to all request methods. Will replace
      *  all existing destinations for the URL.
      */

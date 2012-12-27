@@ -120,8 +120,7 @@ public interface WarMachine
      *  Attempts to find the specified class on the classpath, and loads it
      *  using BCEL. Returns <code>null</code> if unable to find the classfile.
      */
-    public JavaClass loadClass(String classname)
-    throws IOException;
+    public JavaClass loadClass(String classname);
 
 
 

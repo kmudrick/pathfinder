@@ -319,7 +319,6 @@ implements WarMachine
 
     @Override
     public JavaClass loadClass(String classname)
-    throws IOException
     {
         String filename = classname.replace(".", "/") + ".class";
         InputStream in = null;
@@ -329,6 +328,10 @@ implements WarMachine
             return (in == null)
                  ? null
                  : new ClassParser(in, classname).parse();
+        }
+        catch (IOException ex)
+        {
+            throw new RuntimeException("unable to load class", ex);
         }
         finally
         {
