@@ -60,7 +60,8 @@ extends AbstractSpringTestcase
     {
         processWar(WarNames.SPRING_BEAN_NAME);
 
-//        assertEquals("number of controller beans", 2, pathRepo.size());
+        // index.jsp + 2 Spring mappings
+        assertEquals("number of mapped URLs", 3, pathRepo.urlCount());
 
         SpringDestination dest1 = (SpringDestination)pathRepo.get("/servlet/foo", HttpMethod.GET);
         assertEquals("controllerA", dest1.getBeanName());
@@ -77,7 +78,8 @@ extends AbstractSpringTestcase
     {
         processWar(WarNames.SPRING_CLASS_NAME);
 
-//        assertEquals("number of controller beans", 2, pathRepo.size());
+        // index.jsp + 2 Spring mappings
+        assertEquals("number of mapped URLs", 3, pathRepo.urlCount());
 
         SpringDestination dest1 = (SpringDestination)pathRepo.get("/servlet/test/foo", HttpMethod.GET);
         assertEquals("controllerA", dest1.getBeanName());
