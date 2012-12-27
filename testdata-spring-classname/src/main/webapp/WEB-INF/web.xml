@@ -16,20 +16,11 @@
         <url-pattern>/servlet/*</url-pattern>
     </servlet-mapping>
 
-    <!-- and also an old-style servlet to verify we don't do too much -->
-    <servlet>
-        <servlet-name>MyServlet</servlet-name>
-        <servlet-class>com.example.servlet.SomeServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>MyServlet</servlet-name>
-        <url-pattern>/servlet2</url-pattern>
-    </servlet-mapping>
-
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
+
 </web-app>
