@@ -32,7 +32,7 @@ extends AbstractSpringTestcase
     @Test
     public void testDefaultLocations() throws Exception
     {
-        processWar(WarNames.SPRING_DEFAULT);
+        processWar(WarNames.SPRING_DEFAULT_CONFIG);
 
         // this bean is defined in the servlet context
         SpringDestination dest1 = (SpringDestination)pathRepo.get("/servlet/foo", HttpMethod.GET);
@@ -49,7 +49,7 @@ extends AbstractSpringTestcase
     @Test
     public void testServletContextIsCombinedWithRoot() throws Exception
     {
-        processWar(WarNames.SPRING_SPLIT);
+        processWar(WarNames.SPRING_SPLIT_CONFIG);
 
         // this one is defined in the servlet context
         SpringDestination dest1 = (SpringDestination)pathRepo.get("/servlet/foo", HttpMethod.GET);
@@ -67,7 +67,7 @@ extends AbstractSpringTestcase
     @Test
     public void testImportedContext() throws Exception
     {
-        processWar(WarNames.SPRING_SPLIT);
+        processWar(WarNames.SPRING_SPLIT_CONFIG);
 
         // this one is defined in the servlet context
         SpringDestination dest1 = (SpringDestination)pathRepo.get("/servlet/foo", HttpMethod.GET);

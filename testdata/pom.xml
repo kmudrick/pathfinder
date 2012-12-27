@@ -83,18 +83,6 @@
         </dependency>
         <dependency>
             <groupId>com.kdgregory.pathfinder</groupId>
-            <artifactId>pathfinder-testdata-spring-default</artifactId>
-            <version>${project.version}</version>
-            <type>war</type>
-        </dependency>
-        <dependency>
-            <groupId>com.kdgregory.pathfinder</groupId>
-            <artifactId>pathfinder-testdata-spring-split</artifactId>
-            <version>${project.version}</version>
-            <type>war</type>
-        </dependency>
-        <dependency>
-            <groupId>com.kdgregory.pathfinder</groupId>
             <artifactId>pathfinder-testdata-spring-dispatch-1</artifactId>
             <version>${project.version}</version>
             <type>war</type>
@@ -102,6 +90,18 @@
         <dependency>
             <groupId>com.kdgregory.pathfinder</groupId>
             <artifactId>pathfinder-testdata-spring-dispatch-2</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>com.kdgregory.pathfinder</groupId>
+            <artifactId>pathfinder-testdata-spring-default-config</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>com.kdgregory.pathfinder</groupId>
+            <artifactId>pathfinder-testdata-spring-split-config</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
