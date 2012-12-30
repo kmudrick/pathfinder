@@ -22,8 +22,8 @@ import static org.junit.Assert.*;
 
 import org.apache.bcel.classfile.JavaClass;
 
-import com.kdgregory.pathfinder.core.impl.ClasspathScannerImpl;
 import com.kdgregory.pathfinder.test.WarNames;
+import com.kdgregory.pathfinder.util.ClasspathScanner;
 import com.kdgregory.pathfinder.util.TestHelpers;
 
 
@@ -35,7 +35,7 @@ public class TestClasspathScanner
         // this test is identical to TestWarMachine.testGetFilesOnClasspath()
         WarMachine machine = TestHelpers.createWarMachine(WarNames.SERVLET);
 
-        ClasspathScannerImpl scanner = new ClasspathScannerImpl();
+        ClasspathScanner scanner = new ClasspathScanner();
 
         Map<String,JavaClass> result = scanner.scan(machine);
         assertTrue("searching for file under WEB-INF", result.containsKey("com.example.servlet.SomeServlet"));
@@ -48,7 +48,7 @@ public class TestClasspathScanner
     {
         WarMachine machine = TestHelpers.createWarMachine(WarNames.SERVLET);
 
-        ClasspathScannerImpl scanner = new ClasspathScannerImpl()
+        ClasspathScanner scanner = new ClasspathScanner()
                                        .addBasePackage("com.example", true);
 
         Map<String,JavaClass> result = scanner.scan(machine);
@@ -62,7 +62,7 @@ public class TestClasspathScanner
     {
         WarMachine machine = TestHelpers.createWarMachine(WarNames.SERVLET);
 
-        ClasspathScannerImpl scanner = new ClasspathScannerImpl()
+        ClasspathScanner scanner = new ClasspathScanner()
                                        .addBasePackage("com.example", false);
 
         Map<String,JavaClass> result = scanner.scan(machine);
@@ -75,7 +75,7 @@ public class TestClasspathScanner
     {
         WarMachine machine = TestHelpers.createWarMachine(WarNames.SPRING_ANNO);
 
-        ClasspathScannerImpl scanner = new ClasspathScannerImpl()
+        ClasspathScanner scanner = new ClasspathScanner()
                                        .addBasePackage("com.kdgregory.pathfinder.test.spring3.pkg1", false)
                                        .addBasePackage("com.kdgregory.pathfinder.test.spring3.pkg2", false);
 
@@ -100,7 +100,7 @@ public class TestClasspathScanner
     {
         WarMachine machine = TestHelpers.createWarMachine(WarNames.SPRING_ANNO);
 
-        ClasspathScannerImpl scanner = new ClasspathScannerImpl()
+        ClasspathScanner scanner = new ClasspathScanner()
                                            .addBasePackages(Arrays.asList(
                                                "com.kdgregory.pathfinder.test.spring3.pkg1",
                                                "com.kdgregory.pathfinder.test.spring3.pkg2"),
@@ -122,7 +122,7 @@ public class TestClasspathScanner
     {
         WarMachine machine = TestHelpers.createWarMachine(WarNames.SPRING_ANNO);
 
-        ClasspathScannerImpl scanner = new ClasspathScannerImpl()
+        ClasspathScanner scanner = new ClasspathScanner()
                                        .addBasePackage("com.kdgregory.pathfinder.test.spring3")
                                        .setIncludedAnnotations("org.springframework.stereotype.Controller");
 

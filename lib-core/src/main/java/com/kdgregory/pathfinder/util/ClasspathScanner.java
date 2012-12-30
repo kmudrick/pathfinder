@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.kdgregory.pathfinder.core.impl;
+package com.kdgregory.pathfinder.util;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,7 +29,6 @@ import net.sf.kdgcommons.lang.StringUtil;
 
 import com.kdgregory.bcelx.classfile.Annotation;
 import com.kdgregory.bcelx.parser.AnnotationParser;
-import com.kdgregory.pathfinder.core.ClasspathScanner;
 import com.kdgregory.pathfinder.core.WarMachine;
 
 
@@ -38,8 +37,7 @@ import com.kdgregory.pathfinder.core.WarMachine;
  *  more filters to the classes found there. An unconfigured instance (one
  *  without filters) returns all classes on the classpath.
  */
-public class ClasspathScannerImpl
-implements ClasspathScanner
+public class ClasspathScanner
 {
     private Map<String,Boolean> basePackages;   // packageName -> recurse
     private Set<String> includedAnnotations;
@@ -48,8 +46,7 @@ implements ClasspathScanner
 //  ClasspathScanner
 //----------------------------------------------------------------------------
 
-    @Override
-    public ClasspathScannerImpl addBasePackage(String packageName, boolean includeSubPackages)
+    public ClasspathScanner addBasePackage(String packageName, boolean includeSubPackages)
     {
         if (basePackages == null)
             basePackages = new HashMap<String,Boolean>();
@@ -59,15 +56,13 @@ implements ClasspathScanner
     }
 
 
-    @Override
-    public ClasspathScannerImpl addBasePackage(String packageName)
+    public ClasspathScanner addBasePackage(String packageName)
     {
         return addBasePackage(packageName, true);
     }
 
 
-    @Override
-    public ClasspathScannerImpl addBasePackages(Collection<String> packageNames, boolean includeSubPackages)
+    public ClasspathScanner addBasePackages(Collection<String> packageNames, boolean includeSubPackages)
     {
         for (String packageName : packageNames)
         {
@@ -77,8 +72,7 @@ implements ClasspathScanner
     }
 
 
-    @Override
-    public ClasspathScannerImpl setIncludedAnnotations(String... annotationClasses)
+    public ClasspathScanner setIncludedAnnotations(String... annotationClasses)
     {
         includedAnnotations = new HashSet<String>();
         includedAnnotations.addAll(Arrays.asList(annotationClasses));
@@ -86,7 +80,6 @@ implements ClasspathScanner
     }
 
 
-    @Override
     public Map<String,JavaClass> scan(WarMachine war)
     {
         // FIXME - should return AnnotationParser rather than JavaClass

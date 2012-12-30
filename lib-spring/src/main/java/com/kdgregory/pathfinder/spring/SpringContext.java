@@ -39,9 +39,8 @@ import net.sf.practicalxml.xpath.XPathWrapperFactory;
 import net.sf.practicalxml.xpath.XPathWrapperFactory.CacheType;
 
 import com.kdgregory.bcelx.parser.AnnotationParser;
-import com.kdgregory.pathfinder.core.ClasspathScanner;
 import com.kdgregory.pathfinder.core.WarMachine;
-import com.kdgregory.pathfinder.core.impl.ClasspathScannerImpl;
+import com.kdgregory.pathfinder.util.ClasspathScanner;
 
 
 /**
@@ -300,7 +299,7 @@ public class SpringContext
         List<ClasspathScanner> result = new ArrayList<ClasspathScanner>(scanDefs.size());
         for (Element elem : scanDefs)
         {
-            ClasspathScanner scanner = new ClasspathScannerImpl()
+            ClasspathScanner scanner = new ClasspathScanner()
                                        .setIncludedAnnotations(SpringConstants.ANNO_CONTROLLER,
                                                                SpringConstants.ANNO_COMPONENT);
             String basePackage = elem.getAttribute("base-package");
