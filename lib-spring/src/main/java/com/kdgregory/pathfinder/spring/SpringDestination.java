@@ -33,9 +33,11 @@ implements Destination
 
 
     /**
-     *  Constructor for mappings read from an XML file.
+     *  Constructor for mappings read from an XML file; these won't have method
+     *  information.
      *
-     *  @param beanDef  The bean definition.
+     *  @param  beanDef         Bean definition; used to retrieve bean id, name,
+     *                          and class.
      */
     public SpringDestination(BeanDefinition beanDef)
     {
@@ -47,18 +49,16 @@ implements Destination
 
 
     /**
-     *  Constructor for annotated classes.
+     *  Constructor for annotated classes, which includes handler method information.
      *
-     *  @param  beanName        Identifier for the bean (either defined in annotation
-     *                          or generated from classname)
-     *  @param  className       The fully-qualified name of the controller class
+     *  @param  beanDef         Bean definition; used to retrieve bean id, name,
+     *                          and class.
      *  @param  methodName      The name of the method invoked for this destination
      *  @param  requestParams   Any method parameters identified with @RequestParam
      */
-    public SpringDestination(String beanName, String className, String methodName, Map<String,RequestParameter> requestParams)
+    public SpringDestination(BeanDefinition beanDef, String methodName, Map<String,RequestParameter> requestParams)
     {
-        this.beanName = beanName;
-        this.className = className;
+        this(beanDef);
         this.methodName  = methodName;
         this.requestParams = requestParams;
     }

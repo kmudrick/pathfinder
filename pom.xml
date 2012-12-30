@@ -104,6 +104,7 @@
             <modules>
                 <module>testdata-servlet</module>
                 <module>testdata-servlet25</module>
+                <module>testdata-spring-scan</module>
                 <module>testdata-spring-simple</module>
                 <module>testdata-spring-beanname</module>
                 <module>testdata-spring-classname</module>

@@ -18,9 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import org.apache.bcel.classfile.LocalVariable;
 import org.apache.bcel.classfile.Method;
@@ -35,10 +33,10 @@ import net.sf.kdgcommons.lang.ClassUtil;
 import com.kdgregory.bcelx.classfile.Annotation;
 import com.kdgregory.bcelx.classfile.Annotation.ParamValue;
 import com.kdgregory.bcelx.parser.AnnotationParser;
-import com.kdgregory.pathfinder.core.ClasspathScanner;
 import com.kdgregory.pathfinder.core.HttpMethod;
 import com.kdgregory.pathfinder.core.PathRepo;
 import com.kdgregory.pathfinder.core.WarMachine;
+import com.kdgregory.pathfinder.spring.BeanDefinition.DefinitionType;
 import com.kdgregory.pathfinder.spring.SpringDestination.RequestParameter;
 
 // Copyright (c) Keith D Gregory
@@ -76,7 +74,7 @@ public class AnnotationInspector
         this.paths = paths;
     }
 
-    
+
 //----------------------------------------------------------------------------
 //  Public Methods
 //----------------------------------------------------------------------------
@@ -86,24 +84,18 @@ public class AnnotationInspector
      */
     public void inspect(String urlPrefix)
     {
-        logger.debug("processing Spring3 annotations");
-        Set<String> controllers = new TreeSet<String>();    // TreeSet is nicer to print for debugging
-
-        // FIXME - process explicit beans
-
-        Map<String,AnnotationParser> parsedClasses = new TreeMap<String,AnnotationParser>();
-        List<ClasspathScanner> scanners = context.getComponentScans();
-        for (ClasspathScanner scanner : scanners)
+        logger.debug("processing annotated Spring beans");
+        for (BeanDefinition bean : context.getBeans().values())
         {
-            Set<String> scanResults = scanner.scan(war, parsedClasses);
-            controllers.addAll(scanResults);
-        }
+            // FIXME - load class for XML bean
+            if (bean.getDefinitionType() != DefinitionType.SCAN)
+                continue;
 
-        logger.debug("found " + controllers.size() + " beans marked with @Controller");
+            AnnotationParser ap = ((ScannedBeanDefinition)bean).getAnnotationParser();
+            if (ap.getClassAnnotation(SpringConstants.ANNO_CONTROLLER) == null)
+                continue;
 
-        for (String filename : controllers)
-        {
-            processAnnotatedController(filename, parsedClasses.get(filename), urlPrefix);
+            processAnnotatedController(urlPrefix, bean, ap);
         }
     }
 
@@ -113,27 +105,24 @@ public class AnnotationInspector
 //----------------------------------------------------------------------------
 
     private void processAnnotatedController(
-            String filename, AnnotationParser ap, String urlPrefix)
+            String urlPrefix, BeanDefinition bean, AnnotationParser ap)
     {
-        logger.debug("processing annotations from " + filename);
+        logger.debug("processing annotated bean: " + bean);
         logger.debug("initial urlPrefix: " + urlPrefix);
-        String className = ap.getParsedClass().getClassName();
-        String beanName = getBeanName(className, ap);
         Annotation classMapping = ap.getClassAnnotation(SpringConstants.REQUEST_MAPPING_ANNO_CLASS);
         for (String classPrefix : getMappingUrls(urlPrefix, classMapping))
         {
             logger.debug("updated prefix from controller mapping: " + classPrefix);
             for (Method method : ap.getAnnotatedMethods(SpringConstants.REQUEST_MAPPING_ANNO_CLASS))
             {
-                processAnnotatedControllerMethods(beanName, className, method, ap, classPrefix);
+                processAnnotatedControllerMethods(classPrefix, bean, ap, method);
             }
         }
     }
 
 
     private void processAnnotatedControllerMethods(
-            String beanName, String className, Method method,
-            AnnotationParser ap, String urlPrefix)
+            String urlPrefix, BeanDefinition bean, AnnotationParser ap, Method method)
     {
         String methodName = method.getName();
         Map<String,RequestParameter> requestParams = processParameterAnnotations(method, ap);
@@ -143,7 +132,7 @@ public class AnnotationInspector
         {
             for (HttpMethod reqMethod : getRequestMethods(anno))
             {
-                paths.put(methodUrl, reqMethod, new SpringDestination(beanName, className, methodName, requestParams));
+                paths.put(methodUrl, reqMethod, new SpringDestination(bean, methodName, requestParams));
             }
         }
     }
@@ -178,9 +167,9 @@ public class AnnotationInspector
 
     private String getBeanName(String className, AnnotationParser ap)
     {
-        Annotation ctlAnno = ap.getClassAnnotation(SpringConstants.CONTROLLER_ANNO_CLASS);
+        Annotation ctlAnno = ap.getClassAnnotation(SpringConstants.ANNO_CONTROLLER);
         if (ctlAnno.getValue() == null)
-            return BeanDefinition.classNameToBeanId(className);
+            return XmlBeanDefinition.classNameToBeanId(className);
         else
             return ctlAnno.getValue().asScalar().toString();
     }

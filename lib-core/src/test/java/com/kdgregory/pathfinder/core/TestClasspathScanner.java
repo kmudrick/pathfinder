@@ -15,14 +15,13 @@
 package com.kdgregory.pathfinder.core;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import com.kdgregory.bcelx.parser.AnnotationParser;
+import org.apache.bcel.classfile.JavaClass;
+
 import com.kdgregory.pathfinder.core.impl.ClasspathScannerImpl;
 import com.kdgregory.pathfinder.test.WarNames;
 import com.kdgregory.pathfinder.util.TestHelpers;
@@ -38,9 +37,9 @@ public class TestClasspathScanner
 
         ClasspathScannerImpl scanner = new ClasspathScannerImpl();
 
-        Set<String> files = scanner.scan(machine);
-        assertTrue("searching for file under WEB-INF", files.contains("com.example.servlet.SomeServlet"));
-        assertTrue("searching for file in JAR",        files.contains("net.sf.practicalxml.DomUtil"));
+        Map<String,JavaClass> result = scanner.scan(machine);
+        assertTrue("searching for file under WEB-INF", result.containsKey("com.example.servlet.SomeServlet"));
+        assertTrue("searching for file in JAR",        result.containsKey("net.sf.practicalxml.DomUtil"));
     }
 
 
@@ -52,9 +51,9 @@ public class TestClasspathScanner
         ClasspathScannerImpl scanner = new ClasspathScannerImpl()
                                        .addBasePackage("com.example", true);
 
-        Set<String> files = scanner.scan(machine);
-        assertEquals("number of files found", 1, files.size());
-        assertTrue("searching for file under WEB-INF", files.contains("com.example.servlet.SomeServlet"));
+        Map<String,JavaClass> result = scanner.scan(machine);
+        assertEquals("number of files found", 1, result.size());
+        assertTrue("searching for file under WEB-INF", result.containsKey("com.example.servlet.SomeServlet"));
     }
 
 
@@ -66,8 +65,8 @@ public class TestClasspathScanner
         ClasspathScannerImpl scanner = new ClasspathScannerImpl()
                                        .addBasePackage("com.example", false);
 
-        Set<String> files = scanner.scan(machine);
-        assertEquals("number of files found", 0, files.size());
+        Map<String,JavaClass> result = scanner.scan(machine);
+        assertEquals("number of files found", 0, result.size());
     }
 
 
@@ -85,14 +84,14 @@ public class TestClasspathScanner
         assertEquals("expected pkg1", Boolean.FALSE, packages.get("com.kdgregory.pathfinder.test.spring3.pkg1"));
         assertEquals("expected pkg2", Boolean.FALSE, packages.get("com.kdgregory.pathfinder.test.spring3.pkg2"));
 
-        Set<String> files = scanner.scan(machine);
-        assertEquals("number of files found", 6, files.size());
-        assertTrue("expected ControllerA", files.contains("com.kdgregory.pathfinder.test.spring3.pkg1.ControllerA"));
-        assertTrue("expected ControllerB", files.contains("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerB"));
-        assertTrue("expected ControllerC", files.contains("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerC"));
-        assertTrue("expected ControllerD", files.contains("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerD"));
-        assertTrue("expected ControllerE", files.contains("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerE"));
-        assertTrue("expected Dummy",       files.contains("com.kdgregory.pathfinder.test.spring3.pkg1.Dummy"));
+        Map<String,JavaClass> result = scanner.scan(machine);
+        assertEquals("number of files found", 6, result.size());
+        assertTrue("expected ControllerA", result.containsKey("com.kdgregory.pathfinder.test.spring3.pkg1.ControllerA"));
+        assertTrue("expected ControllerB", result.containsKey("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerB"));
+        assertTrue("expected ControllerC", result.containsKey("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerC"));
+        assertTrue("expected ControllerD", result.containsKey("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerD"));
+        assertTrue("expected ControllerE", result.containsKey("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerE"));
+        assertTrue("expected Dummy",       result.containsKey("com.kdgregory.pathfinder.test.spring3.pkg1.Dummy"));
     }
 
 
@@ -107,14 +106,14 @@ public class TestClasspathScanner
                                                "com.kdgregory.pathfinder.test.spring3.pkg2"),
                                                false);
 
-        Set<String> files = scanner.scan(machine);
+        Map<String,JavaClass> files = scanner.scan(machine);
         assertEquals("number of files found", 6, files.size());
-        assertTrue("expected ControllerA", files.contains("com.kdgregory.pathfinder.test.spring3.pkg1.ControllerA"));
-        assertTrue("expected ControllerB", files.contains("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerB"));
-        assertTrue("expected ControllerC", files.contains("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerC"));
-        assertTrue("expected ControllerD", files.contains("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerD"));
-        assertTrue("expected ControllerE", files.contains("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerE"));
-        assertTrue("expected Dummy",       files.contains("com.kdgregory.pathfinder.test.spring3.pkg1.Dummy"));
+        assertTrue("expected ControllerA", files.containsKey("com.kdgregory.pathfinder.test.spring3.pkg1.ControllerA"));
+        assertTrue("expected ControllerB", files.containsKey("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerB"));
+        assertTrue("expected ControllerC", files.containsKey("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerC"));
+        assertTrue("expected ControllerD", files.containsKey("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerD"));
+        assertTrue("expected ControllerE", files.containsKey("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerE"));
+        assertTrue("expected Dummy",       files.containsKey("com.kdgregory.pathfinder.test.spring3.pkg1.Dummy"));
     }
 
 
@@ -127,34 +126,13 @@ public class TestClasspathScanner
                                        .addBasePackage("com.kdgregory.pathfinder.test.spring3")
                                        .setIncludedAnnotations("org.springframework.stereotype.Controller");
 
-        Set<String> files = scanner.scan(machine);
-        assertEquals("number of files found", 5, files.size());
-        assertTrue("expected ControllerA", files.contains("com.kdgregory.pathfinder.test.spring3.pkg1.ControllerA"));
-        assertTrue("expected ControllerB", files.contains("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerB"));
-        assertTrue("expected ControllerC", files.contains("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerC"));
-        assertTrue("expected ControllerD", files.contains("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerD"));
-        assertTrue("expected ControllerE", files.contains("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerE"));
+        Map<String,JavaClass> result = scanner.scan(machine);
+        assertEquals("number of files found", 5, result.size());
+        assertTrue("expected ControllerA", result.containsKey("com.kdgregory.pathfinder.test.spring3.pkg1.ControllerA"));
+        assertTrue("expected ControllerB", result.containsKey("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerB"));
+        assertTrue("expected ControllerC", result.containsKey("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerC"));
+        assertTrue("expected ControllerD", result.containsKey("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerD"));
+        assertTrue("expected ControllerE", result.containsKey("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerE"));
         // no Dummy
     }
-
-
-    @Test
-    public void testAnnotationFilterWithRetainedParsedClasses() throws Exception
-    {
-        WarMachine machine = TestHelpers.createWarMachine(WarNames.SPRING_ANNO);
-
-        ClasspathScannerImpl scanner = new ClasspathScannerImpl()
-                                       .addBasePackage("com.kdgregory.pathfinder.test.spring3")
-                                       .setIncludedAnnotations("org.springframework.stereotype.Controller");
-
-        Map<String,AnnotationParser> parsedClasses = new HashMap<String,AnnotationParser>();
-        scanner.scan(machine, parsedClasses);
-        assertEquals("number of files found", 5, parsedClasses.size());
-        assertNotNull("expected ControllerA", parsedClasses.get("com.kdgregory.pathfinder.test.spring3.pkg1.ControllerA"));
-        assertNotNull("expected ControllerB", parsedClasses.get("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerB"));
-        assertNotNull("expected ControllerC", parsedClasses.get("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerC"));
-        assertNotNull("expected ControllerD", parsedClasses.get("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerD"));
-        assertNotNull("expected ControllerE", parsedClasses.get("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerE"));
-    }
-
 }

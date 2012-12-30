@@ -26,6 +26,7 @@ public class SpringConstants
     public final static String BEAN_NAME_HANDLER_CLASS      = "org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping";
     public final static String CLASS_NAME_HANDLER_CLASS     = "org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping";
     public final static String CONTROLLER_INTERFACE         = "org.springframework.web.servlet.mvc.Controller";
-    public final static String CONTROLLER_ANNO_CLASS        = "org.springframework.stereotype.Controller";
+    public final static String ANNO_CONTROLLER              = "org.springframework.stereotype.Controller";
+    public final static String ANNO_COMPONENT               = "org.springframework.stereotype.Component";
     public final static String REQUEST_MAPPING_ANNO_CLASS   = "org.springframework.web.bind.annotation.RequestMapping";
 }

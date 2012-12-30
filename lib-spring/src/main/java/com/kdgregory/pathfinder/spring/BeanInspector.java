@@ -25,6 +25,7 @@ import net.sf.kdgcommons.lang.StringUtil;
 
 import com.kdgregory.pathfinder.core.PathRepo;
 import com.kdgregory.pathfinder.core.WarMachine;
+import com.kdgregory.pathfinder.spring.BeanDefinition.DefinitionType;
 
 
 /**
@@ -70,8 +71,15 @@ public class BeanInspector
         List<BeanDefinition> defs = context.getBeansByClass(SpringConstants.SIMPLE_URL_HANDLER_CLASS);
         logger.debug("found " + defs.size() + " SimpleUrlHandlerMapping beans");
 
-        for (BeanDefinition def : defs)
+        for (BeanDefinition def0 : defs)
         {
+            if (def0.getDefinitionType() != DefinitionType.XML)
+            {
+                logger.debug("SimpleUrlHandlerMapping bean " + def0.getBeanId() + " found by scan; ignoring");
+                continue;
+            }
+
+            XmlBeanDefinition def = (XmlBeanDefinition)def0;
             Properties mappings = def.getPropertyAsProperties("mappings");
             if ((mappings == null) || mappings.isEmpty())
             {
@@ -98,9 +106,16 @@ public class BeanInspector
         if (mappers.size() == 0)
             return;
 
+        BeanDefinition mapper0 = mappers.get(0);
+        if ( mapper0.getDefinitionType() != DefinitionType.XML)
+        {
+            logger.warn("found ControllerClassNameHandlerMapping as scanned bean; ignoring");
+            return;
+        }
+
         logger.debug("found ControllerClassNameHandlerMapping; scanning for beans");
 
-        BeanDefinition mapper = mappers.get(0);
+        XmlBeanDefinition mapper = (XmlBeanDefinition)mapper0;
         String mapperPrefix = mapper.getPropertyAsString("pathPrefix");
         if (! StringUtil.isBlank(mapperPrefix))
         {

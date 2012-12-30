@@ -22,6 +22,7 @@ public class WarNames
 {
     public final static String  SERVLET                 = "pathfinder-testdata-servlet.war";
     public final static String  SERVLET_25              = "pathfinder-testdata-servlet25.war";
+    public final static String  SPRING_SCAN             = "pathfinder-testdata-spring-scan.war";
     public final static String  SPRING_SIMPLE           = "pathfinder-testdata-spring-simple.war";
     public final static String  SPRING_BEAN_NAME        = "pathfinder-testdata-spring-beanname.war";
     public final static String  SPRING_CLASS_NAME       = "pathfinder-testdata-spring-classname.war";

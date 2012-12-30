@@ -16,9 +16,8 @@ package com.kdgregory.pathfinder.core;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 
-import com.kdgregory.bcelx.parser.AnnotationParser;
+import org.apache.bcel.classfile.JavaClass;
 
 
 /**
@@ -64,15 +63,8 @@ public interface ClasspathScanner
 //----------------------------------------------------------------------------
 
     /**
-     *  Perform the scan.
+     *  Performs the scan, returning all classes that match the filters. The
+     *  map is keyed by classname.
      */
-    public Set<String> scan(WarMachine war);
-
-
-    /**
-     *  Performs the scan, retaining any classes that pass an annotation
-     *  filter (if there is one). The passed map is keyed by filename; note
-     *  that it may contain more entries than the returned set of filenames.
-     */
-    public Set<String> scan(WarMachine war, Map<String,AnnotationParser> parseResults);
+    public Map<String,JavaClass> scan(WarMachine war);
 }
