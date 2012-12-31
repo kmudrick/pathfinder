@@ -174,16 +174,6 @@ public class AnnotationInspector
     }
 
 
-    private String getBeanName(String className, AnnotationParser ap)
-    {
-        Annotation ctlAnno = ap.getClassAnnotation(SpringConstants.ANNO_CONTROLLER);
-        if (ctlAnno.getValue() == null)
-            return XmlBeanDefinition.classNameToBeanId(className);
-        else
-            return ctlAnno.getValue().asScalar().toString();
-    }
-
-
     private List<String> getMappingUrls(String urlPrefix, Annotation requestMapping)
     {
         // note: called at both class and method level; either can be empty/missing
