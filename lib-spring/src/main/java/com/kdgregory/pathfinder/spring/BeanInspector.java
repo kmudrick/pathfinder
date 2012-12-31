@@ -68,7 +68,7 @@ public class BeanInspector
 
     private void processSimpleUrlHandlerMappings(String urlPrefix)
     {
-        List<BeanDefinition> defs = context.getBeansByClass(SpringConstants.SIMPLE_URL_HANDLER_CLASS);
+        List<BeanDefinition> defs = context.getBeansByClass(SpringConstants.CLASS_SIMPLE_URL_HANDLER);
         logger.debug("found " + defs.size() + " SimpleUrlHandlerMapping beans");
 
         for (BeanDefinition def0 : defs)
@@ -102,7 +102,7 @@ public class BeanInspector
 
     private void processClassNameHandlerMappings(String urlPrefix)
     {
-        List<BeanDefinition> mappers = context.getBeansByClass(SpringConstants.CLASS_NAME_HANDLER_CLASS);
+        List<BeanDefinition> mappers = context.getBeansByClass(SpringConstants.CLASS_CLASS_NAME_HANDLER);
         if (mappers.size() == 0)
             return;
 
@@ -149,7 +149,7 @@ public class BeanInspector
     //          whether it should act even if no explicit mapping bean defined
     private void processBeanNameHandlerMappings(String urlPrefix)
     {
-        List<BeanDefinition> beans = context.getBeansByClass(SpringConstants.BEAN_NAME_HANDLER_CLASS);
+        List<BeanDefinition> beans = context.getBeansByClass(SpringConstants.CLASS_BEAN_NAME_HANDLER);
         if (beans.size() == 0)
         {
             logger.debug("did not find BeanNameUrlHandlerMapping");
@@ -192,7 +192,7 @@ public class BeanInspector
             JavaClass klass = war.loadClass(className);
             for (String intf : klass.getInterfaceNames())
             {
-                if (intf.equals(SpringConstants.CONTROLLER_INTERFACE))
+                if (intf.equals(SpringConstants.INTF_CONTROLLER))
                     return true;
             }
             className = klass.getSuperclassName();

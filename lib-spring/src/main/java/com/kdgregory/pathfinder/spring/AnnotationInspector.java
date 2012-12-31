@@ -118,11 +118,11 @@ public class AnnotationInspector
     {
         logger.debug("processing annotated bean: " + bean);
         logger.debug("initial urlPrefix: " + urlPrefix);
-        Annotation classMapping = ap.getClassAnnotation(SpringConstants.REQUEST_MAPPING_ANNO_CLASS);
+        Annotation classMapping = ap.getClassAnnotation(SpringConstants.ANNO_REQUEST_MAPPING);
         for (String classPrefix : getMappingUrls(urlPrefix, classMapping))
         {
             logger.debug("updated prefix from controller mapping: " + classPrefix);
-            for (Method method : ap.getAnnotatedMethods(SpringConstants.REQUEST_MAPPING_ANNO_CLASS))
+            for (Method method : ap.getAnnotatedMethods(SpringConstants.ANNO_REQUEST_MAPPING))
             {
                 processAnnotatedControllerMethods(classPrefix, bean, ap, method);
             }
@@ -136,7 +136,7 @@ public class AnnotationInspector
         String methodName = method.getName();
         Map<String,RequestParameter> requestParams = processParameterAnnotations(method, ap);
 
-        Annotation anno = ap.getMethodAnnotation(method, SpringConstants.REQUEST_MAPPING_ANNO_CLASS);
+        Annotation anno = ap.getMethodAnnotation(method, SpringConstants.ANNO_REQUEST_MAPPING);
         for (String methodUrl : getMappingUrls(urlPrefix, anno))
         {
             for (HttpMethod reqMethod : getRequestMethods(anno))
