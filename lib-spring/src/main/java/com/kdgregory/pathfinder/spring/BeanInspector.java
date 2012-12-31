@@ -75,7 +75,8 @@ public class BeanInspector
         {
             if (def0.getDefinitionType() != DefinitionType.XML)
             {
-                logger.debug("SimpleUrlHandlerMapping bean " + def0.getBeanId() + " found by scan; ignoring");
+                logger.warn("SimpleUrlHandlerMapping bean " + def0.getBeanId() + " found by scan; "
+                            + "ignoring because we can't extract mappings without loading it");
                 continue;
             }
 
