@@ -26,7 +26,7 @@ import com.kdgregory.pathfinder.util.InvocationOptions;
 public class SpringDestination
 implements Destination
 {
-    private String beanName;
+    private String beanId;
     private String className;
     private String methodName;
     private Map<String,RequestParameter> requestParams;
@@ -41,7 +41,7 @@ implements Destination
      */
     public SpringDestination(BeanDefinition beanDef)
     {
-        this.beanName = beanDef.getBeanId();
+        this.beanId = beanDef.getBeanId();
         this.className = beanDef.getBeanClass();
         this.methodName = "";
         this.requestParams = Collections.emptyMap();
@@ -64,9 +64,9 @@ implements Destination
     }
 
 
-    public String getBeanName()
+    public String getBeanId()
     {
-        return beanName;
+        return beanId;
     }
 
 
