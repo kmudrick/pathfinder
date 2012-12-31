@@ -14,7 +14,6 @@
 
 package com.kdgregory.pathfinder.util;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -58,16 +57,6 @@ public class ClasspathScanner
     public ClasspathScanner addBasePackage(String packageName)
     {
         return addBasePackage(packageName, true);
-    }
-
-
-    public ClasspathScanner addBasePackages(Collection<String> packageNames, boolean includeSubPackages)
-    {
-        for (String packageName : packageNames)
-        {
-            addBasePackage(packageName, includeSubPackages);
-        }
-        return this;
     }
 
 

@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.kdgregory.pathfinder.core;
+package com.kdgregory.pathfinder.util;
 
-import java.util.Arrays;
 import java.util.Map;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 import com.kdgregory.bcelx.parser.AnnotationParser;
+import com.kdgregory.pathfinder.core.WarMachine;
 import com.kdgregory.pathfinder.test.WarNames;
 import com.kdgregory.pathfinder.util.ClasspathScanner;
 import com.kdgregory.pathfinder.util.TestHelpers;
@@ -91,28 +91,6 @@ public class TestClasspathScanner
         assertTrue("expected ControllerD", result.containsKey("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerD"));
         assertTrue("expected ControllerE", result.containsKey("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerE"));
         assertTrue("expected Dummy",       result.containsKey("com.kdgregory.pathfinder.test.spring3.pkg1.Dummy"));
-    }
-
-
-    @Test
-    public void testMultipleBasePackagesAllAtOnce() throws Exception
-    {
-        WarMachine machine = TestHelpers.createWarMachine(WarNames.SPRING_ANNO);
-
-        ClasspathScanner scanner = new ClasspathScanner()
-                                           .addBasePackages(Arrays.asList(
-                                               "com.kdgregory.pathfinder.test.spring3.pkg1",
-                                               "com.kdgregory.pathfinder.test.spring3.pkg2"),
-                                               false);
-
-        Map<String,AnnotationParser> files = scanner.scan(machine);
-        assertEquals("number of files found", 6, files.size());
-        assertTrue("expected ControllerA", files.containsKey("com.kdgregory.pathfinder.test.spring3.pkg1.ControllerA"));
-        assertTrue("expected ControllerB", files.containsKey("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerB"));
-        assertTrue("expected ControllerC", files.containsKey("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerC"));
-        assertTrue("expected ControllerD", files.containsKey("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerD"));
-        assertTrue("expected ControllerE", files.containsKey("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerE"));
-        assertTrue("expected Dummy",       files.containsKey("com.kdgregory.pathfinder.test.spring3.pkg1.Dummy"));
     }
 
 
