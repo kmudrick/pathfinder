@@ -120,19 +120,18 @@ public class TestClasspathScanner
     @Test
     public void testAnnotationFilter() throws Exception
     {
-        WarMachine machine = TestHelpers.createWarMachine(WarNames.SPRING_ANNO);
+        WarMachine machine = TestHelpers.createWarMachine(WarNames.SPRING_SCAN);
 
         ClasspathScanner scanner = new ClasspathScanner()
-                                       .addBasePackage("com.kdgregory.pathfinder.test.spring3")
-                                       .setIncludedAnnotations("org.springframework.stereotype.Controller");
+                                       .addBasePackage("com.kdgregory.pathfinder.test")
+                                       .addIncludedAnnotation("org.springframework.stereotype.Controller")
+                                       .addIncludedAnnotation("org.springframework.stereotype.Repository");
 
         Map<String,JavaClass> result = scanner.scan(machine);
-        assertEquals("number of files found", 5, result.size());
-        assertTrue("expected ControllerA", result.containsKey("com.kdgregory.pathfinder.test.spring3.pkg1.ControllerA"));
-        assertTrue("expected ControllerB", result.containsKey("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerB"));
-        assertTrue("expected ControllerC", result.containsKey("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerC"));
-        assertTrue("expected ControllerD", result.containsKey("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerD"));
-        assertTrue("expected ControllerE", result.containsKey("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerE"));
-        // no Dummy
+        assertEquals("number of files found", 3, result.size());
+        assertTrue("expected RepositoryA", result.containsKey("com.kdgregory.pathfinder.test.scan.repo.RepositoryA"));
+        assertTrue("expected ControllerA", result.containsKey("com.kdgregory.pathfinder.test.scan.controller.ControllerA"));
+        assertTrue("expected ControllerB", result.containsKey("com.kdgregory.pathfinder.test.scan.controller.ControllerB"));
+        // no Dummy, no @Service, no @Component
     }
 }

@@ -300,8 +300,8 @@ public class SpringContext
         for (Element elem : scanDefs)
         {
             ClasspathScanner scanner = new ClasspathScanner()
-                                       .setIncludedAnnotations(SpringConstants.ANNO_CONTROLLER,
-                                                               SpringConstants.ANNO_COMPONENT);
+                                       .addIncludedAnnotation(SpringConstants.ANNO_CONTROLLER)
+                                       .addIncludedAnnotation(SpringConstants.ANNO_COMPONENT);
             String basePackage = elem.getAttribute("base-package");
             String[] bp2 = basePackage.split(",");
             for (String pkg : bp2)

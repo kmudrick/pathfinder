@@ -14,7 +14,6 @@
 
 package com.kdgregory.pathfinder.util;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -72,10 +71,12 @@ public class ClasspathScanner
     }
 
 
-    public ClasspathScanner setIncludedAnnotations(String... annotationClasses)
+    public ClasspathScanner addIncludedAnnotation(String annotationClass)
     {
-        includedAnnotations = new HashSet<String>();
-        includedAnnotations.addAll(Arrays.asList(annotationClasses));
+        if (includedAnnotations == null)
+            includedAnnotations = new HashSet<String>();
+
+        includedAnnotations.add(annotationClass);
         return this;
     }
 
