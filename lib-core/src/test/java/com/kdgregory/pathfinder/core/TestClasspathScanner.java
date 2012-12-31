@@ -20,8 +20,7 @@ import java.util.Map;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import org.apache.bcel.classfile.JavaClass;
-
+import com.kdgregory.bcelx.parser.AnnotationParser;
 import com.kdgregory.pathfinder.test.WarNames;
 import com.kdgregory.pathfinder.util.ClasspathScanner;
 import com.kdgregory.pathfinder.util.TestHelpers;
@@ -37,7 +36,7 @@ public class TestClasspathScanner
 
         ClasspathScanner scanner = new ClasspathScanner();
 
-        Map<String,JavaClass> result = scanner.scan(machine);
+        Map<String,AnnotationParser> result = scanner.scan(machine);
         assertTrue("searching for file under WEB-INF", result.containsKey("com.example.servlet.SomeServlet"));
         assertTrue("searching for file in JAR",        result.containsKey("net.sf.practicalxml.DomUtil"));
     }
@@ -51,7 +50,7 @@ public class TestClasspathScanner
         ClasspathScanner scanner = new ClasspathScanner()
                                        .addBasePackage("com.example", true);
 
-        Map<String,JavaClass> result = scanner.scan(machine);
+        Map<String,AnnotationParser> result = scanner.scan(machine);
         assertEquals("number of files found", 1, result.size());
         assertTrue("searching for file under WEB-INF", result.containsKey("com.example.servlet.SomeServlet"));
     }
@@ -65,7 +64,7 @@ public class TestClasspathScanner
         ClasspathScanner scanner = new ClasspathScanner()
                                        .addBasePackage("com.example", false);
 
-        Map<String,JavaClass> result = scanner.scan(machine);
+        Map<String,AnnotationParser> result = scanner.scan(machine);
         assertEquals("number of files found", 0, result.size());
     }
 
@@ -84,7 +83,7 @@ public class TestClasspathScanner
         assertEquals("expected pkg1", Boolean.FALSE, packages.get("com.kdgregory.pathfinder.test.spring3.pkg1"));
         assertEquals("expected pkg2", Boolean.FALSE, packages.get("com.kdgregory.pathfinder.test.spring3.pkg2"));
 
-        Map<String,JavaClass> result = scanner.scan(machine);
+        Map<String,AnnotationParser> result = scanner.scan(machine);
         assertEquals("number of files found", 6, result.size());
         assertTrue("expected ControllerA", result.containsKey("com.kdgregory.pathfinder.test.spring3.pkg1.ControllerA"));
         assertTrue("expected ControllerB", result.containsKey("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerB"));
@@ -106,7 +105,7 @@ public class TestClasspathScanner
                                                "com.kdgregory.pathfinder.test.spring3.pkg2"),
                                                false);
 
-        Map<String,JavaClass> files = scanner.scan(machine);
+        Map<String,AnnotationParser> files = scanner.scan(machine);
         assertEquals("number of files found", 6, files.size());
         assertTrue("expected ControllerA", files.containsKey("com.kdgregory.pathfinder.test.spring3.pkg1.ControllerA"));
         assertTrue("expected ControllerB", files.containsKey("com.kdgregory.pathfinder.test.spring3.pkg2.ControllerB"));
@@ -127,7 +126,7 @@ public class TestClasspathScanner
                                        .addIncludedAnnotation("org.springframework.stereotype.Controller")
                                        .addIncludedAnnotation("org.springframework.stereotype.Repository");
 
-        Map<String,JavaClass> result = scanner.scan(machine);
+        Map<String,AnnotationParser> result = scanner.scan(machine);
         assertEquals("number of files found", 3, result.size());
         assertTrue("expected RepositoryA", result.containsKey("com.kdgregory.pathfinder.test.scan.repo.RepositoryA"));
         assertTrue("expected ControllerA", result.containsKey("com.kdgregory.pathfinder.test.scan.controller.ControllerA"));

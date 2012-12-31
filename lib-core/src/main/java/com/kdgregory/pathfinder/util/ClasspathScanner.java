@@ -81,12 +81,10 @@ public class ClasspathScanner
     }
 
 
-    public Map<String,JavaClass> scan(WarMachine war)
+    public Map<String,AnnotationParser> scan(WarMachine war)
     {
-        // FIXME - should return AnnotationParser rather than JavaClass
-
         // a TreeMap is easier for debugging: all scanned classes are in order
-        Map<String,JavaClass> result = new TreeMap<String,JavaClass>();
+        Map<String,AnnotationParser> result = new TreeMap<String,AnnotationParser>();
 
         for (String fileName :  war.getFilesOnClasspath())
         {
@@ -98,10 +96,11 @@ public class ClasspathScanner
                 continue;
 
             JavaClass klass = war.loadClass(className);
-            if (! applyIncludedAnnotationFilter(klass))
+            AnnotationParser ap = new AnnotationParser(klass);
+            if (! applyIncludedAnnotationFilter(ap))
                 continue;
 
-            result.put(className, klass);
+            result.put(className, ap);
         }
         return result;
     }
@@ -152,12 +151,11 @@ public class ClasspathScanner
     }
 
 
-    private boolean applyIncludedAnnotationFilter(JavaClass klass)
+    private boolean applyIncludedAnnotationFilter(AnnotationParser ap)
     {
         if (includedAnnotations == null)
             return true;
 
-        AnnotationParser ap = new AnnotationParser(klass);
         for (Annotation anno : ap.getClassVisibleAnnotations())
         {
             String annoClass = anno.getClassName();

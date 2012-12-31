@@ -28,7 +28,6 @@ import org.w3c.dom.Element;
 
 import org.xml.sax.InputSource;
 
-import org.apache.bcel.classfile.JavaClass;
 import org.apache.log4j.Logger;
 
 import net.sf.kdgcommons.io.IOUtil;
@@ -244,9 +243,9 @@ public class SpringContext
     {
         for (ClasspathScanner scanner : getComponentScans(dom))
         {
-            for (JavaClass bean : scanner.scan(war).values())
+            for (AnnotationParser parsedClass : scanner.scan(war).values())
             {
-                ScannedBeanDefinition def = new ScannedBeanDefinition(bean, new AnnotationParser(bean));
+                ScannedBeanDefinition def = new ScannedBeanDefinition(parsedClass.getParsedClass(), parsedClass);
                 if (!beanDefinitions.containsKey(def.getBeanId()))
                 {
                     beanDefinitions.put(def.getBeanId(), def);
