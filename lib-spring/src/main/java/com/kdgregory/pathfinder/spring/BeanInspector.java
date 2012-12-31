@@ -29,7 +29,7 @@ import com.kdgregory.pathfinder.spring.BeanDefinition.DefinitionType;
 
 
 /**
- *  This class contains the logic for inspecting beans defined in XML.
+ *  This class extracts mappings defined in XML configuration.
  */
 public class BeanInspector
 {

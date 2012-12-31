@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.LocalVariable;
 import org.apache.bcel.classfile.Method;
 import org.apache.bcel.generic.Type;
@@ -55,8 +56,7 @@ import com.kdgregory.pathfinder.spring.SpringDestination.RequestParameter;
 
 
 /**
- *  This class contains the logic for classpath scans and annotation-driven
- *  bean configuration.
+ *  This class extracts mappings defined in by bean annotations.
  */
 public class AnnotationInspector
 {
@@ -87,11 +87,7 @@ public class AnnotationInspector
         logger.debug("processing annotated Spring beans");
         for (BeanDefinition bean : context.getBeans().values())
         {
-            // FIXME - load class for XML bean
-            if (bean.getDefinitionType() != DefinitionType.SCAN)
-                continue;
-
-            AnnotationParser ap = ((ScannedBeanDefinition)bean).getAnnotationParser();
+            AnnotationParser ap = getAnnotationsForBean(bean);
             if (ap.getClassAnnotation(SpringConstants.ANNO_CONTROLLER) == null)
                 continue;
 
@@ -103,6 +99,19 @@ public class AnnotationInspector
 //----------------------------------------------------------------------------
 //  Internals
 //----------------------------------------------------------------------------
+
+    private AnnotationParser getAnnotationsForBean(BeanDefinition bean)
+    {
+        if (bean.getDefinitionType() == DefinitionType.SCAN)
+        {
+            return ((ScannedBeanDefinition)bean).getAnnotationParser();
+        }
+
+        // assume that it's an XML definition
+        JavaClass klass = war.loadClass(bean.getBeanClass());
+        return new AnnotationParser(klass);
+    }
+
 
     private void processAnnotatedController(
             String urlPrefix, BeanDefinition bean, AnnotationParser ap)

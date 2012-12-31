@@ -174,4 +174,18 @@ extends AbstractSpringTestcase
         assertEquals("default val: bargle", "",                  params.get("bargle").getDefaultValue());
         assertTrue("required: bargle",                           params.get("bargle").isRequired());
     }
+
+
+    @Test
+    public void testExplicitControllerDefs() throws Exception
+    {
+        processWar(WarNames.SPRING_ANNO_NOSCAN);
+
+        // index.jsp + one controller mapping
+        assertEquals("number of mapped URLs", 2, pathRepo.urlCount());
+
+        SpringDestination dest = (SpringDestination)pathRepo.get("/servlet/B/bar", HttpMethod.GET);
+        assertEquals("controller ID",    "controllerB", dest.getBeanName());
+        assertEquals("controller class", "com.kdgregory.pathfinder.test.spring3.pkg1.ControllerB", dest.getBeanClass());
+    }
 }
