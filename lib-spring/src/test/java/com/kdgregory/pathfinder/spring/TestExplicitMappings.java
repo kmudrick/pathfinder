@@ -24,7 +24,7 @@ import com.kdgregory.pathfinder.test.WarNames;
 /**
  *  This test looks for explicitly configured URL mappings.
  */
-public class TestSpring2
+public class TestExplicitMappings
 extends AbstractSpringTestcase
 {
     @Test

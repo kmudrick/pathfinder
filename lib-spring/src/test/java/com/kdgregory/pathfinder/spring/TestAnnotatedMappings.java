@@ -30,7 +30,7 @@ import com.kdgregory.pathfinder.test.WarNames;
  *  exploring a different facet of the WAR (and reflecting the incremental
  *  implementation process).
  */
-public class TestSpring3
+public class TestAnnotatedMappings
 extends AbstractSpringTestcase
 {
 
