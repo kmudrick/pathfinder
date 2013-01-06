@@ -14,50 +14,67 @@
 
 package com.kdgregory.pathfinder.spring;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.List;
-import java.util.Properties;
-
-import org.w3c.dom.Element;
-
 import net.sf.kdgcommons.lang.StringUtil;
-import net.sf.practicalxml.DomUtil;
-import net.sf.practicalxml.xpath.XPathWrapperFactory;
 
 
 /**
- *  Holds information extracted from the bean definition. The amount of
- *  information available depends on how the bean was defined: wehether
- *  by XML or a component scan. All beans will have at least name and
- *  class.
+ *  Common functionality for bean definitions. Subclasses will provide additional
+ *  functionality.
  */
-public class BeanDefinition
+public abstract class BeanDefinition
 {
-    // this factory is shared with all other definitions from the context
-    private XPathWrapperFactory xpfact;
+    /**
+     *  The different ways that a bean can be defined. This may be used to control
+     *  code that casts to a subclass.
+     */
+    public enum DefinitionType { XML, SCAN }
 
+
+//----------------------------------------------------------------------------
+//  Instance variables and constructor
+//----------------------------------------------------------------------------
+
+    private DefinitionType type;
+    private String beanId;
     private String beanName;
     private String beanClass;
-    private Element beanDef;
 
+    protected BeanDefinition(DefinitionType type, String beanId, String beanName, String beanClass)
+    {
+        this.type = type;
+        this.beanId = StringUtil.isBlank(beanId) ? classNameToBeanId(beanClass) : beanId;
+        this.beanName = StringUtil.isBlank(beanName) ? this.beanId : beanName;
+        this.beanClass = beanClass;
+    }
+
+
+//----------------------------------------------------------------------------
+//  Common public methods
+//----------------------------------------------------------------------------
 
     /**
-     *  Called for beans defined in XML; will extract information from the
-     *  XML subtree, and retain a reference to the tree.
+     *  Returns the mechanism used to define this bean. Note that beans defined in
+     *  XML are not inspected for additional class-level information.
      */
-    public BeanDefinition(XPathWrapperFactory xpf, Element def)
+    public DefinitionType getDefinitionType()
     {
-        xpfact = xpf;
-        beanName = def.getAttribute("id").trim();
-        beanClass = def.getAttribute("class").trim();
-        beanDef = def;
+        return type;
     }
 
 
     /**
-     *  Returns the name of this bean: the <code>id</code> attribute for
-     *  XML-configured beans, ?? for annotation-configured beans.
+     *  Returns the ID of this bean. If the bean does not define its own ID,
+     *  will return the bean's simple classname, with first letter lowercased.
+     */
+    public String getBeanId()
+    {
+        return beanId;
+    }
+
+
+    /**
+     *  Returns the name of this bean. Defaults to the ID if the name is not
+     *  specified.
      */
     public String getBeanName()
     {
@@ -74,124 +91,10 @@ public class BeanDefinition
     }
 
 
-    /**
-     *  For XML-defined beans, returns the raw XML of the bean definition.
-     *  @return
-     */
-    public Element getBeanDef()
-    {
-        return beanDef;
-    }
-
-
-    /**
-     *  Returns the named property value as a string. Returns <code>null</code>
-     *  if the named property does not exist or cannot be converted to a string.
-     */
-    public String getPropertyAsString(String name)
-    {
-        Element propDef = getPropertyDefinition(name);
-        if (propDef == null)
-            return null;
-
-        String value = propDef.getAttribute("value");
-        if (StringUtil.isEmpty(value))
-            value = xpfact.newXPath("b:value").evaluateAsString(propDef);
-
-        return value;
-    }
-
-
-    /**
-     *  Returns the name of the bean referred to by the named property. Returns
-     *  <code>null</code> if the property does not exist or is not a reference.
-     */
-    public String getPropertyAsRefId(String name)
-    {
-        Element propDef = getPropertyDefinition(name);
-        if (propDef == null)
-            return null;
-
-        return propDef.getAttribute("ref");
-    }
-
-
-    /**
-     *  Returns the named property as a <code>Properties</code> object. Returns
-     *  <code>null</code> if the property does not exist or cannot be converted.
-     */
-    public Properties getPropertyAsProperties(String name)
-    {
-        Element propDef = getPropertyDefinition(name);
-        if (propDef == null)
-            return null;
-
-        Properties ret = tryParsePropertiesFromValue(propDef);
-        if (ret == null)
-            ret = tryParsePropertiesFromProps(propDef);
-
-        return ret;
-    }
-
-
-
     @Override
     public String toString()
     {
-        return getClass().getSimpleName() + "[id=" + getBeanName() + ", class=" + getBeanClass() + "]";
-    }
-
-
-//----------------------------------------------------------------------------
-//  Internals
-//----------------------------------------------------------------------------
-
-    private Element getPropertyDefinition(String name)
-    {
-        // FIXME - consider binding a variable here
-        Element propDef = xpfact.newXPath("b:property[@name='" + name+ "']")
-                          .evaluateAsElement(getBeanDef());
-        return propDef;
-    }
-
-
-    private Properties tryParsePropertiesFromValue(Element propDef)
-    {
-        // single value is what's in the document, so try it first ... note that
-        // we can't use a string eval, because it returns empty if the element
-        // isn't present
-        Element valueElem = xpfact.newXPath("b:value").evaluateAsElement(propDef);
-        if (valueElem == null)
-            return null;
-
-        String value = DomUtil.getText(valueElem).trim();
-        try
-        {
-            Properties ret = new Properties();
-            ret.load(new StringReader(value));
-            return ret;
-        }
-        catch (IOException ex)
-        {
-            // shouldn't happen; we'll let the null bubble up
-            return null;
-        }
-    }
-
-
-    private Properties tryParsePropertiesFromProps(Element propDef)
-    {
-        // FIXME - this will return an empty list if there's no "props" element
-        List<Element> props = xpfact.newXPath("b:props/b:prop").evaluate(propDef, Element.class);
-
-        Properties ret = new Properties();
-        for (Element prop : props)
-        {
-            String propName  = prop.getAttribute("key");
-            String propValue = prop.getTextContent().trim();
-            ret.put(propName, propValue);
-        }
-        return ret;
+        return getClass().getSimpleName() + "[id=" + getBeanId() + ", class=" + getBeanClass() + "]";
     }
 
 

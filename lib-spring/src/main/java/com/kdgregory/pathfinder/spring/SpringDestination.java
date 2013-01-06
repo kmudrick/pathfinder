@@ -20,26 +20,28 @@ import java.util.Map;
 import net.sf.kdgcommons.lang.StringUtil;
 
 import com.kdgregory.pathfinder.core.Destination;
-import com.kdgregory.pathfinder.util.InvocationOptions;
+import com.kdgregory.pathfinder.core.InvocationOptions;
 
 
 public class SpringDestination
 implements Destination
 {
-    private String beanName;
+    private String beanId;
     private String className;
     private String methodName;
     private Map<String,RequestParameter> requestParams;
 
 
     /**
-     *  Constructor for mappings read from an XML file.
+     *  Constructor for mappings read from an XML file; these won't have method
+     *  information.
      *
-     *  @param beanDef  The bean definition.
+     *  @param  beanDef         Bean definition; used to retrieve bean id, name,
+     *                          and class.
      */
     public SpringDestination(BeanDefinition beanDef)
     {
-        this.beanName = beanDef.getBeanName();
+        this.beanId = beanDef.getBeanId();
         this.className = beanDef.getBeanClass();
         this.methodName = "";
         this.requestParams = Collections.emptyMap();
@@ -47,30 +49,28 @@ implements Destination
 
 
     /**
-     *  Constructor for annotated classes.
+     *  Constructor for annotated classes, which includes handler method information.
      *
-     *  @param  beanName        Identifier for the bean (either defined in annotation
-     *                          or generated from classname)
-     *  @param  className       The fully-qualified name of the controller class
+     *  @param  beanDef         Bean definition; used to retrieve bean id, name,
+     *                          and class.
      *  @param  methodName      The name of the method invoked for this destination
      *  @param  requestParams   Any method parameters identified with @RequestParam
      */
-    public SpringDestination(String beanName, String className, String methodName, Map<String,RequestParameter> requestParams)
+    public SpringDestination(BeanDefinition beanDef, String methodName, Map<String,RequestParameter> requestParams)
     {
-        this.beanName = beanName;
-        this.className = className;
+        this(beanDef);
         this.methodName  = methodName;
         this.requestParams = requestParams;
     }
 
 
-    public String getBeanName()
+    public String getBeanId()
     {
-        return beanName;
+        return beanId;
     }
 
 
-    public String getClassName()
+    public String getBeanClass()
     {
         return className;
     }
@@ -87,14 +87,20 @@ implements Destination
         return requestParams;
     }
 
+    @Override
+    public boolean isDisplayed(Map<InvocationOptions,Boolean> options)
+    {
+        return true;
+    }
+
 
     @Override
     public String toString()
     {
         if (StringUtil.isBlank(methodName))
-            return getClassName();
+            return getBeanClass();
         else
-            return getClassName() + "." + getMethodName() + "()";
+            return getBeanClass() + "." + getMethodName() + "()";
     }
 
 
@@ -102,7 +108,7 @@ implements Destination
     public String toString(Map<InvocationOptions,Boolean> options)
     {
         String base = toString();
-        if (! options.get(InvocationOptions.ENABLE_REQUEST_PARAMS).booleanValue())
+        if (! InvocationOptions.ENABLE_REQUEST_PARAMS.isEnabled(options))
             return base;
 
         StringBuilder sb = new StringBuilder(1024)

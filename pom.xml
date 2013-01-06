@@ -29,7 +29,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- all dependency versions are specified here -->
-        <bcelx.version>1.0-SNAPSHOT</bcelx.version>
+        <bcel.version>5.2</bcel.version>
+        <bcelx.version>1.0.0</bcelx.version>
         <commons.io.version>2.3</commons.io.version>
         <javax.servlet.version>2.4</javax.servlet.version>
         <javax.jstl.version>1.1.1</javax.jstl.version>
@@ -102,14 +103,19 @@
         <profile>
             <id>testdata</id>
             <modules>
+                <module>testdata-static</module>
                 <module>testdata-servlet</module>
                 <module>testdata-servlet25</module>
-                <module>testdata-spring-split</module>
-                <module>testdata-spring-default</module>
-                <module>testdata-spring2-simple</module>
-                <module>testdata-spring3-basic</module>
+                <module>testdata-spring-scan</module>
+                <module>testdata-spring-simple</module>
+                <module>testdata-spring-beanname</module>
+                <module>testdata-spring-classname</module>
+                <module>testdata-spring-anno</module>
+                <module>testdata-spring-anno-noscan</module>
                 <module>testdata-spring-dispatch-1</module>
                 <module>testdata-spring-dispatch-2</module>
+                <module>testdata-spring-split-config</module>
+                <module>testdata-spring-default-config</module>
                 <module>testdata</module>
             </modules>
         </profile>

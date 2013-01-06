@@ -53,31 +53,49 @@
         </dependency>
         <dependency>
             <groupId>com.kdgregory.pathfinder</groupId>
+            <artifactId>pathfinder-testdata-static</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>com.kdgregory.pathfinder</groupId>
             <artifactId>pathfinder-testdata-servlet25</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
             <groupId>com.kdgregory.pathfinder</groupId>
-            <artifactId>pathfinder-testdata-spring-split</artifactId>
+            <artifactId>pathfinder-testdata-spring-scan</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
             <groupId>com.kdgregory.pathfinder</groupId>
-            <artifactId>pathfinder-testdata-spring-default</artifactId>
+            <artifactId>pathfinder-testdata-spring-simple</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
             <groupId>com.kdgregory.pathfinder</groupId>
-            <artifactId>pathfinder-testdata-spring2-simple</artifactId>
+            <artifactId>pathfinder-testdata-spring-beanname</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
             <groupId>com.kdgregory.pathfinder</groupId>
-            <artifactId>pathfinder-testdata-spring3-basic</artifactId>
+            <artifactId>pathfinder-testdata-spring-classname</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>com.kdgregory.pathfinder</groupId>
+            <artifactId>pathfinder-testdata-spring-anno</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>com.kdgregory.pathfinder</groupId>
+            <artifactId>pathfinder-testdata-spring-anno-noscan</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
@@ -90,6 +108,18 @@
         <dependency>
             <groupId>com.kdgregory.pathfinder</groupId>
             <artifactId>pathfinder-testdata-spring-dispatch-2</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>com.kdgregory.pathfinder</groupId>
+            <artifactId>pathfinder-testdata-spring-default-config</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>com.kdgregory.pathfinder</groupId>
+            <artifactId>pathfinder-testdata-spring-split-config</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
