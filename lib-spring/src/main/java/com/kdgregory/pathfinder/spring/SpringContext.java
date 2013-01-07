@@ -225,10 +225,20 @@ public class SpringContext
             for (AnnotationParser parsedClass : scanner.scan(war).values())
             {
                 ScannedBeanDefinition def = new ScannedBeanDefinition(parsedClass.getParsedClass(), parsedClass);
-                if (!beanDefinitions.containsKey(def.getBeanId()))
+                if (! beanDefinitions.containsKey(def.getBeanId()))
                 {
                     beanDefinitions.put(def.getBeanId(), def);
                     logger.debug("scanned bean \"" + def.getBeanId() + "\" => " + def.getBeanClass());
+                }
+                else
+                {
+                    BeanDefinition existing = beanDefinitions.get(def.getBeanId());
+                    if (! existing.getBeanClass().equals(def.getBeanClass()))
+                    {
+                        logger.warn("multiple beans with same id: " + def.getBeanId()
+                                    + "; keeping " + existing.getBeanClass()
+                                    + ", ignoring " + def.getBeanClass());
+                    }
                 }
             }
         }
